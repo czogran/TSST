@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Agent.cs" />
     <Compile Include="CLI.cs" />
+    <Compile Include="Label.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Port.cs" />
     <Compile Include="Program.cs" />

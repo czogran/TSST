@@ -17,6 +17,7 @@ namespace CableCloud
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+
         }
     }
 }
