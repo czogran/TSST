@@ -17,6 +17,9 @@ namespace NetworkNode
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            Console.WriteLine("Node");
+            Port port = new Port("127.0.0.2", 11002);
+            Console.Read();
         }
     }
 }

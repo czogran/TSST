@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 
-namespace ClientNode
+namespace CableCloud
 {
-    /// <summary>
-    /// Port
-    /// </summary>
-    class Port
+    class SocketCloud
     {
-        public static Socket sender;
+        public Socket node;
         byte[] bytes = new byte[1024];
 
-        public Port()
+
+        public SocketCloud(string ip,int port)
         {
             // Data buffer for incoming data.  
             byte[] bytes = new byte[1024];
@@ -28,19 +26,18 @@ namespace ClientNode
                 // This example uses port 11000 on the local computer.  
                 IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
                 //  IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPAddress ipAddress = IPAddress.Parse("127.0.0.3");
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11003);
+                IPAddress ipAddress = IPAddress.Parse(ip);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
                 // Create a TCP/IP  socket.  
-                sender = new Socket(ipAddress.AddressFamily,
+                node = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
 
                 // Connect the socket to the remote endpoint. Catch any errors.  
                 try
                 {
-                    sender.Connect(remoteEP);
-                    Console.WriteLine("connected" );
-
+                    node.Connect(remoteEP);
+                   Console.WriteLine("connected to node");
 
                 }
                 catch (ArgumentNullException ane)
@@ -62,17 +59,28 @@ namespace ClientNode
                 Console.WriteLine(e.ToString());
             }
         }
-       public void send(string tekst)
+        public static string  send(string tekst,SocketCloud sender)
         {
+            string get=null;
             try
             {
- 
+                tekst = "to node<EOF>";
+                byte[] bytes = new byte[1024];
                 byte[] msg = Encoding.ASCII.GetBytes(tekst);
-           
+
+
                 // Send the data through the socket.  
-                int bytesSent = sender.Send(msg);
-                Console.WriteLine("test");
-           
+                int bytesSent = sender.node.Send(msg);//SocketCloud.node.Send(msg);
+
+                Console.WriteLine("test send");
+                // Receive the response from the remote device.  
+                int bytesRec = sender.node.Receive(bytes);
+
+                Console.WriteLine("Echoed test send = {0}",
+                    Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                get = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                // Release the socket.  
+
             }
             catch (ArgumentNullException ane)
             {
@@ -87,30 +95,13 @@ namespace ClientNode
                 Console.WriteLine("Unexpected exception : {0}", e.ToString());
             }
 
-           
-        }
-        public void listen()
-        {
-            string data=null;
-            int bytesRec = sender.Receive(bytes);
-            Console.WriteLine("Echoed test = {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
-            while (true)
-            {
-                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                if (data.IndexOf("<EOF>") > -1)
-                {
-
-                    byte[] msg = Encoding.ASCII.GetBytes("data");
-
-                    break;
-                }             
-            }
+            return get;
         }
         public void close()
         {
-            sender.Shutdown(SocketShutdown.Both);
-            sender.Close();
+            node.Shutdown(SocketShutdown.Both);
+            node.Close();
         }
-}
+
     }
-   
+}

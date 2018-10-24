@@ -17,6 +17,7 @@ namespace ManagementCenter
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            
         }
     }
 }
