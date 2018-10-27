@@ -19,54 +19,110 @@ namespace CableCloud
         public Socket socket;
 
         /// <summary>
+        /// Adres końca portu receivera
+        /// </summary>
+        public IPEndPoint ipEndPoint;
+
+        /// <summary>
+        /// Adres
+        /// </summary>
+        private const string addresss = "127.0.0.1";
+
+        /// <summary>
+        /// Nr portu
+        /// </summary>
+        private const int port = 10000;
+
+        public string test; //do usuniecia
+
+        /// <summary>
         /// Konstruktor
         /// </summary>
         public CableCloud()
         {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+            ipEndPoint = new  IPEndPoint(IPAddress.Parse(addresss), port);
         }
 
         /// <summary>
         /// Nasłuchuje czy przychodzą dane
         /// </summary>
-        /// <param name="server">adres serwera</param>
-        /// <param name="port">numer portu</param>
-        public void Listen(string server, int port)
-        {            
-            socket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1));
-            socket.Listen(1);
-            Console.WriteLine("LISTENING");
-            
-            socket = socket.Accept();
-            string result = ReceiveData();
-            Console.WriteLine(result);
+        public void Listen()
+        {
+            try
+            {
+                socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+                socket.Bind(ipEndPoint);
+
+                socket.Listen(2);
+                Console.WriteLine("LISTENING");
+
+                Socket handler = socket.Accept();
+                string result = ReceiveData(handler);
+                test = result+"0";
+                Console.WriteLine(result);
+                
+                socket.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+        
+        /// <summary>
+        /// Wysyła strumień bitów
+        /// </summary>
+        /// <param name="receiverAddress">adres na który wysłane będą dane</param>
+        /// <param name="data">dane do wysłania</param>
+        public void SendData(string receiverAddress, int receiverPort, string data)
+        {
+            try
+            {
+                CreateSocket();
+
+                socket.Connect(receiverAddress, receiverPort);
+                socket.Send(ASCIIEncoding.ASCII.GetBytes(data));
+                Console.WriteLine("SENDING");
+
+                Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         /// <summary>
         /// Zwraca otrzymane dane
         /// </summary>
         /// <returns>odebrany string</returns>
-        private string ReceiveData()
+        private string ReceiveData(Socket handler)
         {
             string result ="";
             int bytes = 0;
             Byte[] buffer = new Byte[256];
 
-            bytes = socket.Receive(buffer, buffer.Length, 0);
+            bytes = handler.Receive(buffer, buffer.Length, 0);
             result = Encoding.ASCII.GetString(buffer, 0, bytes);
             
             return result;
         }
 
         /// <summary>
-        /// Wysyła dane dalej
+        /// Tworzy socketa
         /// </summary>
-        /// <param name="client">adres klienta</param>
-        /// <param name="port">numer portu</param>
-        /// <param name="data">dane do przesłania</param>
-        private void SendData(string client, int port, string data)
+        private void CreateSocket()
         {
-            
+            socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+        }
+
+        /// <summary>
+        /// Zamyka socketa
+        /// </summary>
+        private void Close()
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
         }
     }
 }

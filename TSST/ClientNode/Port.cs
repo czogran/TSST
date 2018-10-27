@@ -17,59 +17,117 @@ namespace ClientNode
         /// <summary>
         /// Sockecik do komunikacji z chmurką
         /// </summary>
-        private Socket socket;
+        public Socket socket;
+
+        /// <summary>
+        /// Adres końca portu
+        /// </summary>
+        public IPEndPoint ipEndPoint;
+
+        public string test;    //do usuniecia
+
+        /// <summary>
+        /// Adres portu
+        /// </summary>
+        private string address;
+
+        /// <summary>
+        /// Nr portu
+        /// </summary>
+        private int port;
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        public Port()
+        /// <param name="address">adres portu</param>
+        /// <param name="port">Nr portu</param>
+        public Port(string address, int port)
         {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+            this.address = address;
+            this.port = port;
+            ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
         }
 
         /// <summary>
         /// Wysyła strumień bitów
         /// </summary>
-        /// <param name="server">adres serwera</param>
-        /// <param name="port">numer portu</param>
+        /// <param name="receiver">adres na który wysłane będą dane</param>
         /// <param name="data">dane do wysłania</param>
-        public void SendData(string server, int port, string data)
+        public void SendData(string receiver, string data)
         {
-            socket.Connect(server, port);
-            socket.Send(ASCIIEncoding.ASCII.GetBytes(data));
-            Console.WriteLine("SENDING");
+            try
+            {
+                CreateSocket();
+
+                socket.Connect(receiver, port);
+                socket.Send(ASCIIEncoding.ASCII.GetBytes(data));
+                Console.WriteLine("SENDING");
+
+                Close();
+            }
+            catch(Exception e)
+            {
+                Console.Write(e.ToString());
+            }
         }
         
         /// <summary>
         /// Nasłuchuje czy przychodzą dane
         /// </summary>
-        /// <param name="server">adres serwera</param>
-        /// <param name="port">numer portu</param>
-        public void Listen(string server, int port)
-        {            
-            socket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1));
-            socket.Listen(1);
-            Console.WriteLine("LISTENING");
-            
-            socket = socket.Accept();
-            string result = ReceiveData();
-            Console.WriteLine(result);
+        public void Listen()
+        {
+            try
+            {
+                socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+                socket.Bind(ipEndPoint);
+                
+                socket.Listen(1);
+                Console.WriteLine("LISTENING");
+
+                Socket handler = socket.Accept();
+                string result = ReceiveData(handler);
+                test = result+"0";
+                Console.WriteLine(result);
+                
+                socket.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
         
         /// <summary>
         /// Zwraca otrzymane dane
         /// </summary>
         /// <returns>odebrany string</returns>
-        private string ReceiveData()
+        private string ReceiveData(Socket handler)
         {
             string result ="";
             int bytes = 0;
             Byte[] buffer = new Byte[256];
 
-            bytes = socket.Receive(buffer, buffer.Length, 0);
+            bytes = handler.Receive(buffer, buffer.Length, 0);
             result = Encoding.ASCII.GetString(buffer, 0, bytes);
             
             return result;
+        }
+
+        /// <summary>
+        /// Tworzy socketa
+        /// </summary>
+        private void CreateSocket()
+        {
+            socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+        }
+
+        /// <summary>
+        /// Zamyka socketa
+        /// </summary>
+        private void Close()
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
         }
     }
 }
