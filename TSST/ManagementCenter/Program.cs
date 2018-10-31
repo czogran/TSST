@@ -17,6 +17,10 @@ namespace ManagementCenter
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            Manager manager = new Manager(10000);
+            
+            manager.SendData("127.0.0.10", "siema");
+            manager.Listen();
         }
     }
 }

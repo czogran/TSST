@@ -48,6 +48,18 @@ namespace NetworkNode
         }
 
         /// <summary>
+        /// Głowna pętla portu. Trzeba tak zrobić bo wątek potrzebuje delegata tej metody
+        /// </summary>
+        public void Execute()
+        {
+            while (true)
+            {
+                Listen();
+                SendData("127.0.0.1", test);
+            }
+        }
+        
+        /// <summary>
         /// Wysyła strumień bitów
         /// </summary>
         /// <param name="receiver">adres na który wysłane będą dane</param>

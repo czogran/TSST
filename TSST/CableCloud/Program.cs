@@ -21,22 +21,8 @@ namespace CableCloud
         {
             CableCloud cc = new CableCloud();
             //testy
+            cc.SendData("127.0.0.4", 10000, "dupa");
             cc.Listen();
-            cc.SendData("127.0.0.4", 10000, cc.test);
-            cc.Listen();
-            cc.SendData("127.0.0.3", 10000, cc.test);
-
-            for (int i = 0; i < 3; i++)
-            {
-                cc.Listen();
-                cc.SendData("127.0.0.3", 10000, cc.test);
-            }
-
-            //tu będzie piękna pętla w której będzie chodził program
-//            while (true)
-//            {
-//                
-//            }
         }
     }
 }
