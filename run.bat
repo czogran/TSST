@@ -24,6 +24,9 @@ echo Uruchamiam chmure kablowa
 
 start /d "TSST\CableCloud\bin\Debug" CableCloud.exe
 
+echo Uruchamiam centrum zarzadzania
+
+start /d "TSST\ManagementCenter\bin\Debug" ManagementCenter.exe
 
 
 
