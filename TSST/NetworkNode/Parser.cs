@@ -11,5 +11,6 @@ namespace NetworkNode
     /// </summary>
     class Parser
     {
+
     }
 }
