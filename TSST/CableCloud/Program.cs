@@ -21,8 +21,11 @@ namespace CableCloud
         {
             CableCloud cc = new CableCloud();
             //testy
-            cc.SendData("127.0.0.4", 10000, "dupa");
-            cc.Listen();
+            //cc.SendData("127.0.0.4", 10000, "dupa");
+            //cc.Listen();
+
+            cc.SetPortTable("config_file.xml");
+            cc.PrintPortTable();
         }
     }
 }

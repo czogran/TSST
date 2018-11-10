@@ -11,5 +11,14 @@ namespace NetworkNode
     /// </summary>
     class SwitchingMatrix
     {
+        /// <summary>
+        /// Słownik portów wejścia/wyjścia
+        /// </summary>
+        private Dictionary<int, int> portTable;
+
+        public SwitchingMatrix()
+        {
+            portTable = new Dictionary<int, int>();
+        }
     }
 }
