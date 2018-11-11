@@ -30,8 +30,6 @@ namespace NetworkNode
             thread1.Join();
             thread2.Join();*/
 
-            port.SetPortTable("config_file.xml");
-            port.PrintPortTable();
         }
     }
 }

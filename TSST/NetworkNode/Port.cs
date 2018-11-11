@@ -36,11 +36,6 @@ namespace NetworkNode
         private int port;
 
         /// <summary>
-        /// Słownik portów wejścia/wyjścia
-        /// </summary>
-        private Dictionary<int, int> portTable;
-
-        /// <summary>
         /// Konstruktor
         /// </summary>
         /// <param name="address">adres portu</param>
@@ -50,7 +45,6 @@ namespace NetworkNode
             this.address = address;
             this.port = port;
             ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
-            portTable = new Dictionary<int, int>();
         }
 
         /// <summary>
@@ -145,32 +139,6 @@ namespace NetworkNode
         {
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
-        }
-
-        /// <summary>
-        /// Przepisanie portów do słownika z XMLa
-        /// </summary>
-        /// <param name="filePath">ścieżka do pliku konfiguracyjnego</param>
-        public void SetPortTable(string filePath)
-        {
-            XMLParser xml = new XMLParser();
-            xml.ReadXml(filePath);
-
-            foreach (KeyValuePair<int, int> kvp in xml.portTable)
-            {
-                portTable.Add(kvp.Key, kvp.Value);
-            }
-        }
-
-        /// <summary>
-        /// Wypisanie słownika na konsolę
-        /// </summary>
-        public void PrintPortTable()
-        {
-            foreach (KeyValuePair<int, int> kvp in portTable)
-            {
-                Console.WriteLine(string.Format("Port_in = {0}, Port_out = {1}", kvp.Key, kvp.Value));
-            }
         }
     }
 }
