@@ -14,11 +14,11 @@ namespace NetworkNode
         /// <summary>
         /// Słownik portów wejścia/wyjścia
         /// </summary>
-        private Dictionary<int, int> portTable;
+        private Dictionary<int, Tuple<int, string>> portTable;
 
         public SwitchingMatrix()
         {
-            portTable = new Dictionary<int, int>();
+            portTable = new Dictionary<int, Tuple<int, string>>();
         }
         
         
@@ -26,14 +26,17 @@ namespace NetworkNode
         /// Przepisanie portów do słownika z XMLa
         /// </summary>
         /// <param name="filePath">ścieżka do pliku konfiguracyjnego</param>
-        public void SetPortTable(string filePath)
+        /// <param name="ipNodeAddress">adres ip węzła</param>
+        public void SetPortTable(string filePath, string ipNodeAddress)
         {
             XMLParser xml = new XMLParser();
             xml.ReadXml(filePath);
+            Tuple<int, string> tuple;
 
             foreach (KeyValuePair<int, int> kvp in xml.portTable)
             {
-                portTable.Add(kvp.Key, kvp.Value);
+                tuple = Tuple.Create<int, string>(kvp.Value, ipNodeAddress);
+                portTable.Add(kvp.Key, tuple);
             }
         }
 
@@ -42,9 +45,9 @@ namespace NetworkNode
         /// </summary>
         public void PrintPortTable()
         {
-            foreach (KeyValuePair<int, int> kvp in portTable)
+            foreach (KeyValuePair<int, Tuple<int, string>> kvp in portTable)
             {
-                Console.WriteLine(string.Format("Port_in = {0}, Port_out = {1}", kvp.Key, kvp.Value));
+                Console.WriteLine(string.Format("Port_in = {0}, Port_out = {1}, Node_ip = {2}", kvp.Key, kvp.Value.Item1, kvp.Value.Item2));
             }
         }
     }

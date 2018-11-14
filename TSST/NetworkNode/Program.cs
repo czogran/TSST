@@ -30,6 +30,10 @@ namespace NetworkNode
             thread1.Join();
             thread2.Join();*/
 
+            SwitchingMatrix s = new SwitchingMatrix();
+            s.SetPortTable("config_file.xml", "192.168.8.1");
+            s.PrintPortTable();
+
         }
     }
 }
