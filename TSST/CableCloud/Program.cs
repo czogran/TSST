@@ -24,7 +24,7 @@ namespace CableCloud
             //cc.SendData("127.0.0.4", 10000, "dupa");
             //cc.Listen();
 
-            cc.SetPortTable("config_file.xml");
+            cc.SetPortTable("config_file.xml", "192.168.8.1");
             cc.PrintPortTable();
         }
     }
