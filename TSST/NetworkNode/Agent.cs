@@ -53,11 +53,10 @@ namespace NetworkNode
         /// </summary>
         public void Execute()
         {
-            while (true)
-            {
-                Listen();
-                SendData("127.0.0.30", "czesc");
-            }
+
+            SendData("127.0.0.30", "czesc");
+            Listen();
+
         }
 
         /// <summary>

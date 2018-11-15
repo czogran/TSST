@@ -22,6 +22,7 @@ namespace NetworkNode
         {
             Port port = new Port("127.0.0.4", 10000);
             Agent agent = new Agent("127.0.0.10", 10000);
+            agent.Execute();
             //testy
             /*Thread thread1 = new Thread(new ThreadStart(port.Execute));
             Thread thread2 = new Thread(new ThreadStart(agent.Execute));

@@ -41,11 +41,18 @@ namespace ManagementCenter
         private int port;
 
         /// <summary>
+        /// parser
+        /// </summary>
+        public XMLParser parser;
+
+        /// <summary>
         /// Konstruktor
         /// </summary>
         /// <param name="port">Nr portu</param>
         public Manager(int port)
         {
+            parser = new XMLParser();
+            List<string> node_configs = parser.ReadXml("config.xml");
             this.port = port;
             ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
         }
@@ -76,7 +83,7 @@ namespace ManagementCenter
         /// <summary>
         /// Nasłuchuje czy przychodzą dane
         /// </summary>
-        public void Listen()
+        public string Listen()
         {
             try
             {
@@ -92,10 +99,49 @@ namespace ManagementCenter
                 Console.WriteLine(result);
                 
                 socket.Close();
+
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+            }
+            return "";
+        }
+
+
+        public string NodeInitWait()
+        {
+            try
+            {
+                socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+                socket.Bind(ipEndPoint);
+
+                socket.Listen(1);
+                Console.WriteLine("LISTENING");
+
+                Socket handler = socket.Accept();
+                string result = ReceiveData(handler);
+                test = result + "0";
+                Console.WriteLine(result);
+
+                socket.Close();
+                var endPoint = (IPEndPoint)handler.RemoteEndPoint;
+
+                return endPoint.Address.ToString();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            return "";
+        }
+
+        public void InitNodes()
+        {
+            for (int i = 0; i < parser.config_text.Count; i++)
+            {
+                string x = NodeInitWait();
             }
         }
         
