@@ -24,6 +24,11 @@ namespace CableCloud
         public IPEndPoint ipEndPoint;
 
         /// <summary>
+        /// Otrzymana wiadomość
+        /// </summary>
+        public string receivedData;
+
+        /// <summary>
         /// Adres
         /// </summary>
         private const string addresss = "127.0.0.1";
@@ -63,9 +68,8 @@ namespace CableCloud
                 Console.WriteLine("LISTENING");
 
                 Socket handler = socket.Accept();
-                string result = ReceiveData(handler);
-                test = result+"0";
-                Console.WriteLine(result);
+                receivedData = ReceiveData(handler);
+                Console.WriteLine(receivedData);
                 
                 socket.Close();
             }
@@ -82,6 +86,7 @@ namespace CableCloud
         /// <param name="data">dane do wysłania</param>
         public void SendData(string receiverAddress, int receiverPort, string data)
         {
+            //TODO: receiver port do usuniecia
             try
             {
                 CreateSocket();
@@ -153,7 +158,7 @@ namespace CableCloud
         {
             foreach (KeyValuePair<int, int> kvp in portTable)
             {
-                Console.WriteLine(string.Format("Port_in = {0}, Port_out = {1}", kvp.Key, kvp.Value));
+                Console.WriteLine("Port_in = {0}, Port_out = {1}", kvp.Key, kvp.Value);
             }
         }
 
