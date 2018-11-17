@@ -11,15 +11,16 @@ namespace NetworkNode
     {
         /// <summary>
         /// Słownik portów wejścia/wyjścia
+        /// label_in, label_out, port_out
         /// </summary>
-        public Dictionary<int, int> portTable;
+        public Dictionary<int, Tuple<int, int>> portTable;
 
         /// <summary>
         /// Konstruktor
         /// </summary>
         public XMLParser()
         {
-            portTable = new Dictionary<int, int>();
+            portTable = new Dictionary<int, Tuple<int, int>>();
         }
 
         /// <summary>
@@ -28,16 +29,16 @@ namespace NetworkNode
         /// </summary>
         public void ReadXml(string filePath)
         {
-            int port_in, port_out;
             XmlDocument doc = new XmlDocument();
-            doc.Load(filePath);
+            doc.LoadXml(filePath);
 
-            foreach (XmlNode node in doc.SelectNodes("config_file/port"))
+            foreach (XmlNode node in doc.SelectNodes("matrix_entry"))
             {
-                port_in = Int32.Parse(node.SelectSingleNode("port_in").InnerText);
-                port_out = Int32.Parse(node.SelectSingleNode("port_out").InnerText);
+                var label_in = Int32.Parse(node.SelectSingleNode("label_in").InnerText);
+                var label_out = Int32.Parse(node.SelectSingleNode("label_out").InnerText);
+                var port_out = Int32.Parse(node.SelectSingleNode("port_out").InnerText);
 
-                portTable.Add(port_in, port_out);
+                portTable.Add(label_in, new Tuple<int, int>(label_out, port_out));
             }
         }
     }

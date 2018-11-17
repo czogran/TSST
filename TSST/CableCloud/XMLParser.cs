@@ -9,7 +9,6 @@ namespace CableCloud
 {
     class XMLParser
     {
-
         /// <summary>
         /// Słownik portów wejścia/wyjścia
         /// </summary>
@@ -31,9 +30,9 @@ namespace CableCloud
         {
             int port_in, port_out;
             XmlDocument doc = new XmlDocument();
-            doc.Load(filePath);
+            doc.LoadXml(filePath);
 
-            foreach (XmlNode node in doc.SelectNodes("config_file/port"))
+            foreach (XmlNode node in doc.SelectNodes("port"))
             {
                 port_in = Int32.Parse(node.SelectSingleNode("port_in").InnerText);
                 port_out = Int32.Parse(node.SelectSingleNode("port_out").InnerText);

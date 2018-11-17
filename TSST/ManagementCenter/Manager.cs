@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -21,15 +22,18 @@ namespace ManagementCenter
         /// <summary>
         /// Lista adresów wszystkich węzłów
         /// </summary>
-        private List<string> networkNodeIPAddresses;
+        public Dictionary<int, string> networkNodeIPAddresses = new Dictionary<int, string>();
         
         /// <summary>
         /// Adres końca portu
         /// </summary>
         public IPEndPoint ipEndPoint;
-        
-        public string test;    ///do usuniecia
 
+        /// <summary>
+        /// Przysłana od agenta odpowiedź
+        /// </summary>
+        private string response;
+        
         /// <summary>
         /// Adres portu
         /// </summary>
@@ -52,7 +56,9 @@ namespace ManagementCenter
         public Manager(int port)
         {
             parser = new XMLParser();
-            List<string> node_configs = parser.ReadXml("config.xml");
+            //TODO: nołdy są na razie hardkodowane, dodać je w batchu
+            networkNodeIPAddresses.Add(1, "127.0.0.10");
+            networkNodeIPAddresses.Add(2, "127.0.0.3");
             this.port = port;
             ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
         }
@@ -83,7 +89,7 @@ namespace ManagementCenter
         /// <summary>
         /// Nasłuchuje czy przychodzą dane
         /// </summary>
-        public string Listen()
+        public void Listen()
         {
             try
             {
@@ -94,9 +100,8 @@ namespace ManagementCenter
                 Console.WriteLine("LISTENING");
 
                 Socket handler = socket.Accept();
-                string result = ReceiveData(handler);
-                test = result+"0";
-                Console.WriteLine(result);
+                response = ReceiveData(handler);
+                Console.WriteLine(response);
                 
                 socket.Close();
 
@@ -105,44 +110,24 @@ namespace ManagementCenter
             {
                 Console.WriteLine(e.ToString());
             }
-            return "";
         }
 
-
-        public string NodeInitWait()
+        /// <summary>
+        /// Inicjalizacja działania sieci
+        /// </summary>
+        public void Init()
         {
-            try
+            Dictionary<int, string> nodeFiles = parser.ReadXml("config.xml");
+
+            foreach (KeyValuePair<int, string> ipAddress in networkNodeIPAddresses)
             {
-                socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
-                socket.Bind(ipEndPoint);
-
-                socket.Listen(1);
-                Console.WriteLine("LISTENING");
-
-                Socket handler = socket.Accept();
-                string result = ReceiveData(handler);
-                test = result + "0";
-                Console.WriteLine(result);
-
-                socket.Close();
-                var endPoint = (IPEndPoint)handler.RemoteEndPoint;
-
-                return endPoint.Address.ToString();
-
+                SendData(ipAddress.Value, nodeFiles[ipAddress.Key]);
+                Listen(); 
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            return "";
-        }
 
-        public void InitNodes()
-        {
-            for (int i = 0; i < parser.config_text.Count; i++)
-            {
-                string x = NodeInitWait();
-            }
+            SendData("127.0.0.1", nodeFiles[0]);
+            Listen();
+            Console.WriteLine("Pliki konfiguracyjne poprawnie wysłane");
         }
         
         /// <summary>

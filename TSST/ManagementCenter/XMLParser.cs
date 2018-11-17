@@ -10,33 +10,42 @@ namespace ManagementCenter
     class XMLParser
     {
         /// <summary>
-        /// Słownik portów wejścia/wyjścia
-        /// </summary>
-        public List<string> config_text;
-        public int node_num;
-        /// <summary>
         /// Konstruktor
         /// </summary>
         public XMLParser()
         {
-            config_text = new List<string>();
+            
         }
 
         /// <summary>
         /// Odczyt pliku XML i zapis portów do słownika
         /// <param name="filePath">ścieżka do pliku konfiguracyjnego</param>
         /// </summary>
-        public List<string> ReadXml(string filePath)
+        public Dictionary<int, string> ReadXml(string filePath)
         {
+            Dictionary<int, string> configText = new Dictionary<int, string>();
+            
             XmlDocument doc = new XmlDocument();
             doc.Load(filePath);
 
-            foreach (XmlNode node in doc.SelectNodes("config/nodes"))
+            foreach (XmlNode node in doc.SelectNodes("config/nodes/node"))
             {
-                config_text.Add(node.InnerXml);
-                
+                int id = int.Parse(node.Attributes["id"].Value);
+                configText.Add(id, node.InnerXml);
             }
-            return config_text;
+
+            foreach (XmlNode node in doc.SelectNodes("config/clients/client"))
+            {
+                int id = int.Parse(node.Attributes["id"].Value);
+                configText.Add(id, node.InnerXml);
+            }
+
+            foreach (XmlNode node in doc.SelectNodes("config/cable_cloud"))
+            {
+                //chmura nie potrzebuje id, więc daję arbitralnie 0
+                configText.Add(0, node.InnerXml);
+            }
+            return configText;
         }
     }
 }

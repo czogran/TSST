@@ -55,6 +55,7 @@ namespace NetworkNode
             while (true)
             {
                 Listen();
+                //TODO: dać polu komutacyjnemu i potem wysłać
                 SendData("127.0.0.1", test);
             }
         }
@@ -66,6 +67,7 @@ namespace NetworkNode
         /// <param name="data">dane do wysłania</param>
         public void SendData(string receiver, string data)
         {
+            //TODO: chmura będzie miała stały ip, więc parametr receiver bedzie do usunięcia
             try
             {
                 CreateSocket();

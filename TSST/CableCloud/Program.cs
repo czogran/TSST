@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace CableCloud
 {
@@ -20,12 +21,17 @@ namespace CableCloud
         static void Main(string[] args)
         {
             CableCloud cc = new CableCloud();
-            //testy
-            //cc.SendData("127.0.0.4", 10000, "dupa");
-            //cc.Listen();
 
-            cc.SetPortTable("config_file.xml");
+            cc.Listen();
+            cc.SetPortTable(cc.receivedData);
             cc.PrintPortTable();
+            cc.SendData("127.0.0.30", 10000, "potwierdzam");
+            
+            while (true)
+            {
+                //TODO: sprawdzać w tablicy dokąd wysłać dalej i zrobić tam senddata
+                cc.Listen();
+            }
         }
     }
 }
