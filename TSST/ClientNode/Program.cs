@@ -26,7 +26,7 @@ namespace ClientNode
             port.Listen();
             port.connectedPortNumber = parser.ReadXml(port.receivedData);
             Console.WriteLine(port.connectedPortNumber);
-            port.SendData("127.0.0.30", "potwierdzam");
+            port.SendData("127.0.0.30", CLI.confirmation);
             
             Thread t1 = new Thread(new ThreadStart(port.SenderLoop));
             Thread t2 = new Thread(new ThreadStart(port.ListenerLoop));

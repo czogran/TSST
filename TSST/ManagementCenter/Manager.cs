@@ -82,7 +82,7 @@ namespace ManagementCenter
             }
             catch(Exception e)
             {
-                Console.Write(e.ToString());
+                CLI.PrintError();
             }
         }
         
@@ -101,7 +101,7 @@ namespace ManagementCenter
 
                 Socket handler = socket.Accept();
                 response = ReceiveData(handler);
-                Console.WriteLine(response);
+                CLI.PrintReceivedMessage(response);
                 
                 socket.Close();
 
@@ -122,12 +122,13 @@ namespace ManagementCenter
             foreach (KeyValuePair<int, string> ipAddress in networkNodeIPAddresses)
             {
                 SendData(ipAddress.Value, nodeFiles[ipAddress.Key]);
+                CLI.PrintSentXML(nodeFiles[ipAddress.Key], ipAddress.Key);
                 Listen(); 
             }
 
             SendData("127.0.0.1", nodeFiles[0]);
             Listen();
-            Console.WriteLine("Pliki konfiguracyjne poprawnie wysłane");
+            CLI.PrintConfigFilesSent();
         }
         
         /// <summary>

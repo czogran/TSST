@@ -83,7 +83,7 @@ namespace NetworkNode
             }
             catch(Exception e)
             {
-                Console.Write(e.ToString());
+                CLI.PrintError();
             }
         }
         
@@ -102,7 +102,7 @@ namespace NetworkNode
 
                 Socket handler = socket.Accept();
                 receivedData = ReceiveData(handler);
-                Console.WriteLine(receivedData);
+                CLI.PrintReceivedMessage(receivedData);
                 
                 socket.Close();
             }

@@ -89,7 +89,7 @@ namespace ClientNode
     
                 Socket handler = listener.Accept();
                 receivedData = ReceiveData(handler);
-                Console.WriteLine(receivedData);
+                CLI.PrintReceivedMessage(receivedData);
                     
                 listener.Close();
             }
@@ -108,6 +108,7 @@ namespace ClientNode
             {
                 var message = Console.ReadLine();
                 SendData("127.0.0.1", message);
+                CLI.PrintSentMessage(message);
             }
         }
 

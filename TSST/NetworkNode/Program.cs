@@ -28,7 +28,7 @@ namespace NetworkNode
             Console.WriteLine(agent.receivedData);
             switchingMatrix.SetPortTable(agent.receivedData);
             switchingMatrix.PrintPortTable();
-            agent.SendData("127.0.0.30", "potwierdzam");
+            agent.SendData("127.0.0.30", CLI.confirmation);
             
             //testy
             Thread thread1 = new Thread(new ThreadStart(port.Execute));
