@@ -1,4 +1,4 @@
-@echo off
+
 color A
 
 echo Sprawdzanie uprawnien uzytkownika
@@ -18,7 +18,10 @@ set /p ile_wezlow="Ile wezlow sieciowych: "
 
 echo Tworze %ile_wezlow% wezlow
 
-for /l %%x in (1, 1, %ile_wezlow%) do start "" /d "TSST\NetworkNode\bin\Debug" NetworkNode.exe %%x
+for /l %%x in (1, 1, %ile_wezlow%) do (
+	start "" /d "TSST\NetworkNode\bin\Debug" NetworkNode.exe %%x
+
+)
 
 echo Uruchamiam chmure kablowa
 
@@ -26,5 +29,5 @@ start /d "TSST\CableCloud\bin\Debug" CableCloud.exe
 
 echo Uruchamiam centrum zarzadzania
 
-start /d "TSST\ManagementCenter\bin\Debug" ManagementCenter.exe
+start /d "TSST\ManagementCenter\bin\Debug" ManagementCenter.exe %ile_wezlow%
 

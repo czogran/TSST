@@ -20,6 +20,7 @@ namespace NetworkNode
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            Console.WriteLine(args[0]);
             Port port = new Port("127.0.0.4", 10000);
             Agent agent = new Agent("127.0.0.10", 10000);
             SwitchingMatrix switchingMatrix = new SwitchingMatrix();
