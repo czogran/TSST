@@ -20,6 +20,8 @@ namespace ClientNode
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            Console.WriteLine(args[0]);
+            
             Port port = new Port("127.0.0.3", "127.0.0.12", 10000);
             XMLParser parser = new XMLParser();
             

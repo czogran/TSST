@@ -28,7 +28,7 @@ set /p ile_klient="Ile wezlow klienckich: "
 echo Tworze %ile_klient% klientow
 
 for /l %%x in (1, 1, %ile_klient%) do (
-	start "" /d "TSST\ClientNode\bin\Debug" ClientNode.exe %%x
+	start "" /d "TSST\ClientNode\bin\Debug" ClientNode.exe %%x %ile_wezlow%
 )
 
 echo Uruchamiam chmure kablowa
