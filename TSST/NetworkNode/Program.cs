@@ -17,12 +17,16 @@ namespace NetworkNode
         /// <summary>
         /// Mapuje adres ip
         /// </summary>
-        /// <param name="arggs">nr wezla</param>
-        private void MapIpAddress(string args)
+        /// 
+        private static string[] ArgToIP(string arg)
         {
-            
+            int id = int.Parse(arg);
+
+            id = 2 * id + 10;
+
+            return new string[] { "127.0.0." + (id - 1).ToString(), "127.0.0." + id.ToString() };
         }
-        
+
         /// <summary>
         /// Main
         /// </summary>
@@ -30,10 +34,13 @@ namespace NetworkNode
         static void Main(string[] args)
         {
             Console.WriteLine(args[0]);
-            
-            
-            Port port = new Port("127.0.0.4", 10000);
-            Agent agent = new Agent("127.0.0.10", 10000);
+
+            string[] ips = ArgToIP(args[0]);
+            Console.WriteLine(ips[0]);
+            Console.WriteLine(ips[1]);
+
+            Port port = new Port(ips[0], 10000);
+            Agent agent = new Agent(ips[1], 10000);
             SwitchingMatrix switchingMatrix = new SwitchingMatrix();
             
             agent.Listen();

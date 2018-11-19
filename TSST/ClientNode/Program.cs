@@ -14,15 +14,27 @@ namespace ClientNode
     /// </summary>
     class Program
     {
+
+        private static string[] ArgToIP(string a1, string a2)
+        {
+            int id1 = int.Parse(a1);
+            int id2 = int.Parse(a2);
+
+            int id3 = 2*(id1 + id2)+10;
+
+            return new string[] { "127.0.0." + (id3 - 1).ToString(), "127.0.0." + (id3).ToString() };
+        }
         /// <summary>
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-            Console.WriteLine(args[0]);
-            
-            Port port = new Port("127.0.0.3", "127.0.0.12", 10000);
+            Console.WriteLine(args[1]);
+            var ips = ArgToIP(args[0], args[1]);
+            Console.WriteLine(ips[0]);
+            Console.WriteLine(ips[1]);
+            Port port = new Port(ips[0], ips[1], 10000);
             XMLParser parser = new XMLParser();
             
             port.Listen();
