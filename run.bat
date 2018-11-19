@@ -1,4 +1,4 @@
-
+@echo off
 color A
 
 echo Sprawdzanie uprawnien uzytkownika
@@ -21,6 +21,14 @@ echo Tworze %ile_wezlow% wezlow
 for /l %%x in (1, 1, %ile_wezlow%) do (
 	start "" /d "TSST\NetworkNode\bin\Debug" NetworkNode.exe %%x
 
+)
+
+set /p ile_klient="Ile wezlow klienckich: "
+
+echo Tworze %ile_klient% klientow
+
+for /l %%x in (1, 1, %ile_klient%) do (
+	start "" /d "TSST\ClientNode\bin\Debug" ClientNode.exe %%x
 )
 
 echo Uruchamiam chmure kablowa
