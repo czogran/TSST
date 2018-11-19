@@ -15,21 +15,44 @@ namespace ClientNode
     class Port
     {
         /// <summary>
-        /// Sockecik do komunikacji z chmurką
+        /// Sockecik do słuchania
         /// </summary>
-        public Socket socket;
+        public Socket listener;
 
         /// <summary>
-        /// Adres końca portu
+        /// Sockecik do wysyłania
         /// </summary>
-        public IPEndPoint ipEndPoint;
-
-        public string test;    //do usuniecia
+        public Socket sender;
 
         /// <summary>
-        /// Adres portu
+        /// Otrzymana wiadomość
         /// </summary>
-        private string address;
+        public string receivedData;
+
+        /// <summary>
+        /// Numer kabla, do którego podłączony jest host
+        /// </summary>
+        public int connectedPortNumber;
+
+        /// <summary>
+        /// Adres końca portu listenera
+        /// </summary>
+        private IPEndPoint listenerIpEndPoint;
+
+        /// <summary>
+        /// Adres końca portu sendera
+        /// </summary>
+        private IPEndPoint senderIpEndPoint;
+
+        /// <summary>
+        /// Adres listenera
+        /// </summary>
+        private string listenerAddress;
+
+        /// <summary>
+        /// Adres sendera
+        /// </summary>
+        private string senderAddress;
 
         /// <summary>
         /// Nr portu
@@ -39,36 +62,16 @@ namespace ClientNode
         /// <summary>
         /// Konstruktor
         /// </summary>
-        /// <param name="address">adres portu</param>
+        /// <param name="listenerAddress">adres listenera</param>
+        /// <param name="senderAddress">adres sendera</param>
         /// <param name="port">Nr portu</param>
-        public Port(string address, int port)
+        public Port(string listenerAddress, string senderAddress, int port)
         {
-            this.address = address;
+            this.listenerAddress = listenerAddress;
+            this.senderAddress = senderAddress;
             this.port = port;
-            ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
-        }
-
-        /// <summary>
-        /// Wysyła strumień bitów
-        /// </summary>
-        /// <param name="receiver">adres na który wysłane będą dane</param>
-        /// <param name="data">dane do wysłania</param>
-        public void SendData(string receiver, string data)
-        {
-            try
-            {
-                CreateSocket();
-
-                socket.Connect(receiver, port);
-                socket.Send(ASCIIEncoding.ASCII.GetBytes(data));
-                Console.WriteLine("SENDING");
-
-                Close();
-            }
-            catch(Exception e)
-            {
-                Console.Write(e.ToString());
-            }
+            listenerIpEndPoint = new IPEndPoint(IPAddress.Parse(listenerAddress), port);
+            senderIpEndPoint = new IPEndPoint(IPAddress.Parse(senderAddress), port);
         }
         
         /// <summary>
@@ -78,22 +81,64 @@ namespace ClientNode
         {
             try
             {
-                socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
-                socket.Bind(ipEndPoint);
-                
-                socket.Listen(1);
+                listener = new Socket(listenerIpEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+                listener.Bind(listenerIpEndPoint);
+                    
+                listener.Listen(1);
                 Console.WriteLine("LISTENING");
-
-                Socket handler = socket.Accept();
-                string result = ReceiveData(handler);
-                test = result+"0";
-                Console.WriteLine(result);
-                
-                socket.Close();
+    
+                Socket handler = listener.Accept();
+                receivedData = ReceiveData(handler);
+                CLI.PrintReceivedMessage(receivedData);
+                    
+                listener.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Pętla do wątku sendera
+        /// </summary>
+        public void SenderLoop()
+        {
+            while (true)
+            {
+                var message = Console.ReadLine();
+                SendData("127.0.0.1", message);
+                CLI.PrintSentMessage(message);
+            }
+        }
+
+        public void ListenerLoop()
+        {
+            while (true)
+            {
+                Listen();
+            }
+        }
+        
+        /// <summary>
+        /// Wysyła strumień bitów
+        /// </summary>
+        /// <param name="receiver">adres na który wysłane będą dane</param>
+        /// <param name="data">dane do wysłania</param>
+        public void SendData(string receiver, string data)
+        {
+            try
+            {
+                CreateSender();
+
+                sender.Connect(receiver, port);
+                sender.Send(ASCIIEncoding.ASCII.GetBytes(data));
+
+                Close();
+            }
+            catch(Exception e)
+            {
+                Console.Write(e);
             }
         }
         
@@ -113,21 +158,18 @@ namespace ClientNode
             return result;
         }
 
-        /// <summary>
-        /// Tworzy socketa
-        /// </summary>
-        private void CreateSocket()
+        private void CreateSender()
         {
-            socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+            sender = new Socket(senderIpEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
         }
 
         /// <summary>
-        /// Zamyka socketa
+        /// Zamyka sendera
         /// </summary>
         private void Close()
         {
-            socket.Shutdown(SocketShutdown.Both);
-            socket.Close();
+            sender.Shutdown(SocketShutdown.Both);
+            sender.Close();
         }
     }
 }

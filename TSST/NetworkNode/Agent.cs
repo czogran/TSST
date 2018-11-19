@@ -23,9 +23,12 @@ namespace NetworkNode
         /// Adres końca portu
         /// </summary>
         public IPEndPoint ipEndPoint;
-        
-        public string test;    ///do usuniecia
 
+        /// <summary>
+        /// Otrzymana wiadomość
+        /// </summary>
+        public string receivedData;
+        
         /// <summary>
         /// Adres portu
         /// </summary>
@@ -56,7 +59,7 @@ namespace NetworkNode
             while (true)
             {
                 Listen();
-                SendData("127.0.0.30", "czesc");
+                //TODO: obsłużyć polecenie managera i odesłać wiadomość
             }
         }
 
@@ -67,6 +70,7 @@ namespace NetworkNode
         /// <param name="data">dane do wysłania</param>
         public void SendData(string receiver, string data)
         {
+            //TODO: manager będzie miał stały ip, więc agent nie będzie potrzebował parametru w SendData
             try
             {
                 CreateSocket();
@@ -79,7 +83,7 @@ namespace NetworkNode
             }
             catch(Exception e)
             {
-                Console.Write(e.ToString());
+                CLI.PrintError();
             }
         }
         
@@ -97,9 +101,8 @@ namespace NetworkNode
                 Console.WriteLine("LISTENING");
 
                 Socket handler = socket.Accept();
-                string result = ReceiveData(handler);
-                test = result+"0";
-                Console.WriteLine(result);
+                receivedData = ReceiveData(handler);
+                CLI.PrintReceivedMessage(receivedData);
                 
                 socket.Close();
             }

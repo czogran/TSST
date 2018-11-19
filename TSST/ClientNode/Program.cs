@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ClientNode
@@ -19,21 +20,20 @@ namespace ClientNode
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-            Port port = new Port("127.0.0.3", 10000);
-            port.SendData("127.0.0.1", "dupa");
-            port.Listen();
-
-            for (int i = 0; i < 3; i++)
-            {
-                port.SendData("127.0.0.1", port.test);
-                port.Listen();
-            }
+            Port port = new Port("127.0.0.3", "127.0.0.12", 10000);
+            XMLParser parser = new XMLParser();
             
-            //tu będzie piękna pętla w której będzie chodził program
-//            while (true)
-//            {
-//                
-//            }
+            port.Listen();
+            port.connectedPortNumber = parser.ReadXml(port.receivedData);
+            Console.WriteLine(port.connectedPortNumber);
+            port.SendData("127.0.0.30", CLI.confirmation);
+            
+            Thread t1 = new Thread(new ThreadStart(port.SenderLoop));
+            Thread t2 = new Thread(new ThreadStart(port.ListenerLoop));
+            t1.Start();
+            t2.Start();
+            t1.Join();
+            t2.Join();
         }
     }
 }
