@@ -251,7 +251,7 @@ namespace NetworkNode
         /// <summary>
         /// dodaje etykiete na gore stosu
         /// </summary>
-        public static string push(string message,int newLabel)
+        public static string push(string message,uint newLabel)
         {
             int indeks =  message.IndexOf("</port>")+7;
 

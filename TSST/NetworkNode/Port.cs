@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -8,6 +9,133 @@ using System.Threading.Tasks;
 
 namespace NetworkNode
 {
+    class Port
+    {
+
+    
+
+    Socket mySocket;
+    Socket listeningSocket;
+
+    EndPoint endRemote, endLocal;
+    byte[] buffer;
+
+    public Port()
+    {
+    }
+
+    public void CreateSocket(string IP, int port)
+    {
+        string myIp;
+        int myport;
+        myIp = IP;
+        myport = port;
+
+        IPAddress ipAddress = IPAddress.Parse(myIp);
+        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, myport);
+
+        mySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        mySocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+        mySocket.Bind(localEndPoint);
+    }
+    public void Connect()
+    {
+       
+
+       
+
+        mySocket.Listen(10);
+        mySocket = mySocket.Accept();
+        Console.WriteLine("connected");
+        //mySocket.Accept();
+        //mySocket.BeginAccept(AcceptCallback, mySocket);
+        buffer = new byte[1024];
+
+        mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
+            new AsyncCallback(MessageCallback), buffer);
+    }
+    private void MessageCallback(IAsyncResult result)
+    {
+
+        try
+        {
+
+            byte[] receivedData = new byte[1024];
+            receivedData = (byte[])result.AsyncState;
+
+            ASCIIEncoding encoding = new ASCIIEncoding();
+
+            int i = receivedData.Length - 1;
+            while (receivedData[i] == 0)
+                --i;
+
+            byte[] auxtrim = new byte[i + 1];
+            Array.Copy(receivedData, auxtrim, i + 1);
+
+            string receivedMessage = encoding.GetString(auxtrim);
+
+            Console.WriteLine("FROM Cloud: " + receivedMessage);
+            lock(SwitchingMatrix.collection)
+                {
+                    SwitchingMatrix.collection.Add( receivedMessage + " od wezla");
+                }
+
+
+            buffer = new byte[1024];
+            mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
+                new AsyncCallback(MessageCallback), buffer);
+
+        }
+        catch (Exception ex)
+        {
+                Console.WriteLine("Message callback execption");
+        }
+    }
+        private static int counter = 0;
+    public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
+        {
+
+            if (counter == 0)
+            {
+                lock (SwitchingMatrix.collection)
+                {
+                    string s = SwitchingMatrix.collection.First();
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(s);
+
+                mySocket.Send(sending);
+                
+                    //SwitchingMatrix.collection.Move(SwitchingMatrix.collection.IndexOf(SwitchingMatrix.collection.First()), SwitchingMatrix.collection.IndexOf(SwitchingMatrix.collection.Last()));
+                    //SwitchingMatrix.collection.RemoveAt(0);
+                }
+                counter = 1;
+            }
+            else
+                counter = 0;
+    }
+    public void disconnect_Click()
+    {
+        mySocket.Disconnect(true);
+        mySocket.Close();
+    }
+    public void SendThread()
+    {
+            lock (SwitchingMatrix.collection)
+            {
+                SwitchingMatrix.collection.CollectionChanged += Send;
+            }
+    }
+
+}
+}
+
+
+
+
+
+
+    /*
     /// <summary>
     /// Port
     /// </summary>
