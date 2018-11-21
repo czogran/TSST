@@ -10,21 +10,36 @@ namespace ManagementCenter
     /// Główna klasa programu
     /// </summary>
     class Program
-    {
+    { 
+
         /// <summary>
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+
+            int nodeAmount = int.Parse(args[0]);
+            string port;
+            string agent;
+            int id;
+            //"127.0.0." + (id - 1).ToString(), "127.0.0." + id.ToString()
             XML.CreateXML("test1.xml");
 
             XML.SetName("test1.xml");
-            XML.AddNode(1);
-            XML.AddClient(2,11);
+            for (int i=1;i<=nodeAmount;i++)
+            {
+                id = 2 * i + 10;
+                port = "127.0.0." + (id - 1).ToString();
+                agent= "127.0.0." + id .ToString();
+                XML.AddNode(i,port,agent);
+                XML.AddMatrix(1, i);
+            }
+            //XML.AddNode(1);
+            /*XML.AddClient(2,11);
             XML.AddClient(4,44);
             XML.AddClient(5,66);
-            XML.AddNode(2);
+            //XML.AddNode(2);
             XML.AddMatrix(1, 1);
             XML.AddMatrix(2, 2);
             XML.AddLabel(1, 1, "push", 2, 11,14, 12);
@@ -42,7 +57,7 @@ namespace ManagementCenter
             XML.ChangeLabelPort(2, 2, 15, 111);
             XML.ChangeLabelPush(2, 2, 15, 10);
             XML.ChangeLabelSwap(2, 2, 15, 20);
-            XML.ChangeLabelAcction(2, 2, 15, "push");
+            XML.ChangeLabelAcction(2, 2, 15, "push");*/
         }
     }
 }

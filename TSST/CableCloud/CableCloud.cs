@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -71,9 +72,9 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM NODE: " + receivedMessage);
-                lock (Switch.messageNode)
+                lock (Switch.collection)
                 {
-                    Switch.messageNode = receivedMessage;
+                  //  Switch.collection.Add(receivedMessage);
                 }
 
 
@@ -87,40 +88,31 @@ namespace CableCloud
 
             }
         }
-        public void Send(string message)
+        public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-            ASCIIEncoding enc = new ASCIIEncoding();
-            byte[] sending = new byte[1024];
-            sending = enc.GetBytes(message);
 
-            mySocket.Send(sending);
+
+            lock (Switch.collection)
+            {
+                string s = Switch.collection.Last();
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(s);
+
+                mySocket.Send(sending);
+
+            }
         }
-        public void disconnect_Click()
+            public void disconnect_Click()
         {
             mySocket.Disconnect(true);
             mySocket.Close();
         }
         public void SendThread()
         {
-            while (true)
+            lock (Switch.collection)
             {
-                lock (Switch.message)
-                {
-                    if (Switch.message == "end")
-                    {
-                        mySocket.Disconnect(true);
-                        mySocket.Close();
-                    }
-                    else
-                    {
-                        if (Switch.message != "0")
-
-                        {
-                            Send(Switch.message);
-                            Switch.message = "0";
-                        }
-                    }
-                }
+                Switch.collection.CollectionChanged += Send;
             }
         }
     }

@@ -67,15 +67,23 @@ namespace ManagementCenter
         {
             name = filename;
         }
-        public static void AddNode(int id)
+        public static void AddNode(int id, string port,string agent)
         {
            XmlDocument xmlDefault = new XmlDocument();
 
             xmlDefault.Load(name);
             XmlNode node = xmlDefault.CreateElement("node");
+            XmlNode cablePort = xmlDefault.CreateElement("cable_port");
+            cablePort.InnerText=port;
+
+            XmlNode Agent = xmlDefault.CreateElement("agent");
+            Agent.InnerText = agent;
+
             XmlAttribute attribute = xmlDefault.CreateAttribute("id");
             attribute.Value = id.ToString();
             node.Attributes.Append(attribute);
+            node.AppendChild(cablePort);
+            node.AppendChild(Agent);
             XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("nodes");
             addTo.AppendChild(node);
             xmlDefault.Save(name);

@@ -17,7 +17,8 @@ namespace NetworkNode
        static BlockingCollection<string> dataItems = new BlockingCollection<string>(100);
         public static ObservableCollection<string> collection = new ObservableCollection<string>();
 
-
+        //public static void EnableCollectionSynchronization(System.Collections.IEnumerable collection, object lockObject);
+        
 
         static void a()
         {

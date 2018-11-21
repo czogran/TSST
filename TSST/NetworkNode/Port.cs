@@ -51,8 +51,10 @@ namespace NetworkNode
         //mySocket.BeginAccept(AcceptCallback, mySocket);
         buffer = new byte[1024];
 
-        mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
+            
+                mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
             new AsyncCallback(MessageCallback), buffer);
+            
     }
     private void MessageCallback(IAsyncResult result)
     {
@@ -82,6 +84,7 @@ namespace NetworkNode
 
 
             buffer = new byte[1024];
+
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
                 new AsyncCallback(MessageCallback), buffer);
 
@@ -95,24 +98,25 @@ namespace NetworkNode
     public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
-            if (counter == 0)
-            {
+           // if (counter == 0)
+            //{
                 lock (SwitchingMatrix.collection)
                 {
-                    string s = SwitchingMatrix.collection.First();
+                string s = SwitchingMatrix.collection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
 
                 mySocket.Send(sending);
-                
+
                     //SwitchingMatrix.collection.Move(SwitchingMatrix.collection.IndexOf(SwitchingMatrix.collection.First()), SwitchingMatrix.collection.IndexOf(SwitchingMatrix.collection.Last()));
-                    //SwitchingMatrix.collection.RemoveAt(0);
+                   // Console.WriteLine("taaa "+SwitchingMatrix.collection[0]);
+                    //SwitchingMatrix.collection.Remove(SwitchingMatrix.collection.Last());
                 }
-                counter = 1;
-            }
-            else
-                counter = 0;
+            //    counter = 1;
+           // }
+          //  else
+            //    counter = 0;
     }
     public void disconnect_Click()
     {
@@ -124,6 +128,9 @@ namespace NetworkNode
             lock (SwitchingMatrix.collection)
             {
                 SwitchingMatrix.collection.CollectionChanged += Send;
+                
+              
+               // SwitchingMatrix.collection.
             }
     }
 

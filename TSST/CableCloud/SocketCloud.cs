@@ -66,9 +66,9 @@ namespace CableCloud
             string receivedMessage = encoding.GetString(auxtrim);
 
             Console.WriteLine("FROM CLIENT: "+receivedMessage);
-                lock(Switch.message)
+                lock(Switch.collection)
                 {
-                    Switch.message = receivedMessage;
+                    Switch.collection.Add(receivedMessage);
                 }
 
             buffer = new byte[1024];

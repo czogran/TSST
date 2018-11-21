@@ -12,6 +12,16 @@ namespace NetworkNode
     /// </summary>
     class Program
     {
+
+        private static string[] ArgToIP(string arg)
+        {
+            int id = int.Parse(arg);
+
+            id = 2 * id + 10;
+
+            return new string[] { "127.0.0." + (id - 1).ToString(), "127.0.0." + id.ToString() };
+        }
+
         /// <summary>
         /// Main
         /// </summary>
@@ -21,8 +31,11 @@ namespace NetworkNode
 
 
             Console.WriteLine("node2");
+            Console.WriteLine("node number "+args[0]);
 
-
+            string[] ips = ArgToIP(args[0]);
+            Console.WriteLine(ips[0]);
+            Console.WriteLine(ips[1]);
 
             Port p = new Port();
             p.CreateSocket("127.0.0.5", 11005);
