@@ -14,7 +14,12 @@ namespace ClientNode
     /// </summary>
     class Program
     {
-
+        /// <summary>
+        /// Przypisuje klientom adresy IP
+        /// </summary>
+        /// <param name="a1">liczba networknode</param>
+        /// <param name="a2">liczba clientnode</param>
+        /// <returns>Para adresów IP klienta</returns>
         private static string[] ArgToIP(string a1, string a2)
         {
             int id1 = int.Parse(a1);
@@ -22,7 +27,7 @@ namespace ClientNode
 
             int id3 = 2*(id1 + id2)+10;
 
-            return new string[] { "127.0.0." + (id3 - 1).ToString(), "127.0.0." + (id3).ToString() };
+            return new [] { "127.0.0." + (id3 - 1), "127.0.0." + id3 };
         }
         /// <summary>
         /// Main
@@ -30,10 +35,8 @@ namespace ClientNode
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-            Console.WriteLine(args[1]);
             var ips = ArgToIP(args[0], args[1]);
-            Console.WriteLine(ips[0]);
-            Console.WriteLine(ips[1]);
+
             Port port = new Port(ips[0], ips[1], 10000);
             XMLParser parser = new XMLParser();
             

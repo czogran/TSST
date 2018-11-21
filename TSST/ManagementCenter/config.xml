@@ -14,11 +14,29 @@
         </port_out>
       </matrix_entry>
     </node>
+    <node id="2">
+      <matrix_entry num="1">
+        <label_in>
+          4
+        </label_in>
+        <label_out>
+          5
+        </label_out>
+        <port_out>
+          6
+        </port_out>
+      </matrix_entry>
+    </node>
   </nodes>
   <clients>
-    <client id="2">
+    <client id="3">
       <port_out>
-        4
+        1
+      </port_out>
+    </client>
+    <client id="4">
+      <port_out>
+        2
       </port_out>
     </client>
   </clients>

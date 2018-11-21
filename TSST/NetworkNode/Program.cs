@@ -17,14 +17,15 @@ namespace NetworkNode
         /// <summary>
         /// Mapuje adres ip
         /// </summary>
-        /// 
+        /// <param name="arg"></param>
+        /// <returns>Para adresów IP węzła</returns>
         private static string[] ArgToIP(string arg)
         {
             int id = int.Parse(arg);
 
             id = 2 * id + 10;
 
-            return new string[] { "127.0.0." + (id - 1).ToString(), "127.0.0." + id.ToString() };
+            return new[] { "127.0.0." + (id - 1), "127.0.0." + id };
         }
 
         /// <summary>
@@ -39,8 +40,8 @@ namespace NetworkNode
             Console.WriteLine(ips[0]);
             Console.WriteLine(ips[1]);
 
-            Port port = new Port(ips[0], 10000);
-            Agent agent = new Agent(ips[1], 10000);
+            Agent agent = new Agent(ips[0], 10000);
+            Port port = new Port(ips[1], 10000);
             SwitchingMatrix switchingMatrix = new SwitchingMatrix();
             
             agent.Listen();
