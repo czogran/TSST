@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
@@ -9,16 +10,18 @@ using System.Threading.Tasks;
 
 namespace CableCloud
 {
-    class CableCloud
+    class NodeCloud
     {
 
         Socket mySocket;
 
         EndPoint endRemote, endLocal;
         byte[] buffer;
-
-        public CableCloud()
+        int id;
+        public NodeCloud(int id)
         {
+            this.id = id;
+            Switch.nodeCollection.Add(new ObservableCollection<string>());
         }
 
         public void CreateSocket(string IP, int port)
@@ -72,9 +75,20 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM NODE: " + receivedMessage);
-                lock (Switch.collection)
+                lock (Switch.nodeCollection.ElementAt(id-1))
                 {
-                  //  Switch.collection.Add(receivedMessage);
+                    //if (id < 5)
+                    //{
+                    //nastepny element
+                    try
+                    {
+                        Switch.nodeCollection.ElementAt(id).Add(receivedMessage);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("za daleko");
+                    }
+                     //  }
                 }
 
 
@@ -92,9 +106,9 @@ namespace CableCloud
         {
 
 
-            lock (Switch.collection)
+            lock (Switch.nodeCollection.ElementAt(id - 1))
             {
-                string s = Switch.collection.Last();
+                string s = Switch.nodeCollection.ElementAt(id - 1).Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
@@ -110,9 +124,9 @@ namespace CableCloud
         }
         public void SendThread()
         {
-            lock (Switch.collection)
+            lock (Switch.nodeCollection.ElementAt(id - 1))
             {
-                Switch.collection.CollectionChanged += Send;
+                Switch.nodeCollection.ElementAt(id - 1).CollectionChanged += Send;
             }
         }
     }

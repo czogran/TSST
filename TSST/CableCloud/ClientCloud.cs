@@ -9,14 +9,14 @@ using System.Net.Sockets;
 namespace CableCloud
 {
 
-    class SocketCloud
+    class ClientCloud
     { 
         Socket mySocket;
         Socket listeningSocket;
 
     byte[] buffer;
-
-    public SocketCloud()
+        
+    public ClientCloud()
     {
     }
 
@@ -38,7 +38,7 @@ namespace CableCloud
     {
         mySocket.Listen(10);
         mySocket= mySocket.Accept();
-        Console.WriteLine("connected");
+        Console.WriteLine("Client connected");
     
         buffer = new byte[1024];
 
@@ -64,12 +64,27 @@ namespace CableCloud
             Array.Copy(receivedData, auxtrim, i + 1);
 
             string receivedMessage = encoding.GetString(auxtrim);
+                
 
             Console.WriteLine("FROM CLIENT: "+receivedMessage);
-                lock(Switch.collection)
+                //do testow
+                receivedMessage += "port";
+                if (Switch.SwitchBufer(receivedMessage) == "node")
                 {
-                    Switch.collection.Add(receivedMessage);
+                    Console.WriteLine("wykrywa noda");
+                    lock (Switch.nodeCollection.ElementAt(Switch.SwitchNodes(receivedMessage) - 1))
+                    {
+                        Switch.nodeCollection.ElementAt(Switch.SwitchNodes(receivedMessage) - 1).Add(receivedMessage);
+                    }
+                   
                 }
+                else if (Switch.SwitchBufer(receivedMessage) == "client")
+                {
+
+                }
+                else
+                    Console.WriteLine("error");
+               
 
             buffer = new byte[1024];
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,

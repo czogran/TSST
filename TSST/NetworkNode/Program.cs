@@ -12,11 +12,11 @@ namespace NetworkNode
     /// </summary>
     class Program
     {
-
+        public static int number;
         private static string[] ArgToIP(string arg)
         {
             int id = int.Parse(arg);
-
+            number = id;
             id = 2 * id + 10;
 
             return new string[] { "127.0.0." + (id - 1).ToString(), "127.0.0." + id.ToString() };
@@ -26,17 +26,35 @@ namespace NetworkNode
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
+        
         static void Main(string[] args)
         {
 
 
-            Console.WriteLine("node2");
-            Console.WriteLine("node number "+args[0]);
+            Console.WriteLine("node"+args[0]);
+            //Console.WriteLine("node number "+args[0]);
 
             string[] ips = ArgToIP(args[0]);
-            Console.WriteLine(ips[0]);
-            Console.WriteLine(ips[1]);
+            Console.WriteLine("port: "+ips[0]+"end");
+            Console.WriteLine("agent: "+ips[1]+"end");
 
+            Port port = new Port();
+            Agent agent = new Agent();
+            port.CreateSocket(ips[0], 11001);
+            //port.CreateSocket(ips[0], 11002);
+            agent.CreateSocket(ips[1], 11001);
+
+            port.Connect();
+            agent.Connect();
+
+            Thread threadPort = new Thread(new ThreadStart(port.SendThread));
+            Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
+
+            threadAgent.Start();
+            threadPort.Start();
+            Console.ReadLine();
+
+            /*
             Port p = new Port();
             p.CreateSocket("127.0.0.5", 11005);
             p.Connect();
@@ -46,7 +64,7 @@ namespace NetworkNode
 
             t1.Start();
             Console.Read();
-
+            */
 
             /* string message;
              Console.WriteLine("Node");

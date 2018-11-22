@@ -12,37 +12,65 @@ namespace CableCloud
     /// </summary>
     class Program
     {
+        public static String nodeAmount = "0";
         /// <summary>
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-            Console.WriteLine("cable1");
+            Console.WriteLine("CABLE CLOUD");
 
-           
+            //utworzenie agenta
+            Agent agent = new Agent();
+            agent.CreateSocket("127.0.0.2", 11001);
+            agent.Connect();
+            Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
+            threadAgent.Start();
 
-            SocketCloud p = new SocketCloud();
+            //wezly
+            List<NodeCloud> node = new List<NodeCloud>();
+            string localIP;
+            int localHost;
+            int remoteID;
+            //lock (nodeAmount)
+            //{
+                int num = Int32.Parse(nodeAmount);
+                Console.WriteLine("num"+num);
+                /*for (int i = 1; i <= Switch.data.ElementAt(0); i++)
+                {
+                //int i = 1;
+                    localHost = 150 + i;
+                    node.Add(new NodeCloud(i));
+                    localIP = "127.0.0." + localHost.ToString();
+                    node[i - 1].CreateSocket(localIP, 11001);
+
+                    remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
+                    Console.WriteLine("127.0.0." + (remoteID - 1).ToString());
+                    node[i - 1].Connect("127.0.0." + (remoteID - 1).ToString(), 11001);
+                    Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
+                    threadNode.Start();
+                }*/
+            //}
+
+            //klijenci
+            ClientCloud p = new ClientCloud();
             p.CreateSocket("127.0.0.4", 11004);
-            //p.Connect("127.0.0.3",11003);
-            //p.Send("siema");
-            //string test;
-            //test=Console.ReadLine();
             p.Connect();
             //Thread t2 = new Thread( p.Connect);
            // t2.Start();
             Thread t1 = new Thread(new ThreadStart(p.SendThread));
             t1.Start();
-
-            CableCloud c = new CableCloud();
-            c.CreateSocket("127.0.0.6", 11006);
-            c.Connect("127.0.0.5", 11005);
+            /*
+NodeCloud c = new NodeCloud(1);
+            c.CreateSocket("127.0.0.151", 11001);
+            c.Connect("127.0.0.11", 11001);
             //Thread t3 = new Thread(() => c.Connect("127.0.0.5", 11005));
             //t3.Start();
             Thread t4 = new Thread(new ThreadStart(c.SendThread));
             t4.Start();
 
-
+*/
             //  CableCloud.listen();\
 
             //SocketCloud socket1 = new SocketCloud("127.0.0.2", 11002);

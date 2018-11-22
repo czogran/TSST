@@ -46,7 +46,7 @@ namespace NetworkNode
 
         mySocket.Listen(10);
         mySocket = mySocket.Accept();
-        Console.WriteLine("connected");
+        Console.WriteLine("connected Cloud");
         //mySocket.Accept();
         //mySocket.BeginAccept(AcceptCallback, mySocket);
         buffer = new byte[1024];
@@ -79,7 +79,7 @@ namespace NetworkNode
             Console.WriteLine("FROM Cloud: " + receivedMessage);
             lock(SwitchingMatrix.collection)
                 {
-                    SwitchingMatrix.collection.Add( receivedMessage + " od wezla");
+                    SwitchingMatrix.collection.Add( receivedMessage + Program.number);
                 }
 
 

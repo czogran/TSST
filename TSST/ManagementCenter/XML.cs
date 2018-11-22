@@ -88,6 +88,46 @@ namespace ManagementCenter
             addTo.AppendChild(node);
             xmlDefault.Save(name);
         }
+
+        public static string StringNode(int id)
+        {
+            XmlDocument xmlDefault = new XmlDocument();
+            StringWriter sw = new StringWriter();
+            XmlTextWriter tx = new XmlTextWriter(sw);
+           
+            string file;
+            string readXML;
+            int start, end;
+            xmlDefault.Load(name);
+            xmlDefault.WriteTo(tx);
+            readXML =sw.ToString();
+            start = readXML.IndexOf("<node id=\"" + id + "\">");
+           
+            end = readXML.IndexOf("</node>", start);
+            file = readXML.Substring(start, end - start);
+            file = file + "</node>";
+            return file;
+        }
+        public static string StringCableLinks()
+        {
+            XmlDocument xmlDefault = new XmlDocument();
+            StringWriter sw = new StringWriter();
+            XmlTextWriter tx = new XmlTextWriter(sw);
+
+            string file;
+            string readXML;
+            int start, end;
+            xmlDefault.Load(name);
+            xmlDefault.WriteTo(tx);
+            readXML = sw.ToString();
+            start = readXML.IndexOf("<cable_cloud");
+
+            end = readXML.IndexOf("</cable_cloud>", start);
+            file = readXML.Substring(start, end - start);
+            file = file + "</cable_cloud>";
+            return file;
+        }
+
         public static void AddClient(int id,int port_out)
         {
             XmlDocument xmlDefault = new XmlDocument();

@@ -6,17 +6,19 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace NetworkNode
+namespace CableCloud
 {
-    /// <summary>
-    /// Obsługuje polecenia z centrum zarządzania
-    /// </summary>
     class Agent
     {
         Socket mySocket;
+        Socket listeningSocket;
+
+        EndPoint endRemote, endLocal;
         byte[] buffer;
+
 
         public Agent()
         {
@@ -66,9 +68,9 @@ namespace NetworkNode
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM Agent: " + receivedMessage);
-                lock (SwitchingMatrix.agentCollection)
+                lock (global::CableCloud.Switch.agentCollection)
                 {
-                    SwitchingMatrix.agentCollection.Add(receivedMessage );
+                    global::CableCloud.Switch.agentCollection.Add(receivedMessage);
                 }
                 buffer = new byte[1024];
 
@@ -85,9 +87,9 @@ namespace NetworkNode
 
         public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-            lock (SwitchingMatrix.agentCollection)
+            lock (global::CableCloud.Switch.agentCollection)
             {
-                string s = SwitchingMatrix.agentCollection.Last();
+                string s = Switch.agentCollection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
@@ -104,29 +106,51 @@ namespace NetworkNode
 
         public void ComputingThread()
         {
-            
-            lock (SwitchingMatrix.agentCollection)
+            lock (Switch.agentCollection)
             {
-                 SwitchingMatrix.agentCollection.CollectionChanged += SwitchAction;
+                Switch.agentCollection.CollectionChanged += SwitchAction;
             }
         }
-        public void AgentInfo()
-        {
-            lock (SwitchingMatrix.agentCollection)
-            {
-                SwitchingMatrix.agentCollection.CollectionChanged += SwitchAction;
-            }
-        }
+       
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-           
 
-            if (SwitchingMatrix.agentCollection.Last().Contains("node"))
+
+            if (Switch.agentCollection.Last().Contains("cloud"))
             {
-                File.WriteAllText("myNode"+Program.number+".xml", SwitchingMatrix.agentCollection.Last());
+                File.WriteAllText("myLinks.xml", Switch.agentCollection.Last());
+            }
+            else if (Switch.agentCollection.Last().Contains("nodes"))
+            {
+                int start = Switch.agentCollection.Last().IndexOf("nodes");
+                string nodes = Switch.agentCollection.Last().Substring(6);
+                lock (Program.nodeAmount)
+                {
+                    Program.nodeAmount = nodes;
+                    Switch.data.Add(Int32.Parse(nodes));
+                    List<NodeCloud> node = new List<NodeCloud>();
+                    string localIP;
+                    int localHost;
+                    int remoteID;
+                    for (int i = 1; i <= Int32.Parse(nodes); i++)
+                    {
+                        //int i = 1;
+                        localHost = 150 + i;
+                        node.Add(new NodeCloud(i));
+                        localIP = "127.0.0." + localHost.ToString();
+                        node[i - 1].CreateSocket(localIP, 11001);
+
+                        remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
+                        Console.WriteLine("127.0.0." + (remoteID - 1).ToString());
+                        node[i - 1].Connect("127.0.0." + (remoteID - 1).ToString(), 11001);
+                        Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
+                        threadNode.Start();
+                    }
+
+                    // Console.WriteLine("nodesAmount:" + Program.nodeAmount);
+                } 
+
             }
         }
     }
 }
-
-
