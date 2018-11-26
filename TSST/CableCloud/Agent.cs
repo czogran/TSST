@@ -59,7 +59,7 @@ namespace CableCloud
                 ASCIIEncoding encoding = new ASCIIEncoding();
 
                 int i = receivedData.Length - 1;
-                while (receivedData[i] == 0)
+                while (receivedData[i] == 0 && i !=0)
                     --i;
 
                 byte[] auxtrim = new byte[i + 1];
@@ -68,7 +68,7 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM Agent: " + receivedMessage);
-                lock (global::CableCloud.Switch.agentCollection)
+                lock (Switch.agentCollection)
                 {
                     global::CableCloud.Switch.agentCollection.Add(receivedMessage);
                 }
@@ -80,7 +80,8 @@ namespace CableCloud
 
             catch (Exception ex)
             {
-                Console.WriteLine("Message callback execption");
+                Console.WriteLine("Message Callback exception");
+                Console.WriteLine(ex);
             }
         }
 
@@ -122,6 +123,7 @@ namespace CableCloud
             }
             else if (Switch.agentCollection.Last().Contains("nodes"))
             {
+                
                 int start = Switch.agentCollection.Last().IndexOf("nodes");
                 string nodes = Switch.agentCollection.Last().Substring(6);
                 lock (Program.nodeAmount)
@@ -135,9 +137,9 @@ namespace CableCloud
                     for (int i = 1; i <= Int32.Parse(nodes); i++)
                     {
                         //int i = 1;
-                        localHost = 150 + i;
+                        localHost = 100 + i;
                         node.Add(new NodeCloud(i));
-                        localIP = "127.0.0." + localHost.ToString();
+                        localIP = "127.0.1." + localHost.ToString();
                         node[i - 1].CreateSocket(localIP, 11001);
 
                         remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()

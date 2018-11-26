@@ -56,8 +56,8 @@ namespace ManagementCenter
             {
                 manager.Add(new Manager());
                 Console.WriteLine("tworze agenta dlanoda"+agent[i-1]);
-                socket += i;
-                manager[i-1].CreateSocket("127.0.0."+socket, 11001);
+                socket ++;
+                manager[i-1].CreateSocket("127.0.2."+socket, 11001);
                 manager[i -1].Connect(agent[i-1 ], 11001);
                 manager[i -1].Send(XML.StringNode(i));
             }

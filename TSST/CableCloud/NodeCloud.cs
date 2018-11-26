@@ -75,8 +75,11 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM NODE: " + receivedMessage);
-                lock (Switch.nodeCollection.ElementAt(id-1))
+                //wezly sa od 1 as tablica od 0 dlatego wezel i+1 to w tablicy = i
+                // to ma byc switchowanie gdzie dalej wyslac
+                lock (Switch.nodeCollection.ElementAt(id))
                 {
+                    
                     //if (id < 5)
                     //{
                     //nastepny element
