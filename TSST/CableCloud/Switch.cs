@@ -13,7 +13,6 @@ namespace CableCloud
         public static string message="0";
         public static string messageNode = "0";
         public static ObservableCollection<string> collection = new ObservableCollection<string>();
-        //aktualne
         public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
         public static BlockingCollection<ObservableCollection<string>> nodeCollection = new BlockingCollection<ObservableCollection<string>>();
         public static BlockingCollection<ObservableCollection<string>> clientCollection = new BlockingCollection<ObservableCollection<string>>();
