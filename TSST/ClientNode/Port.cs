@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
-using System.Net;
+
 
 namespace ClientNode
 {
@@ -13,104 +14,162 @@ namespace ClientNode
     /// </summary>
     class Port
     {
-        public static Socket sender;
-        byte[] bytes = new byte[1024];
+        /// <summary>
+        /// Sockecik do słuchania
+        /// </summary>
+        public Socket listener;
 
-        public Port()
+        /// <summary>
+        /// Sockecik do wysyłania
+        /// </summary>
+        public Socket sender;
+
+        /// <summary>
+        /// Otrzymana wiadomość
+        /// </summary>
+        public string receivedData;
+
+        /// <summary>
+        /// Numer kabla, do którego podłączony jest host
+        /// </summary>
+        public int connectedPortNumber;
+
+        /// <summary>
+        /// Adres końca portu listenera
+        /// </summary>
+        private IPEndPoint listenerIpEndPoint;
+
+        /// <summary>
+        /// Adres końca portu sendera
+        /// </summary>
+        private IPEndPoint senderIpEndPoint;
+
+        /// <summary>
+        /// Adres listenera
+        /// </summary>
+        private string listenerAddress;
+
+        /// <summary>
+        /// Adres sendera
+        /// </summary>
+        private string senderAddress;
+
+        /// <summary>
+        /// Nr portu
+        /// </summary>
+        private int port;
+
+        /// <summary>
+        /// Konstruktor
+        /// </summary>
+        /// <param name="listenerAddress">adres listenera</param>
+        /// <param name="senderAddress">adres sendera</param>
+        /// <param name="port">Nr portu</param>
+        public Port(string listenerAddress, string senderAddress, int port)
         {
-            // Data buffer for incoming data.  
-            byte[] bytes = new byte[1024];
-
-            // Connect to a remote device.  
+            this.listenerAddress = listenerAddress;
+            this.senderAddress = senderAddress;
+            this.port = port;
+            listenerIpEndPoint = new IPEndPoint(IPAddress.Parse(listenerAddress), port);
+            senderIpEndPoint = new IPEndPoint(IPAddress.Parse(senderAddress), port);
+        }
+        
+        /// <summary>
+        /// Nasłuchuje czy przychodzą dane
+        /// </summary>
+        public void Listen()
+        {
             try
             {
-                // Establish the remote endpoint for the socket.  
-                // This example uses port 11000 on the local computer.  
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                //  IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPAddress ipAddress = IPAddress.Parse("127.0.0.3");
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11003);
-
-                // Create a TCP/IP  socket.  
-                sender = new Socket(ipAddress.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
-
-                // Connect the socket to the remote endpoint. Catch any errors.  
-                try
-                {
-                    sender.Connect(remoteEP);
-                    Console.WriteLine("connected" );
-
-
-                }
-                catch (ArgumentNullException ane)
-                {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                }
-                catch (SocketException se)
-                {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                }
-
+                listener = new Socket(listenerIpEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+                listener.Bind(listenerIpEndPoint);
+                    
+                listener.Listen(1);
+                Console.WriteLine("LISTENING");
+    
+                Socket handler = listener.Accept();
+                receivedData = ReceiveData(handler);
+                CLI.PrintReceivedMessage(receivedData);
+                    
+                listener.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
         }
-       public void send(string tekst)
+
+        /// <summary>
+        /// Pętla do wątku sendera
+        /// </summary>
+        public void SenderLoop()
+        {
+            while (true)
+            {
+                var message = Console.ReadLine();
+                SendData("127.0.0.1", message);
+                CLI.PrintSentMessage(message);
+            }
+        }
+
+        public void ListenerLoop()
+        {
+            while (true)
+            {
+                Listen();
+            }
+        }
+        
+        /// <summary>
+        /// Wysyła strumień bitów
+        /// </summary>
+        /// <param name="receiver">adres na który wysłane będą dane</param>
+        /// <param name="data">dane do wysłania</param>
+        public void SendData(string receiver, string data)
         {
             try
             {
- 
-                byte[] msg = Encoding.ASCII.GetBytes(tekst);
-           
-                // Send the data through the socket.  
-                int bytesSent = sender.Send(msg);
-                Console.WriteLine("test");
-           
-            }
-            catch (ArgumentNullException ane)
-            {
-                Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-            }
-            catch (SocketException se)
-            {
-                Console.WriteLine("SocketException : {0}", se.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
-            }
+                CreateSender();
 
-           
+                sender.Connect(receiver, port);
+                sender.Send(ASCIIEncoding.ASCII.GetBytes(data));
+
+                Close();
+            }
+            catch(Exception e)
+            {
+                Console.Write(e);
+            }
         }
-        public void listen()
+        
+        /// <summary>
+        /// Zwraca otrzymane dane
+        /// </summary>
+        /// <returns>odebrany string</returns>
+        private string ReceiveData(Socket handler)
         {
-            string data=null;
-            int bytesRec = sender.Receive(bytes);
-            Console.WriteLine("Echoed test = {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
-            while (true)
-            {
-                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                if (data.IndexOf("<EOF>") > -1)
-                {
+            string result ="";
+            int bytes = 0;
+            Byte[] buffer = new Byte[256];
 
-                    byte[] msg = Encoding.ASCII.GetBytes("data");
-
-                    break;
-                }             
-            }
+            bytes = handler.Receive(buffer, buffer.Length, 0);
+            result = Encoding.ASCII.GetString(buffer, 0, bytes);
+            
+            return result;
         }
-        public void close()
+
+        private void CreateSender()
+        {
+            sender = new Socket(senderIpEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+        }
+
+        /// <summary>
+        /// Zamyka sendera
+        /// </summary>
+        private void Close()
         {
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
         }
-}
     }
-   
+}

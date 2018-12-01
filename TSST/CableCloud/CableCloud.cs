@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace CableCloud
 {
@@ -13,73 +13,154 @@ namespace CableCloud
     /// </summary>
     class CableCloud
     {
-        //public static Socket listener;//= new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        /// <summary>
+        /// Sockecik
+        /// </summary>
+        public Socket socket;
 
-        CableCloud()
+        /// <summary>
+        /// Adres końca portu receivera
+        /// </summary>
+        public IPEndPoint ipEndPoint;
+
+        /// <summary>
+        /// Otrzymana wiadomość
+        /// </summary>
+        public string receivedData;
+
+        /// <summary>
+        /// Adres
+        /// </summary>
+        private const string addresss = "127.0.0.1";
+
+        /// <summary>
+        /// Nr portu
+        /// </summary>
+        private const int port = 10000;
+
+        public string test; //do usuniecia
+
+        /// <summary>
+        /// Słownik portów wejścia/wyjścia
+        /// </summary>
+        private Dictionary<int, int> portTable;
+
+        /// <summary>
+        /// Konstruktor
+        /// </summary>
+        public CableCloud()
         {
-           // listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
+            ipEndPoint = new  IPEndPoint(IPAddress.Parse(addresss), port);
+            portTable = new Dictionary<int, int>();
         }
 
-        public static void connect(SocketCloud socket)
+        /// <summary>
+        /// Nasłuchuje czy przychodzą dane
+        /// </summary>
+        public void Listen()
         {
-
-            //string address,int port
-            int port = 11003 ;
-            string address = "127.0.0.3";//, 11002
-            IPAddress ip = IPAddress.Parse(address);
-            IPEndPoint endPoint = new IPEndPoint(ip, port);
-            string data = null;
-            string get = null;
-            Socket listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            byte[] bytes = new byte[1024];
-
             try
             {
-                listener.Bind(endPoint);
-                listener.Listen(10);
-                while (true)
-                {
-                    Console.WriteLine("Waiting for a connection...");
-                    Socket handler = listener.Accept();
-                    Console.WriteLine("client connected");
+                socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+                socket.Bind(ipEndPoint);
 
-                    data = null;
+                socket.Listen(2);
+                Console.WriteLine("LISTENING");
 
-                    while (true)
-                    {
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                        if (data.IndexOf("<EOF>") > -1)
-                        {
-
-                            //   byte[] msg = Encoding.ASCII.GetBytes("data");
-                            //handler.Send(msg);
-                            Console.WriteLine("Text received2 : {0}", data);
-                            get = SocketCloud.send(data, socket);
-                            handler.Shutdown(SocketShutdown.Both);
-                            //  Console.WriteLine("Text received2 : {0}", data);
-                            handler.Close();
-                            data = null;
-                            break;
-                        }
-                        if (data == "end")
-                        {
-                            handler.Shutdown(SocketShutdown.Both);
-                            Console.WriteLine("Text received : {0}", data);
-                            handler.Close();
-                            break;
-                        }
-                    }
-                }
+                Socket handler = socket.Accept();
+                receivedData = ReceiveData(handler);
+                Console.WriteLine(receivedData);
+                
+                socket.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
-
         }
+        
+        /// <summary>
+        /// Wysyła strumień bitów
+        /// </summary>
+        /// <param name="receiverAddress">adres na który wysłane będą dane</param>
+        /// <param name="data">dane do wysłania</param>
+        public void SendData(string receiverAddress, int receiverPort, string data)
+        {
+            //TODO: receiver port do usuniecia
+            try
+            {
+                CreateSocket();
+
+                socket.Connect(receiverAddress, receiverPort);
+                socket.Send(ASCIIEncoding.ASCII.GetBytes(data));
+                Console.WriteLine("SENDING");
+
+                Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Zwraca otrzymane dane
+        /// </summary>
+        /// <returns>odebrany string</returns>
+        private string ReceiveData(Socket handler)
+        {
+            string result ="";
+            int bytes = 0;
+            Byte[] buffer = new Byte[256];
+
+            bytes = handler.Receive(buffer, buffer.Length, 0);
+            result = Encoding.ASCII.GetString(buffer, 0, bytes);
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Tworzy socketa
+        /// </summary>
+        private void CreateSocket()
+        {
+            socket = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.IP);
+        }
+
+        /// <summary>
+        /// Zamyka socketa
+        /// </summary>
+        private void Close()
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
+        }
+
+        /// <summary>
+        /// Przepisanie portów do słownika z XMLa
+        /// </summary>
+        /// <param name="filePath">ścieżka do pliku konfiguracyjnego</param>
+        public void SetPortTable(string filePath)
+        { 
+            XMLParser xml = new XMLParser();
+            xml.ReadXml(filePath);
+            
+            foreach (KeyValuePair<int, int> kvp in xml.portTable)
+            {
+                portTable.Add(kvp.Key, kvp.Value);
+            }
+        }
+
+        /// <summary>
+        /// Wypisanie słownika na konsolę
+        /// </summary>
+        public void PrintPortTable()
+        {
+            foreach (KeyValuePair<int, int> kvp in portTable)
+            {
+                Console.WriteLine("Port_in = {0}, Port_out = {1}", kvp.Key, kvp.Value);
+            }
+        }
+
     }
-
-
 }

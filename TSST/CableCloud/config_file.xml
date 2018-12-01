@@ -1,0 +1,16 @@
+<config_file>
+  <port>
+    <port_in>1</port_in>
+    <port_out>2</port_out>
+  </port>
+
+  <port>
+    <port_in>3</port_in>
+    <port_out>4</port_out>
+  </port>
+
+  <port>
+    <port_in>5</port_in>
+    <port_out>6</port_out>
+  </port>
+</config_file>

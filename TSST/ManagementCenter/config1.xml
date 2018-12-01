@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <nodes>
+    <node id="1">
+      <matrix_entry num="21">
+        <label_in label="1">
+         <acction>push</acction>
+	 <swap>90</swap>
+         <push>91</push>
+       	 <port_out>3</port_out>
+	</label_in>
+	<label_in label="22">
+         <acction>swap</acction>
+	 <swap>92</swap>
+         <push></push>
+       	 <port_out>4</port_out>
+	</label_in>
+	<label_in label="22">
+         <acction>pop</acction>
+	 <swap></swap>
+         <push></push>
+       	 <port_out>4</port_out>
+	</label_in>
+      </matrix_entry>
+    </node>
+  </nodes>
+  <clients>
+    <client id="1">
+      <port_out>
+        4
+      </port_out>
+    </client>
+  </clients>
+  <cable_cloud>
+    <port id="1">
+      <port_in>
+        3
+      </port_in>
+      <port_out>
+        4
+      </port_out>
+    </port>
+  </cable_cloud>
+</config>

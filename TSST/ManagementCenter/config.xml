@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <nodes>
+    <node id="1">
+      <matrix_entry num="1">
+        <label_in>
+          1
+        </label_in>
+        <label_out>
+          2
+        </label_out>
+        <port_out>
+          3
+        </port_out>
+      </matrix_entry>
+    </node>
+    <node id="2">
+      <matrix_entry num="1">
+        <label_in>
+          4
+        </label_in>
+        <label_out>
+          5
+        </label_out>
+        <port_out>
+          6
+        </port_out>
+      </matrix_entry>
+    </node>
+  </nodes>
+  <clients>
+    <client id="3">
+      <port_out>
+        1
+      </port_out>
+    </client>
+    <client id="4">
+      <port_out>
+        2
+      </port_out>
+    </client>
+  </clients>
+  <cable_cloud>
+    <port id="1">
+      <port_in>
+        3
+      </port_in>
+      <port_out>
+        4
+      </port_out>
+    </port>
+  </cable_cloud>
+</config>
