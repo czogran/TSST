@@ -36,7 +36,7 @@ namespace ManagementCenter
   ///RemoveClient
   ///RemoveLink
   ///RemoveLabel
-  ///
+  ///Test
   /// </summary>
     class XML
     {
@@ -67,7 +67,22 @@ namespace ManagementCenter
         {
             name = filename;
         }
-        public static void AddNode(int id, string port,string agent)
+        public static bool Test()
+        {
+            try
+            {
+                XmlDocument xmlDefault = new XmlDocument();
+
+                xmlDefault.Load(name);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+        }
+            public static void AddNode(int id, string port,string agent)
         {
            XmlDocument xmlDefault = new XmlDocument();
 
