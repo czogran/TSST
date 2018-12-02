@@ -81,12 +81,13 @@ namespace ManagementCenter
                 manager[i - 1].CreateSocket("127.0.0." + socket, 11001);
                 manager[i - 1].Connect(agent[i - 1], 11001);
             }
-
+            string choose;
             while (true)
             {
                 Console.WriteLine("JEZELI CHCESZ SKONFIGUROWAC SIEC WYBIERZ 1");
                 Console.WriteLine("JEZELI CHCESZ NAPRAWIC SIEC WYBIERZ 2");
-                if (Console.ReadLine() == "1")
+                choose = Console.ReadLine();
+                if ( choose== "1")
                 {
                     Console.WriteLine("PODADAJ XML");
                     string name = "false";
@@ -98,12 +99,19 @@ namespace ManagementCenter
                     }
 
                     for (int i = 1; i <= nodeAmount; i++)
-                    {
-                        manager[i - 1].Send(XML.StringNode(i));
+                    { 
+                        try
+                        {
+                            manager[i - 1].Send(XML.StringNode(i));
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     }
                     managerCloud.Send(XML.StringCableLinks());
                 }
-                else if (Console.ReadLine() == "2")
+                else if (choose=="2")
                 {
                     Console.WriteLine("PODADAJ XML");
                     string name = "false";
@@ -116,7 +124,14 @@ namespace ManagementCenter
 
                     for (int i = 1; i <= nodeAmount; i++)
                     {
-                        manager[i - 1].Send(XML.StringNode(i));
+                        try
+                        {
+                            manager[i - 1].Send(XML.StringNode(i));
+                        }
+                        catch(Exception ex)
+                        {
+
+                        }
                     }
                 }
                 }
