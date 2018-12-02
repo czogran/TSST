@@ -19,6 +19,9 @@ namespace CableCloud
         EndPoint endRemote, endLocal;
         byte[] buffer;
 
+        List<NodeCloud> node = new List<NodeCloud>();
+        List<ClientCloud> client = new List<ClientCloud>();
+
 
         public Agent()
         {
@@ -119,6 +122,10 @@ namespace CableCloud
             if (Switch.agentCollection.Last().Contains("cloud"))
             {
                 File.WriteAllText("myLinks.xml", Switch.agentCollection.Last());
+                lock(Switch.linkDictionary)
+                {
+                    Switch.FillDictionary();
+                }
             }
             else if (Switch.agentCollection.Last().Contains("nodes"))
             {
@@ -128,7 +135,7 @@ namespace CableCloud
                 {
                     Program.nodeAmount = nodes;
                     Switch.data.Add(Int32.Parse(nodes));
-                    List<NodeCloud> node = new List<NodeCloud>();
+                  
                     string localIP;
                     int localHost;
                     int remoteID;
@@ -150,6 +157,35 @@ namespace CableCloud
                     // Console.WriteLine("nodesAmount:" + Program.nodeAmount);
                 } 
 
+            }
+            else if(Switch.agentCollection.Last().Contains("clients"))
+            {
+                Console.WriteLine("heeeeeee");
+                string clients = Switch.agentCollection.Last().Substring(8);
+                Console.WriteLine(clients);
+                for (int i = 1; i <= Int32.Parse(clients); i++)
+                {
+                    Console.WriteLine("aaa");
+                }
+                for (int i = 1; i <= Int32.Parse(clients);i++)
+                {
+                    //nie dziala
+                    /*client.Add(new ClientCloud());
+                    client[i - 1].CreateSocket("127.0.0.5", 11004);
+                    Console.WriteLine("clients socket created: " + "127.0.11." + i);
+                    Thread t2 = new Thread(new ThreadStart( client[i - 1].Connect));
+                    t2.Start();
+                    //klijenci
+                   // ClientCloud p = new ClientCloud();
+                   // p.CreateSocket("127.0.0.4", 11004);
+                    //p.Connect();
+                   // Thread t2 = new Thread( p.Connect);
+                    //t2.Start();
+
+                    Thread t1 = new Thread(new ThreadStart(client[i-1].SendThread));
+                    t1.Start();
+                    Console.WriteLine("clients socket created: " + "127.0.11." + i);*/
+                }
             }
         }
     }

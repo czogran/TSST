@@ -87,7 +87,7 @@ namespace ClientNode
         {
             ASCIIEncoding enc = new ASCIIEncoding();
             byte[] sending = new byte[1024];
-            sending = enc.GetBytes(message);
+            sending = enc.GetBytes(message+"<port>9111</port>");
 
             mySocket.Send(sending);
         }

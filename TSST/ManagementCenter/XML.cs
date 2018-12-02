@@ -154,7 +154,7 @@ namespace ManagementCenter
             attribute.Value = num.ToString();
             matrix.Attributes.Append(attribute);
             
-            XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id="+num+"]");
+            XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id="+nodeNumber+"]");
             addTo.AppendChild(matrix);
             xmlDefault.Save(name);
         }
@@ -186,6 +186,8 @@ namespace ManagementCenter
         }
         public static void AddLink(int id, int nodeA, int nodeB, string status)
         {
+            nodeA += 10;
+            nodeB += 10;
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 

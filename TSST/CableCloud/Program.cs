@@ -52,47 +52,26 @@ namespace CableCloud
                     threadNode.Start();
                 }*/
             //}
-
+            
             //klijenci
-            ClientCloud p = new ClientCloud();
-            p.CreateSocket("127.0.0.4", 11004);
+            ClientCloud p = new ClientCloud(1);
+            p.CreateSocket("127.0.11.1", 11004);
             p.Connect();
             //Thread t2 = new Thread( p.Connect);
            // t2.Start();
             Thread t1 = new Thread(new ThreadStart(p.SendThread));
             t1.Start();
-            /*
-NodeCloud c = new NodeCloud(1);
-            c.CreateSocket("127.0.0.151", 11001);
-            c.Connect("127.0.0.11", 11001);
-            //Thread t3 = new Thread(() => c.Connect("127.0.0.5", 11005));
-            //t3.Start();
-            Thread t4 = new Thread(new ThreadStart(c.SendThread));
-            t4.Start();
-
-*/
-            //  CableCloud.listen();\
-
-            //SocketCloud socket1 = new SocketCloud("127.0.0.2", 11002);
-            //CableCloud.connect(socket1);
-            //Thread t = new Thread(new ThreadStart (SocketCloud.connect));
-            // Thread t = new Thread(new ThreadStart(SocketCloud.connect));
-            // Thread t = new Thread(new ThreadStart(SocketCloud.connect));
-            //t.Start();
 
 
-            // socket2 = new SocketCloud("127.0.0.4", 11004);
-            //socket1.send("asdadad<EOF>");
-            //socket2.send("dttttttttt<EOF>");
-            // socket1.send("end");
-            // socket2.send("end");
-            //socket1.close();
-            // socket2.close();
+            ClientCloud p1 = new ClientCloud(2);
+            p1.CreateSocket("127.0.11.2", 11004);
+            p1.Connect();
+            Thread t2 = new Thread(new ThreadStart(p1.SendThread));
+            t2.Start();
 
 
-
-            //SocketCloud socket2 = new SocketCloud("127.0.0.1", 12001);
-
+            //te read line musi byc inaczej wszystko sie konczy
+            Console.ReadLine();
 
         }
     }

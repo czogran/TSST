@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace CableCloud
 {
@@ -13,11 +15,13 @@ namespace CableCloud
     { 
         Socket mySocket;
         Socket listeningSocket;
-
+        int id;
     byte[] buffer;
         
-    public ClientCloud()
+    public ClientCloud(int id)
     {
+            Switch.clientCollection.Add(new ObservableCollection<string>());
+            this.id = id;
     }
 
     public void CreateSocket(string IP, int port)
@@ -68,25 +72,26 @@ namespace CableCloud
 
             Console.WriteLine("FROM CLIENT: "+receivedMessage);
                 //do testow
-                receivedMessage += "port";
-                if (Switch.SwitchBufer(receivedMessage) == "node")
-                {
-                    Console.WriteLine("wykrywa noda");
-                    lock (Switch.nodeCollection.ElementAt(Switch.SwitchNodes(receivedMessage) - 1))
-                    {
-                        Switch.nodeCollection.ElementAt(Switch.SwitchNodes(receivedMessage) - 1).Add(receivedMessage);
-                    }
-                   
-                }
-                else if (Switch.SwitchBufer(receivedMessage) == "client")
-                {
+                /* receivedMessage += "port";
+                 if (Switch.SwitchBufer(receivedMessage) == "node")
+                 {
+                     Console.WriteLine("wykrywa noda");
+                     lock (Switch.nodeCollection.ElementAt(Switch.SwitchNodes(receivedMessage) - 1))
+                     {
+                         Switch.nodeCollection.ElementAt(Switch.SwitchNodes(receivedMessage) - 1).Add(receivedMessage);
+                     }
 
-                }
-                else
-                    Console.WriteLine("error");
-               
+                 }
+                 else if (Switch.SwitchBufer(receivedMessage) == "client")
+                 {
 
-            buffer = new byte[1024];
+                 }
+                 else
+                     Console.WriteLine("error");
+                */
+                Switch.SwitchBufer(receivedMessage);
+
+                buffer = new byte[1024];
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
                 new AsyncCallback(MessageCallback), buffer);
 
@@ -96,31 +101,55 @@ namespace CableCloud
 
         }
     }
-    public void Send(string message)
+   /* public void Send(string message)
     {
         ASCIIEncoding enc = new ASCIIEncoding();
         byte[] sending = new byte[1024];
         sending = enc.GetBytes(message);
 
         mySocket.Send(sending);
-    }
+    }*/
     public void disconnect_Click()
     {
         mySocket.Disconnect(true);
         mySocket.Close();
     }
-        public void SendThread()
+
+    public void SendThread()
         {
-            while (true)
+
+
+            //Console.ReadLine();
+           lock (Switch.clientCollection.ElementAt(id - 1))
             {
-                string message = Console.ReadLine();
-                if (message == "end")
-                {
-                    disconnect_Click();
-                    break;
-                }
-                else
-                    Send(message);
+                Switch.clientCollection.ElementAt(id - 1).CollectionChanged += Send;
+            }
+            //Console.ReadLine();
+            /* while (true)
+             {
+                 string message = Console.ReadLine();
+                 if (message == "end")
+                 {
+                     disconnect_Click();
+                     break;
+                 }
+                 else
+                     Send(message);
+             }*/
+        }
+        
+        private void Send(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Console.WriteLine("SENDING");
+            lock (Switch.clientCollection.ElementAt(id - 1))
+            {
+                string s = Switch.clientCollection.ElementAt(id - 1).Last();
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(s);
+
+                mySocket.Send(sending);
+
             }
         }
     }

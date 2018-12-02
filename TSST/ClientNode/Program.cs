@@ -18,12 +18,12 @@ namespace ClientNode
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-            Console.WriteLine("client");
-
+            Console.WriteLine("client"+args[0]);
+            //System.Threading.Thread.Sleep(10000);
             Port p = new Port();
         
-            p.CreateSocket("127.0.0.3", 11003);
-            p.Connect("127.0.0.4", 11004);
+            p.CreateSocket("127.0.10."+args[0], 11003);
+            p.Connect("127.0.11."+args[0], 11004);
             //p.Send("siema");
             //string test;
             //test=Console.ReadLine();

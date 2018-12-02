@@ -19,13 +19,18 @@ namespace ManagementCenter
         static void Main(string[] args)
         {
             Console.WriteLine("MANAGER");
+            Console.WriteLine("liczba klijentow: "+args[1]);
             int nodeAmount = int.Parse(args[0]);
             //string port;
             //string agent;
 
             XML.CreateXML("test1.xml");
             XML.SetName("test1.xml");
-            XML.AddLink(1011, 1011, 1110, "on");
+            //nowa konwencja nazwy powyrzej 80 znacza ze chodzi o klijenta
+            XML.AddLink(9111, 81, 1, "on");
+            XML.AddLink(1112, 1, 2, "on");
+            XML.AddLink(1213, 2,3, "on");
+            XML.AddLink(1392, 3, 82, "on");
 
             int id;
 
@@ -37,19 +42,29 @@ namespace ManagementCenter
             managerCloud.CreateSocket("127.0.0.1", 11001);
             managerCloud.Connect("127.0.0.2", 11001);
             managerCloud.Send(XML.StringCableLinks());
+            System.Threading.Thread.Sleep(100);
             managerCloud.Send("nodes:" + args[0]);
+            System.Threading.Thread.Sleep(100);
+       
+            managerCloud.Send("clients:" + args[1]);
+            System.Threading.Thread.Sleep(100);
 
-            XML.CreateXML("test1.xml");
 
-            XML.SetName("test1.xml");
+            //managerCloud.Send("clients:" );
+
+         
                for (int i=1;i<=nodeAmount;i++)
                {
                    id = 2 * i + 10;
                    port.Add ( "127.0.0." + (id - 1).ToString());
                    agent.Add( "127.0.0." + id .ToString());
                    XML.AddNode(i,port[i-1],agent[i-1]);
-                   XML.AddMatrix(1, i);
+                   XML.AddMatrix(10+i, i);
                }
+            XML.AddLabel(1, 11, "push", 0, 1011, 0, 1);
+            XML.AddLabel(2, 12, "swap", 1, 1112, 2);
+            XML.AddLabel(3, 13, "pop", 2, 12);
+
             //miejsce na dodatkowe ustalanie polaczen
             int socket = 100;
             for (int i = 1; i <= nodeAmount; i++)

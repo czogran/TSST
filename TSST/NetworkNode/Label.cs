@@ -77,7 +77,7 @@ namespace NetworkNode
         /// <param name="message"></param>
         /// <param name="newPort"></param>
         /// <returns></returns>
-        public static string SwapPort(string message, uint  newPort)
+        public static string SwapPort(string message, int  newPort)
         {
             int startPort = message.IndexOf("<port>") + 6;
             int endPort = message.IndexOf("</port>");

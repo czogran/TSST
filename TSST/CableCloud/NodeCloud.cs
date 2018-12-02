@@ -75,21 +75,23 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM NODE: " + receivedMessage);
-                lock (Switch.nodeCollection.ElementAt(id-1))
-                {
-                    //if (id < 5)
-                    //{
-                    //nastepny element
-                    try
-                    {
-                        Switch.nodeCollection.ElementAt(id).Add(receivedMessage);
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine("za daleko");
-                    }
-                     //  }
-                }
+                int nextNode = Switch.SwitchNodes(receivedMessage);
+                /* lock (Switch.nodeCollection.ElementAt(nextNode-1))
+                 {
+                     //if (id < 5)
+                     //{
+                     //nastepny element
+                     try
+                     {
+                         Switch.nodeCollection.ElementAt(id).Add(receivedMessage);
+                     }
+                     catch(Exception ex)
+                     {
+                         Console.WriteLine("za daleko");
+                     }
+                      //  }
+                 }*/
+                Switch.SwitchBufer(receivedMessage);
 
 
                 buffer = new byte[1024];

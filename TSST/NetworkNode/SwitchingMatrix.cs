@@ -15,13 +15,55 @@ namespace NetworkNode
     {
         public static string message="0";
        static BlockingCollection<string> dataItems = new BlockingCollection<string>(100);
-        public static ObservableCollection<string> collection = new ObservableCollection<string>();
+        public static ObservableCollection<string> sendCollection = new ObservableCollection<string>();
+        public static ObservableCollection<string> computingCollection = new ObservableCollection<string>();
+
         public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
 
 
         //public static void EnableCollectionSynchronization(System.Collections.IEnumerable collection, object lockObject);
 
 
+       public static void ComputeThread()
+        {
+            lock (computingCollection)
+            {
+                computingCollection.CollectionChanged += Compute;
+            }
+        }
+
+        private static void Compute(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            string content= computingCollection.Last();
+            int num;
+            string toSend;
+            try
+            {
+                lock(computingCollection)
+                {
+                    
+                    num = Program.number;
+                    
+                    num = 100 * (num + 10) + num + 11;
+                    if ((Program.number) == 3)
+                        num = 1392;
+                    toSend=Label.SwapPort(content,num );
+
+                    lock (sendCollection)
+                    {
+                        sendCollection.Add(toSend);
+                    }
+                }
+              //  content.IndexOf("label");
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
+        }
+
+       
         static void a()
         {
             

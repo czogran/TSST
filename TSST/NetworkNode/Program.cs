@@ -25,12 +25,13 @@ namespace NetworkNode
         /// <summary>
         /// Main
         /// </summary>
-        /// <param name="args">Nieużywane</param>
+        /// <param name="args">numer wezla</param>
+
         
         static void Main(string[] args)
         {
-
-
+           
+          
             Console.WriteLine("node"+args[0]);
             //Console.WriteLine("node number "+args[0]);
 
@@ -49,9 +50,11 @@ namespace NetworkNode
 
             Thread threadPort = new Thread(new ThreadStart(port.SendThread));
             Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
+            Thread computeThread = new Thread(new ThreadStart(SwitchingMatrix.ComputeThread));
 
             threadAgent.Start();
             threadPort.Start();
+            computeThread.Start();
             Console.ReadLine();
 
             /*

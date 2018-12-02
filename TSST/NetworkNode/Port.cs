@@ -77,9 +77,9 @@ namespace NetworkNode
             string receivedMessage = encoding.GetString(auxtrim);
 
             Console.WriteLine("FROM Cloud: " + receivedMessage);
-            lock(SwitchingMatrix.collection)
+            lock(SwitchingMatrix.computingCollection)
                 {
-                    SwitchingMatrix.collection.Add( receivedMessage + Program.number);
+                    SwitchingMatrix.computingCollection.Add( receivedMessage + Program.number);
                 }
 
 
@@ -100,9 +100,9 @@ namespace NetworkNode
 
            // if (counter == 0)
             //{
-                lock (SwitchingMatrix.collection)
+                lock (SwitchingMatrix.sendCollection)
                 {
-                string s = SwitchingMatrix.collection.Last();
+                string s = SwitchingMatrix.sendCollection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
@@ -125,9 +125,9 @@ namespace NetworkNode
     }
     public void SendThread()
     {
-            lock (SwitchingMatrix.collection)
+            lock (SwitchingMatrix.sendCollection)
             {
-                SwitchingMatrix.collection.CollectionChanged += Send;
+                SwitchingMatrix.sendCollection.CollectionChanged += Send;
                 
               
                // SwitchingMatrix.collection.
