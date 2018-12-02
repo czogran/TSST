@@ -124,6 +124,7 @@ namespace NetworkNode
             if (SwitchingMatrix.agentCollection.Last().Contains("node"))
             {
                 File.WriteAllText("myNode"+Program.number+".xml", SwitchingMatrix.agentCollection.Last());
+                SwitchingMatrix.portDictionary.Clear();
                 SwitchingMatrix.FillDictionary();
             }
         }

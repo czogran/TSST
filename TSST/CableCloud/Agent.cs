@@ -124,6 +124,7 @@ namespace CableCloud
                 File.WriteAllText("myLinks.xml", Switch.agentCollection.Last());
                 lock(Switch.linkDictionary)
                 {
+                    Switch.linkDictionary.Clear();
                     Switch.FillDictionary();
                 }
             }
