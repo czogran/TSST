@@ -15,14 +15,32 @@ namespace NetworkNode
     /// </summary>
     class Label
     {
+        public uint IDswap;
+        public uint IDpush;
+        public uint labelS;
+        public uint TTLswap;
+        public uint TTLpush;
+        public uint labelTC;
+        public int portOut;
+        public uint labelOut;
+        public string action;
+        public Label(uint IDswap,uint IDpush,string action,int portOut )
+        {
+            this.IDpush = IDpush;
+            this.IDswap = IDswap;
+            this.action = action;
+            this.portOut = portOut;
+        }
+
+
         public static uint label;
         /// <summary>
         /// parametry labela, zgodne z wiki
         /// </summary>
-        static uint ID;
-        static uint S;
-        static uint TTL;
-        static uint TC;
+        public static uint ID;
+        public static uint S;
+        public static uint TTL;
+        public static uint TC;
 
         /// <summary>
         /// maski labela tak, by wycinac z label odpowiednie informacje
@@ -64,12 +82,23 @@ namespace NetworkNode
         /// wyciaga informacje na ktory port przyszla wiadomosc
         /// </summary>
         /// <param name="message"></param>
-        public static void GetPort(string message)
+        public static int GetPort(string message)
         {
-            int start_port = message.IndexOf("<port>") + 6;
-            int end_port = message.IndexOf("</port>");
-            int port = Int32.Parse(message.Substring(start_port, end_port - start_port));           
+            try
+            {
+                int start_port = message.IndexOf("<port>") + 6;
+                int end_port = message.IndexOf("</port>");
+                int port = Int32.Parse(message.Substring(start_port, end_port - start_port));
+                return port;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("nie znalazlem prtu");
+                Console.WriteLine(ex.ToString());
+                return -1;
+            }
         }
+
 
         /// <summary>
         /// zmienia informacje na jaki nowy port ma isc
@@ -102,16 +131,24 @@ namespace NetworkNode
         /// <param name="message"></param>
         public static uint GetLabel(string message)
         {
-            int start_label = message.IndexOf("<label>")+7;
-            int end_label = message.IndexOf("</label>");
-            label=UInt32.Parse(message.Substring(start_label,end_label-start_label));
+            try
+            {
+                int start_label = message.IndexOf("<label>") + 7;
+                int end_label = message.IndexOf("</label>");
+                label = UInt32.Parse(message.Substring(start_label, end_label - start_label));
 
-            S = (label & maskS) /8388608;
-            TTL = (label & maskTTL)/16777216;
-            TC = (label & maskTC )/ 1048576;
-            ID = label & maskID;
-            Console.WriteLine(ID + " " + TC + " " + S + " " + TTL);
-            return label;
+                S = (label & maskS) / 8388608;
+                TTL = (label & maskTTL) / 16777216;
+                TC = (label & maskTC) / 1048576;
+                ID = label & maskID;
+                Console.WriteLine(ID + " " + TC + " " + S + " " + TTL);
+                return label;
+            }
+            catch(Exception ex)
+            {
+                //Console.WriteLine(ex.ToString());
+                return 0;
+            }
         }
 
 
@@ -239,7 +276,7 @@ namespace NetworkNode
         /// 
         /// </summary>
         /// <returns></returns>
-        public static bool ChckTTL()
+        public static bool CheckTTL()
         {
             if (TTL > 0)
                 return true;
@@ -251,7 +288,7 @@ namespace NetworkNode
         /// <summary>
         /// dodaje etykiete na gore stosu
         /// </summary>
-        public static string push(string message,uint newLabel)
+        public static string Push(string message,uint newLabel)
         {
             int indeks =  message.IndexOf("</port>")+7;
 
@@ -266,7 +303,7 @@ namespace NetworkNode
         /// <summary>
         /// zdejmuje gorna etykiete
         /// </summary>
-        public static string pop(string message)
+        public static string Pop(string message)
         {
             int start_label = message.IndexOf("<label>");
             int end_label = message.IndexOf("</label>");
@@ -301,13 +338,13 @@ namespace NetworkNode
         /// <summary>
         /// dodawanie wielu etykiet do pakietu, max 3, ta operacja rowna sie parokrotnemu pushowaniu
         /// </summary>
-        public void multiplePush()
+        public void MultiplePush()
         {
         }
         /// <summary>
         /// zamienia gorna etykiete a nastepnie dodaje nowa na wierzch
         /// </summary>
-        public void swapAndPush()
+        public void SwapAndPush()
         {
         }
 

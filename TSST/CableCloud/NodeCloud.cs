@@ -75,22 +75,8 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("FROM NODE: " + receivedMessage);
-                int nextNode = Switch.SwitchNodes(receivedMessage);
-                /* lock (Switch.nodeCollection.ElementAt(nextNode-1))
-                 {
-                     //if (id < 5)
-                     //{
-                     //nastepny element
-                     try
-                     {
-                         Switch.nodeCollection.ElementAt(id).Add(receivedMessage);
-                     }
-                     catch(Exception ex)
-                     {
-                         Console.WriteLine("za daleko");
-                     }
-                      //  }
-                 }*/
+               
+                //tu switchujemy to co przechodzi
                 Switch.SwitchBufer(receivedMessage);
 
 
@@ -142,82 +128,3 @@ namespace CableCloud
 
 
 
-
-    /*
-    /// <summary>
-    /// Chmura kablowa ze wszystkimi socketami
-    /// </summary>
-    class CableCloud
-    {
-        //public static Socket listener;//= new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-        CableCloud()
-        {
-           // listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-        }
-
-        public static void connect(SocketCloud socket)
-        {
-
-            //string address,int port
-            int port = 11003 ;
-            string address = "127.0.0.3";//, 11002
-            IPAddress ip = IPAddress.Parse(address);
-            IPEndPoint endPoint = new IPEndPoint(ip, port);
-            string data = null;
-            string get = null;
-            Socket listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            byte[] bytes = new byte[1024];
-
-            try
-            {
-                listener.Bind(endPoint);
-                listener.Listen(10);
-                while (true)
-                {
-                    Console.WriteLine("Waiting for a connection...");
-                    Socket handler = listener.Accept();
-                    Console.WriteLine("client connected");
-
-                    data = null;
-                   // SocketCloud socket = new SocketCloud();
-
-                    while (true)
-                    {
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                        if (data.IndexOf("<EOF>") > -1)
-                        {
-
-                            //   byte[] msg = Encoding.ASCII.GetBytes("data");
-                            //handler.Send(msg);
-                            Console.WriteLine("Text received2 : {0}", data);
-                            //get = socket.Send(data, socket);
-                            handler.Shutdown(SocketShutdown.Both);
-                            //  Console.WriteLine("Text received2 : {0}", data);
-                            handler.Close();
-                            data = null;
-                            break;
-                        }
-                        if (data == "end")
-                        {
-                            handler.Shutdown(SocketShutdown.Both);
-                            Console.WriteLine("Text received : {0}", data);
-                            handler.Close();
-                            break;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-        }
-    }
-
-
-}
-*/

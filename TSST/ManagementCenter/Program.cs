@@ -59,11 +59,15 @@ namespace ManagementCenter
                    port.Add ( "127.0.0." + (id - 1).ToString());
                    agent.Add( "127.0.0." + id .ToString());
                    XML.AddNode(i,port[i-1],agent[i-1]);
-                   XML.AddMatrix(10+i, i);
+                  // XML.AddMatrix(10+i, i);
                }
-            XML.AddLabel(1, 11, "push", 0, 1011, 0, 1);
-            XML.AddLabel(2, 12, "swap", 1, 1112, 2);
-            XML.AddLabel(3, 13, "pop", 2, 12);
+            XML.AddMatrix(9111, 1);
+            XML.AddMatrix(1112, 2);
+            XML.AddMatrix(1213, 3);
+           
+            XML.AddLabel(1, 9111, "push", 0, 1112, 0, 1);
+            XML.AddLabel(2, 1112, "swap", 1, 1213, 2);
+            XML.AddLabel(3, 1213, "pop", 2, 1392);
 
             //miejsce na dodatkowe ustalanie polaczen
             int socket = 100;

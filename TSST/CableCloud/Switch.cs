@@ -11,9 +11,6 @@ namespace CableCloud
 {
     class Switch
     {
-        public static string message="0";
-        public static string messageNode = "0";
-        public static ObservableCollection<string> collection = new ObservableCollection<string>();
         public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
         public static BlockingCollection<ObservableCollection<string>> nodeCollection = new BlockingCollection<ObservableCollection<string>>();
         public static BlockingCollection<ObservableCollection<string>> clientCollection = new BlockingCollection<ObservableCollection<string>>();
@@ -83,34 +80,6 @@ namespace CableCloud
                 Console.WriteLine("port not catch: "+ex.ToString());
             }
         }
-        static int testCounter = 0;
-        public static int SwitchNodes(string message)
-        {
-            // testCounter++;
-            int nodeOut;
-            try
-            {
-                int start = message.IndexOf("<port>");
-                int number = Int32.Parse(message.Substring(7,4));
-                int linkOut = linkDictionary[number];
-                nodeOut = linkOut % 100-10;
-                Console.WriteLine("Switching nodes: "+nodeOut);
-
-
-
-                return nodeOut;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("port not catch");
-                return 1;
-            }
-            
-           
-        }
-        public static int SwitchClients(string message)
-        {
-            return 1;
-        }
+        
     }
 }
