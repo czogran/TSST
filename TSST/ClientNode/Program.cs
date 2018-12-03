@@ -12,12 +12,15 @@ namespace ClientNode
     /// </summary>
     class Program
     {
+        public static int number;
         /// <summary>
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
+        /// 
         static void Main(string[] args)
         {
+            number = Int32.Parse(args[0]);
             Console.WriteLine("client"+args[0]);
             //System.Threading.Thread.Sleep(10000);
             Port p = new Port();
@@ -33,17 +36,20 @@ namespace ClientNode
             Thread t1 = new Thread(new ThreadStart(p.SendThread));
             t1.Start();
 
-            // Thread new ThreadStart
-            // var t = new Thread((p.listen));
-            // static Object obj = new Object();
-            // t.Start();
+            Agent agent = new Agent();
+            string ip = "127.0.12" + args[0];
+            agent.CreateSocket(ip, 1104);
 
-            //  p.send("do bani<EOF>");
-            //Console.ReadKey();
-            //p.send("nie nawidze lcpsow<EOF>");
-            // p.send("chranic laby<EOF>");
-            //p.send("end");
-            //p.close();
+
+            agent.Connect();
+
+            
+            Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
+           
+
+            threadAgent.Start();
+           
+      
 
         }
     }

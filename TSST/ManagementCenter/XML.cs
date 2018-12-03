@@ -26,6 +26,9 @@ namespace ManagementCenter
   /// AddClient
   /// AddLink
   /// AddLabel
+  /// StringNode
+  /// StringCableLinks
+  /// StringClients -przetestowac nowa
   /// ChangeLabelPort
   /// ChangeLabelAcction
   /// ChangeLabelIn
@@ -142,8 +145,27 @@ namespace ManagementCenter
             file = file + "</cable_cloud>";
             return file;
         }
+        public static string StringClients()
+        {
+            XmlDocument xmlDefault = new XmlDocument();
+            StringWriter sw = new StringWriter();
+            XmlTextWriter tx = new XmlTextWriter(sw);
 
-        public static void AddClient(int id,int port_out)
+            string file;
+            string readXML;
+            int start, end;
+            xmlDefault.Load(name);
+            xmlDefault.WriteTo(tx);
+            readXML = sw.ToString();
+            start = readXML.IndexOf("<clients");
+
+            end = readXML.IndexOf("</clients>", start);
+            file = readXML.Substring(start, end - start);
+            file = file + "</clients>";
+            return file;
+        }
+
+        public static void AddClient(int id,string clientAddress, int port_out)
         {
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
@@ -151,6 +173,9 @@ namespace ManagementCenter
             XmlAttribute attribute = xmlDefault.CreateAttribute("id");
             attribute.Value = id.ToString();
             client.Attributes.Append(attribute);
+            XmlNode address = xmlDefault.CreateElement("address");
+            address.InnerText = clientAddress;
+            client.AppendChild(address);
             XmlNode port = xmlDefault.CreateElement("port_out");
             port.InnerText = port_out.ToString();
             client.AppendChild(port);
