@@ -30,6 +30,7 @@ namespace ManagementCenter
             List<string> port = new List<string>();
             List<string> agent = new List<string>();
             List<Manager> manager = new List<Manager>();
+            List<Manager> managerClient = new List<Manager>();
 
             Manager managerCloud = new Manager();
             managerCloud.CreateSocket("127.0.0.1", 11001);
@@ -42,11 +43,20 @@ namespace ManagementCenter
             managerCloud.Send("clients:" + args[1]);
             System.Threading.Thread.Sleep(100);
 
+            //manager create clients
+            for (int i = 1; i <= Int32.Parse(args[1]); i++)
+            {
+                managerClient.Add(new Manager());
+                Console.WriteLine("tworze agenta dla cleinta" + i.ToString());
+               
+                managerClient[i - 1].CreateSocket("127.0.13." + i.ToString(), 11001);
+                managerClient[i - 1].Connect("127.0.12."+i.ToString(), 11001);
+            }
 
-            //managerCloud.Send("clients:" );
+                //managerCloud.Send("clients:" );
 
-         
-               for (int i=1;i<=nodeAmount;i++)
+
+                for (int i=1;i<=nodeAmount;i++)
                {
                    id = 2 * i + 10;
                    port.Add ( "127.0.0." + (id - 1).ToString());
@@ -88,6 +98,19 @@ namespace ManagementCenter
                         try
                         {
                             manager[i - 1].Send(XML.StringNode(i));
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                    
+                    for (int i = 1; i <= Int32.Parse(args[1]); i++)
+                    {
+                        Console.WriteLine("try");
+                        try
+                        {
+                            managerClient[i - 1].Send(XML.StringClients());
                         }
                         catch (Exception ex)
                         {

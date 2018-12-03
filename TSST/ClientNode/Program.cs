@@ -37,8 +37,9 @@ namespace ClientNode
             t1.Start();
 
             Agent agent = new Agent();
-            string ip = "127.0.12" + args[0];
-            agent.CreateSocket(ip, 1104);
+            string ip = "127.0.12." + args[0];
+            Console.WriteLine(ip);
+            agent.CreateSocket(ip, 11001);
 
 
             agent.Connect();

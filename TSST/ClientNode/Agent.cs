@@ -48,6 +48,7 @@ namespace ClientNode
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
         new AsyncCallback(MessageCallback), buffer);
+
         }
 
         private void MessageCallback(IAsyncResult result)
