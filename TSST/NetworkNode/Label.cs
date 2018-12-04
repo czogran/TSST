@@ -24,10 +24,18 @@ namespace NetworkNode
         public int portOut;
         public uint labelOut;
         public string action;
+        public string address;
         public Label(uint IDswap,uint IDpush,string action,int portOut )
         {
             this.IDpush = IDpush;
             this.IDswap = IDswap;
+            this.action = action;
+            this.portOut = portOut;
+        }
+        public Label(string address, uint IDpush, string action, int portOut)
+        {
+            this.IDpush = IDpush;
+            this.address = address;
             this.action = action;
             this.portOut = portOut;
         }

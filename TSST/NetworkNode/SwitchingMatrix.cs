@@ -22,7 +22,10 @@ namespace NetworkNode
 
         //public static void EnableCollectionSynchronization(System.Collections.IEnumerable collection, object lockObject);
 
+            //klucz port, potem byl zdaje sie ze label
         public static Dictionary<int, Dictionary<uint,Label>> portDictionary = new Dictionary<int, Dictionary<uint, Label>>();
+        public static Dictionary<int, Dictionary<string, Label>> labelZeroDictionary = new Dictionary<int, Dictionary<string, Label>>();
+
 
         public static void FillDictionary()
         {
@@ -38,15 +41,20 @@ namespace NetworkNode
             uint labelIn;
             string labelInString;
             Label label;
+                string address;
+                int chooseDictionary = 0;
             foreach (XmlNode nodePort in doc.SelectNodes("node/matrix_entry"))
             {
                  Dictionary<uint, Label> labelDictionary = new Dictionary<uint, Label>();
+                Dictionary<string, Label> labelZeroDictionaryHelp = new Dictionary<string, Label>();
 
-                 inPort = Int32.Parse(nodePort.Attributes["num"].Value);
+                inPort = Int32.Parse(nodePort.Attributes["num"].Value);
                 foreach (XmlNode nodeLabel in nodePort.SelectNodes("label_in"))
                 {
                     labelInString=nodeLabel.Attributes["label"].Value;
                     labelIn = UInt32.Parse(labelInString);
+
+                   
 
                     node1=nodeLabel.SelectSingleNode("acction");
                     acction = node1.InnerText;
@@ -56,10 +64,23 @@ namespace NetworkNode
                     push = UInt32.Parse(node1.InnerText);
                     node1 = nodeLabel.SelectSingleNode("port");
                     outPort = Int32.Parse(node1.InnerText);
-                    label = new Label(swap, push, acction, outPort);
-                    labelDictionary.Add(labelIn, label);
-                  
+                   
+
+                    if (labelIn == 0)
+                    {
+                        node1 = nodeLabel.SelectSingleNode("address");
+                        address = node1.InnerText;
+                        label = new Label(address,push,acction,outPort);
+                        labelZeroDictionaryHelp.Add(address, label);
+                    }
+                    else
+                    {
+                        label = new Label(swap, push, acction, outPort);
+                        labelDictionary.Add(labelIn, label);
+                    }
+
                 }
+                labelZeroDictionary.Add(inPort, labelZeroDictionaryHelp);
                 portDictionary.Add(inPort, labelDictionary);
                 Console.WriteLine("cos uzupelniam");
             }
@@ -96,8 +117,8 @@ namespace NetworkNode
                     if (labelIn==0)
                     {
 
-                        label = portDictionary[inPort][labelIn];
-                        Console.WriteLine("znaleziono w slowniku");
+                        label =labelZeroDictionary[inPort]["127.0.10.2"];
+                        Console.WriteLine("znaleziono w slowniku label ZERO");
 
                         if (label.action=="push")
                         {

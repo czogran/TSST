@@ -125,6 +125,7 @@ namespace NetworkNode
             {
                 File.WriteAllText("myNode"+Program.number+".xml", SwitchingMatrix.agentCollection.Last());
                 SwitchingMatrix.portDictionary.Clear();
+                SwitchingMatrix.labelZeroDictionary.Clear();
                 SwitchingMatrix.FillDictionary();
             }
         }
