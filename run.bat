@@ -16,6 +16,8 @@ if %errorLevel% == 0 (
 
 set /p ile_wezlow="Ile wezlow sieciowych: "
 
+set /p ile_klient="Ile wezlow klienckich: "
+
 echo Tworze %ile_wezlow% wezlow
 
 for /l %%x in (1, 1, %ile_wezlow%) do (
@@ -23,14 +25,7 @@ for /l %%x in (1, 1, %ile_wezlow%) do (
 
 )
 
-set /p ile_klient="Ile wezlow klienckich: "
-
-
-
-
 echo Tworze %ile_klient% klientow
-
-
 
 for /l %%x in (1, 1, %ile_klient%) do (
 	start "" /d "TSST\ClientNode\bin\Debug" ClientNode.exe %%x %ile_wezlow%
