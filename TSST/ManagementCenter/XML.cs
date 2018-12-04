@@ -224,6 +224,38 @@ namespace ManagementCenter
             addTo.AppendChild(labelIn);
             xmlDefault.Save(name);
         }
+
+
+        public static void AddLabel(int nodeNumber, int matrixNumber, string acction, int label_in, int port, string address, int swap = 0, int push = 0)
+        {
+            XmlDocument xmlDefault = new XmlDocument();
+            xmlDefault.Load(name);
+            XmlNode labelIn = xmlDefault.CreateElement("label_in");
+            XmlAttribute attribute = xmlDefault.CreateAttribute("label");
+            attribute.Value = label_in.ToString();
+            labelIn.Attributes.Append(attribute);
+            XmlNode addressType = xmlDefault.CreateElement("address");
+            addressType.InnerText = address.ToString();
+            XmlNode acctionType = xmlDefault.CreateElement("acction");
+            acctionType.InnerText = acction;
+            XmlNode swapType = xmlDefault.CreateElement("swap");
+            swapType.InnerText = swap.ToString();
+            XmlNode pushType = xmlDefault.CreateElement("push");
+            pushType.InnerText = push.ToString();
+            XmlNode portType = xmlDefault.CreateElement("port");
+            portType.InnerText = port.ToString();
+
+            labelIn.AppendChild(addressType);
+            labelIn.AppendChild(acctionType);
+            labelIn.AppendChild(swapType);
+            labelIn.AppendChild(pushType);
+            labelIn.AppendChild(portType);
+            XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id=" + nodeNumber + "]/matrix_entry[@num=" + matrixNumber + "]");
+            addTo.AppendChild(labelIn);
+            xmlDefault.Save(name);
+        }
+
+
         public static void AddLink(int id, int nodeA, int nodeB, string status)
         {
             nodeA += 10;

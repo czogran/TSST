@@ -83,13 +83,38 @@ namespace ClientNode
 
             }
         }
-        public void Send(string message)
+        public void Send(string message,int idOfNodeWeAreSendingTo)
         {
-            ASCIIEncoding enc = new ASCIIEncoding();
-            byte[] sending = new byte[1024];
-            sending = enc.GetBytes(message+"<port>9111</port>");
+            try
+            {
+                int port;
+                string address;
+                lock (Agent.clientDictioinary)
+                {
+                    //bierzemy adres docelowego
+                    var tuple = Agent.clientDictioinary[idOfNodeWeAreSendingTo];
+                    Console.WriteLine(tuple.Item2);
+                    
+                    address = tuple.Item1;
+                    
+                    //a teraz bierzemy port z ktorego wysylamy
+                     tuple = Agent.clientDictioinary[Program.number];
+                    Console.WriteLine(tuple.Item2);
+                    port = tuple.Item2;
 
-            mySocket.Send(sending);
+                }
+
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(message + "<address>" + address + "</address>"+ "<port>" +port.ToString()+"</port>");
+
+                mySocket.Send(sending);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Nie udalo sie wyslac:" + ex.ToString());
+
+            }
         }
         public void disconnect_Click()
         {
@@ -107,7 +132,7 @@ namespace ClientNode
                     break;
                 }    
                 else
-                    Send(message);
+                    Send(message,2);
             }
             }
     }

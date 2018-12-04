@@ -121,6 +121,7 @@ namespace NetworkNode
                                 break;
                             case "pop":
                                 content=Label.Pop(content);
+                                
                                 Console.WriteLine("tu jestem");
                                 break;
 
