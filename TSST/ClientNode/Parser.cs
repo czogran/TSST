@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace ClientNode
 {
-    /// <summary>
-    /// Parsuje pliki konfiguracyjne
-    /// </summary>
     class Parser
     {
     }

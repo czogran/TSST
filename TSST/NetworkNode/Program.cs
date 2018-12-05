@@ -17,9 +17,9 @@ namespace NetworkNode
         {
             int id = int.Parse(arg);
             number = id;
-            id = 2 * id + 10;
+           // id = 2 * id + 10;
 
-            return new string[] { "127.0.0." + (id - 1).ToString(), "127.0.0." + id.ToString() };
+            return new string[] { "127.0.1." + id.ToString(), "127.0.3." + id.ToString() };
         }
 
         /// <summary>
@@ -55,6 +55,11 @@ namespace NetworkNode
             threadAgent.Start();
             threadPort.Start();
             computeThread.Start();
+
+            //!!!!!!!!!!!!
+            //bardzo wazne bez tego wyciaganie infromacji z labeli nie bedzie dzialac !!!!
+            Label.setMask();
+
             Console.ReadLine();
 
             /*

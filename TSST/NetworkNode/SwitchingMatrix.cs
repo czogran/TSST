@@ -98,51 +98,68 @@ namespace NetworkNode
         static string content;
         private static void Compute(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            content = computingCollection.Last();
+
+          
+               
             int num;
             string toSend;
             int inPort;
             uint labelIn;
+            uint labelInId;
+            string address;
            
             try
             {
                 lock(computingCollection)
                 {
-                   
-                    inPort=Label.GetPort(content);
+                    content = computingCollection.Last();
+                    address = Label.GetAddress(content);
+                    inPort =Label.GetPort(content);
                    
                     Console.WriteLine("inPort:" + inPort);
                     labelIn = Label.GetLabel(content);
-                    Console.WriteLine("inLabel:" + labelIn);
+                    labelInId = Label.ID;
+
+                    Console.WriteLine("inLabel Id:" + labelInId);
                     if (labelIn==0)
                     {
 
-                        label =labelZeroDictionary[inPort]["127.0.10.2"];
+                        label =labelZeroDictionary[inPort][address];
                         Console.WriteLine("znaleziono w slowniku label ZERO");
 
                         if (label.action=="push")
                         {
-                            Label.SetLabel(label.IDpush, 0, 0, 0);
+                            Label.SetLabel(label.IDpush, 0, 1, 0);
                             content = Label.Push(content,Label.label);
                         }
                         
                     }
                     else
                     {
-                        label = portDictionary[inPort][labelIn];
+                        label = portDictionary[inPort][labelInId];
                         Console.WriteLine("znaleziono w slowniku");
 
                         switch (label.action)
                             {
                             case "push":
+                                Label.SetLabel(label.IDswap, 0, Label.S, 0);
+                                content = Label.Swap(content, Label.label);
+                                Label.SetLabel(label.IDpush, 0, 0, 0);
+                                content = Label.Push(content, Label.label);
                                 break;
                             case "swap":
-                                Label.SetLabel(label.IDswap, 0, 0, 0);
+                                Label.SetLabel(label.IDswap, 0, Label.S, 0);
                                 content=Label.Swap(content, Label.label);
                                 break;
                             case "pop":
                                 content=Label.Pop(content);
-                                
+                                //0 znaczy ze nie ma labela
+                                if(Label.GetLabel(content) != 0)
+                                {
+                                    Label.GetLabel(content);
+                                    Label.SetLabel(label.IDswap, 0, Label.S, 0);
+                                    content = Label.Swap(content, Label.label);
+                                }
                                 Console.WriteLine("tu jestem");
                                 break;
 

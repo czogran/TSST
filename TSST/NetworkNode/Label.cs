@@ -8,6 +8,27 @@ using System.Runtime.Serialization;
 
 namespace NetworkNode
 {
+    //zbior funkcji
+    //setMask
+    //GetPort
+    //SwapPort
+    //GetAddress
+    //GetLabel
+    //SetLabelId
+    //SetLabel
+    //SetLabelS
+    //SetTTL
+    //DecreaseTTL
+    //SetTC
+    //CehckTTL
+    //Push
+    //Pop
+    //Swap
+    // MultiplePush
+    //
+
+
+
     /// <summary>
     /// klasa do obslugi wszystkich operacji na etykietach
     /// zrodlo-https://www.juniper.net/documentation/en_US/junos/topics/concept/mpls-labels-operations.html
@@ -127,17 +148,40 @@ namespace NetworkNode
             return message;
         }
 
-        /// <summary>
-        /// pozyskuje dane z wiadomosci, ktore zapisuje w zmiennych statycznych
-        /// 
-        /// ID-etykieta
-        /// TC-dla QoS
-        /// S-jak 1 to oznacza, ze jest ostatnia na stosie
-        /// TTL-time to live
+        public static string GetAddress(string message)
+        {
+            string address;
 
-        /// </summary>
-        /// <param name="message"></param>
-        public static uint GetLabel(string message)
+            try
+            {
+                int start_address = message.IndexOf("<address>") + 9;
+                int end_address = message.IndexOf("</address>");
+                address=(message.Substring(start_address, end_address - start_address));
+
+              
+                Console.WriteLine("znaleziony address: "+address);
+                return address;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("nie moge znalezc adresu"+ex.ToString());
+                return null;
+
+            }
+                
+        }
+
+            /// <summary>
+            /// pozyskuje dane z wiadomosci, ktore zapisuje w zmiennych statycznych
+            /// 
+            /// ID-etykieta
+            /// TC-dla QoS
+            /// S-jak 1 to oznacza, ze jest ostatnia na stosie
+            /// TTL-time to live
+
+            /// </summary>
+            /// <param name="message"></param>
+            public static uint GetLabel(string message)
         {
             try
             {
@@ -149,6 +193,7 @@ namespace NetworkNode
                 TTL = (label & maskTTL) / 16777216;
                 TC = (label & maskTC) / 1048576;
                 ID = label & maskID;
+                Console.WriteLine(label);
                 Console.WriteLine(ID + " " + TC + " " + S + " " + TTL);
                 return label;
             }

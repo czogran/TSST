@@ -55,7 +55,7 @@ namespace CableCloud
             
             //klijenci
             ClientCloud p = new ClientCloud(1);
-            p.CreateSocket("127.0.11.1", 11004);
+            p.CreateSocket("127.0.11.1", 11001);
             p.Connect();
             //Thread t2 = new Thread( p.Connect);
            // t2.Start();
@@ -64,11 +64,16 @@ namespace CableCloud
 
 
             ClientCloud p1 = new ClientCloud(2);
-            p1.CreateSocket("127.0.11.2", 11004);
+            p1.CreateSocket("127.0.11.2", 11001);
             p1.Connect();
             Thread t2 = new Thread(new ThreadStart(p1.SendThread));
             t2.Start();
 
+            ClientCloud p2 = new ClientCloud(3);
+            p2.CreateSocket("127.0.11.3", 11001);
+            p2.Connect();
+            Thread t3 = new Thread(new ThreadStart(p2.SendThread));
+            t3.Start();
 
             //te read line musi byc inaczej wszystko sie konczy
             Console.ReadLine();
