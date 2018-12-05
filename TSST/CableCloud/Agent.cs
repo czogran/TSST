@@ -145,12 +145,12 @@ namespace CableCloud
                         //int i = 1;
                         localHost = 150 + i;
                         node.Add(new NodeCloud(i));
-                        localIP = "127.0.0." + localHost.ToString();
+                        localIP = "127.0.2." +i.ToString();
                         node[i - 1].CreateSocket(localIP, 11001);
 
-                        remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
-                        Console.WriteLine("127.0.0." + (remoteID - 1).ToString());
-                        node[i - 1].Connect("127.0.0." + (remoteID - 1).ToString(), 11001);
+                      //  remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
+                        Console.WriteLine("127.0.2." + i.ToString());
+                        node[i - 1].Connect("127.0.1." + i.ToString(), 11001);
                         Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
                         threadNode.Start();
                     }

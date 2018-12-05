@@ -59,8 +59,8 @@ namespace ManagementCenter
                 for (int i=1;i<=nodeAmount;i++)
                {
                    id = 2 * i + 10;
-                   port.Add ( "127.0.0." + (id - 1).ToString());
-                   agent.Add( "127.0.0." + id .ToString());
+                   port.Add ( "127.0.1." +i.ToString());
+                   agent.Add( "127.0.3." + i.ToString());
                  
                }
             
@@ -72,8 +72,8 @@ namespace ManagementCenter
             {
                 manager.Add(new Manager());
                 Console.WriteLine("tworze agenta dlanoda" + agent[i - 1]);
-                socket += i;
-                manager[i - 1].CreateSocket("127.0.0." + socket, 11001);
+              //  socket += i;
+                manager[i - 1].CreateSocket("127.0.0.4" + i.ToString(), 11001);
                 manager[i - 1].Connect(agent[i - 1], 11001);
             }
             string choose;

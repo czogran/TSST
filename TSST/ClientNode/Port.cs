@@ -74,7 +74,7 @@ namespace ClientNode
                 //usuniecie informacji charakterystycznej
                // receivedMessage=receivedMessage.Substring(receivedMessage.IndexOf("<address>"));
 
-                Console.WriteLine(receivedMessage.Substring(receivedMessage.IndexOf("<address>"));
+                Console.WriteLine(receivedMessage.Substring(0,receivedMessage.IndexOf("<address>")));
 
 
                 buffer = new byte[1024];
