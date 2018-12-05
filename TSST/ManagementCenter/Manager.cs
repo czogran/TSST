@@ -72,7 +72,7 @@ namespace ManagementCenter
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine(receivedMessage);
+                //Console.WriteLine(receivedMessage);
 
 
                 buffer = new byte[1024];

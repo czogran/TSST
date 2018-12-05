@@ -34,8 +34,7 @@ namespace CableCloud
                 inPort= Int32.Parse(node1.InnerText);
                 node1 = node.SelectSingleNode("port_out");
                 outPort = Int32.Parse(node1.InnerText);
-                System.Console.WriteLine(inPort);
-                Console.WriteLine(outPort);
+                Console.WriteLine($"łączę {inPort} z {outPort}");
                 linkDictionary.Add(inPort, outPort);
             }
 

@@ -129,6 +129,7 @@ namespace NetworkNode
 
                         if (label.action=="push")
                         {
+                            Console.WriteLine("wykonuję operację push");
                             Label.SetLabel(label.IDpush, 0, 1, 0);
                             content = Label.Push(content,Label.label);
                         }
@@ -160,7 +161,7 @@ namespace NetworkNode
                                     Label.SetLabel(label.IDswap, 0, Label.S, 0);
                                     content = Label.Swap(content, Label.label);
                                 }
-                                Console.WriteLine("tu jestem");
+                                //Console.WriteLine("tu jestem");
                                 break;
 
                         }

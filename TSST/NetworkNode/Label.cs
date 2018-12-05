@@ -143,7 +143,7 @@ namespace NetworkNode
             message = message.Remove(startPort, endPort- startPort );
             string stringLabel = newPort.ToString();
             message = message.Insert(startPort, stringLabel);
-            Console.WriteLine("SwapPort: " + message);
+           // Console.WriteLine("SwapPort: " + message);
 
             return message;
         }
@@ -347,7 +347,7 @@ namespace NetworkNode
 
             string stringLabel ="<label>" +newLabel +"</label>";
             message=message.Insert(indeks, stringLabel);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
             return message;
         }
 
@@ -361,7 +361,7 @@ namespace NetworkNode
             int start_label = message.IndexOf("<label>");
             int end_label = message.IndexOf("</label>");
             message=message.Remove(start_label, end_label-start_label + 8);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
             return message;
         }
 
@@ -383,7 +383,8 @@ namespace NetworkNode
 
             string stringLabel =  newLabel.ToString();
             message = message.Insert(start_label, stringLabel);
-            Console.WriteLine("Swap: "+message );
+            Console.WriteLine("Wysyłam wiadomość na port " + 
+                message.Substring(message.IndexOf("<port>")+6, message.IndexOf("</port>") - message.IndexOf("<port>" )));
 
             return message;
         }
