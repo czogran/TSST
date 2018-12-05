@@ -116,11 +116,11 @@ namespace NetworkNode
                     address = Label.GetAddress(content);
                     inPort =Label.GetPort(content);
                    
-                    Console.WriteLine("inPort:" + inPort);
+                    //Console.WriteLine("inPort:" + inPort);
                     labelIn = Label.GetLabel(content);
                     labelInId = Label.ID;
 
-                    Console.WriteLine("inLabel Id:" + labelInId);
+                    //Console.WriteLine("inLabel Id:" + labelInId);
                     if (labelIn==0)
                     {
 
@@ -167,13 +167,7 @@ namespace NetworkNode
                         }
                     }
                  
-                    /* num = Program.number;
 
-                     num = 100 * (num + 10) + num + 11;
-                     if ((Program.number) == 3)
-                         num = 1392;
-                     toSend=Label.SwapPort(content,num );
-                     */
                     toSend = Label.SwapPort(content, label.portOut);
                     lock (sendCollection)
                     {

@@ -46,7 +46,7 @@ namespace NetworkNode
 
         mySocket.Listen(10);
         mySocket = mySocket.Accept();
-        Console.WriteLine("connected Cloud");
+        Console.WriteLine("Połączono z chmurą");
         //mySocket.Accept();
         //mySocket.BeginAccept(AcceptCallback, mySocket);
         buffer = new byte[1024];
@@ -76,7 +76,7 @@ namespace NetworkNode
 
             string receivedMessage = encoding.GetString(auxtrim);
                 string port = receivedMessage.Substring(receivedMessage.IndexOf("<port>") + 6,
-                    receivedMessage.IndexOf("</port>") - receivedMessage.IndexOf("<port>"));
+                    receivedMessage.IndexOf("</port>") - receivedMessage.IndexOf("<port>")-6);
                 Console.WriteLine("Otrzymałem wiadomość na porcie " + port);
                 lock (SwitchingMatrix.computingCollection)
                 {

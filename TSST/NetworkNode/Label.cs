@@ -193,8 +193,9 @@ namespace NetworkNode
                 TTL = (label & maskTTL) / 16777216;
                 TC = (label & maskTC) / 1048576;
                 ID = label & maskID;
-                Console.WriteLine(label);
-                Console.WriteLine(ID + " " + TC + " " + S + " " + TTL);
+                Console.WriteLine("Dane Pakietu:");
+                Console.WriteLine($"Label: {label}");
+                Console.WriteLine($"ID: {ID} TC: {TC} S: {S} TTL: {TTL}");
                 return label;
             }
             catch(Exception ex)
@@ -384,7 +385,7 @@ namespace NetworkNode
             string stringLabel =  newLabel.ToString();
             message = message.Insert(start_label, stringLabel);
             Console.WriteLine("Wysyłam wiadomość na port " + 
-                message.Substring(message.IndexOf("<port>")+6, message.IndexOf("</port>") - message.IndexOf("<port>" )));
+                message.Substring(message.IndexOf("<port>")+6, message.IndexOf("</port>") - message.IndexOf("<port>" )-6));
 
             return message;
         }

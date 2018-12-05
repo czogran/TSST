@@ -45,7 +45,7 @@ namespace CableCloud
         {
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
-            CLI.ConnectedAgent();
+           // CLI.ConnectedAgent();
             buffer = new byte[1024];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
