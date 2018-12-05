@@ -8,5 +8,14 @@ namespace CableCloud
 {
     class CLI
     {
+        internal static void ClientsCount(string clients)
+        {
+            Console.WriteLine($"Znalezniono {clients} klientów");
+        }
+
+        internal static void ClientConnected()
+        {
+            Console.WriteLine($"Połączono z klientem");
+        }
     }
 }

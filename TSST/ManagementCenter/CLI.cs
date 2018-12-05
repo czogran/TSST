@@ -70,6 +70,7 @@ namespace ManagementCenter
 
         }
 
+
         /// <summary>
         /// Waliduje wpisane bazgroły sprawdzając czy to komenda
         /// </summary>
@@ -120,6 +121,22 @@ namespace ManagementCenter
                 Console.WriteLine(invalidParameters);
                 return false;
             }
+        }
+
+        public static void ClientNum(string args)
+        {
+            Console.WriteLine($"Liczba wykrytych klientów: {args}");
+        }
+
+        public static void CreateClientAgent(int c)
+        {
+            Console.WriteLine($"Tworze agenta dla klienta {c}");
+        }
+
+
+        public static void CreateNodeAgent(string v)
+        {
+            Console.WriteLine($"Tworze agenta dla węzła {v}");
         }
     }
 }

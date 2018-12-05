@@ -36,7 +36,7 @@ namespace CableCloud
             //lock (nodeAmount)
             //{
                 int num = Int32.Parse(nodeAmount);
-                Console.WriteLine("num"+num);
+
                 /*for (int i = 1; i <= Switch.data.ElementAt(0); i++)
                 {
                 //int i = 1;
