@@ -55,6 +55,11 @@ namespace NetworkNode
             threadAgent.Start();
             threadPort.Start();
             computeThread.Start();
+
+            //!!!!!!!!!!!!
+            //bardzo wazne bez tego wyciaganie infromacji z labeli nie bedzie dzialac !!!!
+            Label.setMask();
+
             Console.ReadLine();
 
             /*

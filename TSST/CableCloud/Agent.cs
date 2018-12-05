@@ -161,7 +161,7 @@ namespace CableCloud
             }
             else if(Switch.agentCollection.Last().Contains("clients"))
             {
-                Console.WriteLine("heeeeeee");
+               // Console.WriteLine("heeeeeee");
                 string clients = Switch.agentCollection.Last().Substring(8);
                 Console.WriteLine(clients);
                 for (int i = 1; i <= Int32.Parse(clients); i++)

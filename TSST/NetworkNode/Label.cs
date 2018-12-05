@@ -193,6 +193,7 @@ namespace NetworkNode
                 TTL = (label & maskTTL) / 16777216;
                 TC = (label & maskTC) / 1048576;
                 ID = label & maskID;
+                Console.WriteLine(label);
                 Console.WriteLine(ID + " " + TC + " " + S + " " + TTL);
                 return label;
             }

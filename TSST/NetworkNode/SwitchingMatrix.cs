@@ -105,6 +105,7 @@ namespace NetworkNode
             string toSend;
             int inPort;
             uint labelIn;
+            uint labelInId;
             string address;
            
             try
@@ -117,7 +118,9 @@ namespace NetworkNode
                    
                     Console.WriteLine("inPort:" + inPort);
                     labelIn = Label.GetLabel(content);
-                    Console.WriteLine("inLabel:" + labelIn);
+                    labelInId = Label.ID;
+
+                    Console.WriteLine("inLabel Id:" + labelInId);
                     if (labelIn==0)
                     {
 
@@ -126,27 +129,36 @@ namespace NetworkNode
 
                         if (label.action=="push")
                         {
-                            Label.SetLabel(label.IDpush, 0, 0, 0);
+                            Label.SetLabel(label.IDpush, 0, 1, 0);
                             content = Label.Push(content,Label.label);
                         }
                         
                     }
                     else
                     {
-                        label = portDictionary[inPort][labelIn];
+                        label = portDictionary[inPort][labelInId];
                         Console.WriteLine("znaleziono w slowniku");
 
                         switch (label.action)
                             {
                             case "push":
+                                Label.SetLabel(label.IDswap, 0, 0, 0);
+                                content = Label.Swap(content, Label.label);
+                                Label.SetLabel(label.IDpush, 0, 0, 0);
+                                content = Label.Push(content, Label.label);
                                 break;
                             case "swap":
-                                Label.SetLabel(label.IDswap, 0, 0, 0);
+                                Label.SetLabel(label.IDswap, 0, Label.S, 0);
                                 content=Label.Swap(content, Label.label);
                                 break;
                             case "pop":
                                 content=Label.Pop(content);
-                                
+                                //0 znaczy ze nie ma labela
+                                if(Label.GetLabel(content)!=0)
+                                {
+                                    Label.SetLabel(label.IDswap, 0, 0, 0);
+                                    content = Label.Swap(content, Label.label);
+                                }
                                 Console.WriteLine("tu jestem");
                                 break;
 
