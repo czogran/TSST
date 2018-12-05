@@ -22,35 +22,36 @@ namespace ClientNode
         {
             number = Int32.Parse(args[0]);
             Console.WriteLine("client"+args[0]);
-            //System.Threading.Thread.Sleep(10000);
+
+
+            
+
+
+            //tworze port z ktorego laczy i slucha a potem wysyla
             Port p = new Port();
-        
-            p.CreateSocket("127.0.10."+args[0], 11003);
-            p.Connect("127.0.11."+args[0], 11004);
-            //p.Send("siema");
-            //string test;
-            //test=Console.ReadLine();
+            p.CreateSocket("127.0.10."+args[0], 11001);
+            p.Connect("127.0.11."+args[0], 11001);
            
-            //Thread t2 = new Thread(() => p.Connect("127.0.0.4", 11004));
-            //t2.Start();
+           //watek wysylajacy
             Thread t1 = new Thread(new ThreadStart(p.SendThread));
             t1.Start();
 
+            //watek sluchania agenta
             Agent agent = new Agent();
             string ip = "127.0.12." + args[0];
             Console.WriteLine(ip);
             agent.CreateSocket(ip, 11001);
-
-
             agent.Connect();
 
-            
+            //watek wysylania agenta
             Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
-           
-
             threadAgent.Start();
-           
-      
+
+            Console.WriteLine();
+            Console.WriteLine("COMMANDS:");
+            Console.WriteLine("wybierz odbiorce, po dwukropku numer odbiorcy://client:");
+            Console.WriteLine("po wybraniu odbiorcy zwykle pisanie jest wysylaniem");
+            Console.WriteLine();
 
         }
     }

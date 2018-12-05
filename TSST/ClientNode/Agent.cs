@@ -148,7 +148,7 @@ namespace ClientNode
                     portOut =Int32.Parse( node1.InnerText);
                 //var t = new Tuple<address, portOut>;
                 clientDictioinary.Add(id, new Tuple<string,int>(address, portOut) );
-                Console.WriteLine("cos uzupelniam");
+                Console.WriteLine("uzupelniam slownik klijentow o klijenta:"+id);
             }
              
             

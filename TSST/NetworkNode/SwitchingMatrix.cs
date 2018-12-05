@@ -98,18 +98,22 @@ namespace NetworkNode
         static string content;
         private static void Compute(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            content = computingCollection.Last();
+
+          
+               
             int num;
             string toSend;
             int inPort;
             uint labelIn;
+            string address;
            
             try
             {
                 lock(computingCollection)
                 {
-                   
-                    inPort=Label.GetPort(content);
+                    content = computingCollection.Last();
+                    address = Label.GetAddress(content);
+                    inPort =Label.GetPort(content);
                    
                     Console.WriteLine("inPort:" + inPort);
                     labelIn = Label.GetLabel(content);
@@ -117,7 +121,7 @@ namespace NetworkNode
                     if (labelIn==0)
                     {
 
-                        label =labelZeroDictionary[inPort]["127.0.10.2"];
+                        label =labelZeroDictionary[inPort][address];
                         Console.WriteLine("znaleziono w slowniku label ZERO");
 
                         if (label.action=="push")

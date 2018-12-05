@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClientNode
 {
-    /// <summary>
-    /// CLI programu
-    /// </summary>
     class CLI
     {
-        
     }
 }
