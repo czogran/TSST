@@ -47,7 +47,7 @@ namespace ManagementCenter
             for (int i = 1; i <= Int32.Parse(args[1]); i++)
             {
                 managerClient.Add(new Manager());
-                CLI.CreateClientAgent(i);
+                
                
                 managerClient[i - 1].CreateSocket("127.0.13." + i.ToString(), 11001);
                 managerClient[i - 1].Connect("127.0.12."+i.ToString(), 11001);
@@ -66,12 +66,12 @@ namespace ManagementCenter
             
             //miejsce na dodatkowe ustalanie polaczen
             int socket = 100;
-           //XML.SetName("default5.xml");
-
+            //XML.SetName("default5.xml");
+            CLI.NodeNum(nodeAmount);
             for (int i = 1; i <= nodeAmount; i++)
             {
                 manager.Add(new Manager());
-                CLI.CreateNodeAgent(agent[i - 1]);
+                
               //  socket += i;
                 manager[i - 1].CreateSocket("127.0.0.4" + i.ToString(), 11001);
                 manager[i - 1].Connect(agent[i - 1], 11001);

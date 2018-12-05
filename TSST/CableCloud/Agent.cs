@@ -70,7 +70,7 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("FROM Agent: " + receivedMessage);
+                //Console.WriteLine("FROM Agent: " + receivedMessage);
                 lock (global::CableCloud.Switch.agentCollection)
                 {
                     global::CableCloud.Switch.agentCollection.Add(receivedMessage);
@@ -149,7 +149,7 @@ namespace CableCloud
                         node[i - 1].CreateSocket(localIP, 11001);
 
                       //  remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
-                        Console.WriteLine("127.0.2." + i.ToString());
+                        //Console.WriteLine("127.0.2." + i.ToString());
                         node[i - 1].Connect("127.0.1." + i.ToString(), 11001);
                         Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
                         threadNode.Start();

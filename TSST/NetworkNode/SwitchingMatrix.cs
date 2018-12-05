@@ -82,7 +82,7 @@ namespace NetworkNode
                 }
                 labelZeroDictionary.Add(inPort, labelZeroDictionaryHelp);
                 portDictionary.Add(inPort, labelDictionary);
-                Console.WriteLine("cos uzupelniam");
+                Console.WriteLine("Uzupelniam Matrix");
             }
           
         }

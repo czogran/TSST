@@ -70,6 +70,11 @@ namespace ManagementCenter
 
         }
 
+        internal static void NodeNum(int nodeAmount)
+        {
+            Console.WriteLine($"Liczba węzłów: {nodeAmount}");
+        }
+
 
         /// <summary>
         /// Waliduje wpisane bazgroły sprawdzając czy to komenda
@@ -125,7 +130,7 @@ namespace ManagementCenter
 
         public static void ClientNum(string args)
         {
-            Console.WriteLine($"Liczba wykrytych klientów: {args}");
+            Console.WriteLine($"Liczba klientów: {args}");
         }
 
         public static void CreateClientAgent(int c)

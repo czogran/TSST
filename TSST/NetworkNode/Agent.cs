@@ -65,7 +65,7 @@ namespace NetworkNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("FROM Agent: " + receivedMessage);
+                //Console.WriteLine("FROM Agent: " + receivedMessage);
                 lock (SwitchingMatrix.agentCollection)
                 {
                     SwitchingMatrix.agentCollection.Add(receivedMessage );

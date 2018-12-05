@@ -69,7 +69,7 @@ namespace ClientNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("FROM Agent: " + receivedMessage);
+                //Console.WriteLine("FROM Agent: " + receivedMessage);
                 lock(agentCollection)
                 {
                     agentCollection.Add(receivedMessage);
