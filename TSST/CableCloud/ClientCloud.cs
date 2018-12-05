@@ -42,7 +42,7 @@ namespace CableCloud
     {
         mySocket.Listen(10);
         mySocket= mySocket.Accept();
-        CLI.ClientConnected()
+            CLI.ClientConnected();
     
         buffer = new byte[1024];
 

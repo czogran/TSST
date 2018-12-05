@@ -39,6 +39,11 @@ namespace NetworkNode
             Console.WriteLine($"{DateTime.Now} {message}");
         }
 
+        internal static void ConnectedAgent()
+        {
+            Console.WriteLine("Połączono agenta");
+        }
+
         /// <summary>
         /// Printuje wysłanie wiadomości
         /// </summary>

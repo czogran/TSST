@@ -103,8 +103,8 @@ namespace NetworkNode
             antiMaskTC = maskID + maskTTL + maskS;
 
             long a= maskTTL + maskTC + maskS + maskID;
-            if (maskTTL + maskTC + maskS + maskID == 4294967295)
-                Console.WriteLine("good");
+            //if (maskTTL + maskTC + maskS + maskID == 4294967295)
+                //Console.WriteLine("good");
         }
 
         /// <summary>

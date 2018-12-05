@@ -40,7 +40,7 @@ namespace NetworkNode
         {
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
-            Console.WriteLine("connected Agent");
+            CLI.ConnectedAgent();
             buffer = new byte[1024];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,

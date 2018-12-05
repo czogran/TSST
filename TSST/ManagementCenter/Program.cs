@@ -19,7 +19,7 @@ namespace ManagementCenter
         static void Main(string[] args)
         {
             Console.WriteLine("MANAGER");
-            Console.WriteLine("liczba klijentow: "+args[1]);
+            CLI.ClientNum(args[1]);
             int nodeAmount = int.Parse(args[0]);
             //string port;
             //string agent;
@@ -47,7 +47,7 @@ namespace ManagementCenter
             for (int i = 1; i <= Int32.Parse(args[1]); i++)
             {
                 managerClient.Add(new Manager());
-                Console.WriteLine("tworze agenta dla cleinta" + i.ToString());
+                CLI.CreateClientAgent(i);
                
                 managerClient[i - 1].CreateSocket("127.0.13." + i.ToString(), 11001);
                 managerClient[i - 1].Connect("127.0.12."+i.ToString(), 11001);
@@ -71,7 +71,7 @@ namespace ManagementCenter
             for (int i = 1; i <= nodeAmount; i++)
             {
                 manager.Add(new Manager());
-                Console.WriteLine("tworze agenta dlanoda" + agent[i - 1]);
+                CLI.CreateNodeAgent(agent[i - 1]);
               //  socket += i;
                 manager[i - 1].CreateSocket("127.0.0.4" + i.ToString(), 11001);
                 manager[i - 1].Connect(agent[i - 1], 11001);

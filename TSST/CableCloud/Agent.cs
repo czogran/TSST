@@ -45,7 +45,7 @@ namespace CableCloud
         {
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
-            Console.WriteLine("connected Agent");
+            CLI.ConnectedAgent();
             buffer = new byte[1024];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
@@ -161,32 +161,9 @@ namespace CableCloud
             }
             else if(Switch.agentCollection.Last().Contains("clients"))
             {
-               // Console.WriteLine("heeeeeee");
-                string clients = Switch.agentCollection.Last().Substring(8);
-                Console.WriteLine(clients);
-                for (int i = 1; i <= Int32.Parse(clients); i++)
-                {
-                    Console.WriteLine("aaa");
-                }
-                for (int i = 1; i <= Int32.Parse(clients);i++)
-                {
-                    //nie dziala
-                    /*client.Add(new ClientCloud());
-                    client[i - 1].CreateSocket("127.0.0.5", 11004);
-                    Console.WriteLine("clients socket created: " + "127.0.11." + i);
-                    Thread t2 = new Thread(new ThreadStart( client[i - 1].Connect));
-                    t2.Start();
-                    //klijenci
-                   // ClientCloud p = new ClientCloud();
-                   // p.CreateSocket("127.0.0.4", 11004);
-                    //p.Connect();
-                   // Thread t2 = new Thread( p.Connect);
-                    //t2.Start();
 
-                    Thread t1 = new Thread(new ThreadStart(client[i-1].SendThread));
-                    t1.Start();
-                    Console.WriteLine("clients socket created: " + "127.0.11." + i);*/
-                }
+                string clients = Switch.agentCollection.Last().Substring(8);
+                CLI.ClientsCount(clients);
             }
         }
     }

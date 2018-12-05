@@ -43,7 +43,7 @@ namespace ClientNode
         {
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
-            Console.WriteLine("connected Agent");
+            CLI.ConnectedAgent();
             buffer = new byte[1024];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
@@ -148,7 +148,7 @@ namespace ClientNode
                     portOut =Int32.Parse( node1.InnerText);
                 //var t = new Tuple<address, portOut>;
                 clientDictioinary.Add(id, new Tuple<string,int>(address, portOut) );
-                Console.WriteLine("uzupelniam slownik klijentow o klijenta:"+id);
+                Console.WriteLine("uzupelniam slownik klientow o klienta:"+id);
             }
              
             

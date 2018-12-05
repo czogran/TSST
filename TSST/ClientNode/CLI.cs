@@ -8,5 +8,9 @@ namespace ClientNode
 {
     class CLI
     {
+        internal static void ConnectedAgent()
+        {
+            Console.WriteLine("Połączono agenta");
+        }
     }
 }

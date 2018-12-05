@@ -109,14 +109,7 @@ namespace NetworkNode
 
                 mySocket.Send(sending);
 
-                    //SwitchingMatrix.collection.Move(SwitchingMatrix.collection.IndexOf(SwitchingMatrix.collection.First()), SwitchingMatrix.collection.IndexOf(SwitchingMatrix.collection.Last()));
-                   // Console.WriteLine("taaa "+SwitchingMatrix.collection[0]);
-                    //SwitchingMatrix.collection.Remove(SwitchingMatrix.collection.Last());
                 }
-            //    counter = 1;
-           // }
-          //  else
-            //    counter = 0;
     }
     public void disconnect_Click()
     {
