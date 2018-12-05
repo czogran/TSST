@@ -79,12 +79,12 @@ namespace ManagementCenter
             string choose;
             while (true)
             {
-                Console.WriteLine("JEZELI CHCESZ SKONFIGUROWAC SIEC WYBIERZ 1");
-                Console.WriteLine("JEZELI CHCESZ NAPRAWIC SIEC WYBIERZ 2");
+                CLI.Prompt();
+
                 choose = Console.ReadLine();
                 if ( choose== "1")
                 {
-                    Console.WriteLine("PODADAJ XML");
+                    CLI.RequestXML();
                     string name = "false";
                     XML.SetName(name);
                     while (XML.Test() != true)
@@ -107,7 +107,6 @@ namespace ManagementCenter
                     
                     for (int i = 1; i <= Int32.Parse(args[1]); i++)
                     {
-                        Console.WriteLine("try");
                         try
                         {
                             managerClient[i - 1].Send(XML.StringClients());
@@ -121,7 +120,7 @@ namespace ManagementCenter
                 }
                 else if (choose=="2")
                 {
-                    Console.WriteLine("PODADAJ XML");
+                    CLI.RequestXML();
                     string name = "false";
                     XML.SetName(name);
                     while (XML.Test() != true)

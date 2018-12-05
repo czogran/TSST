@@ -70,7 +70,7 @@ namespace CableCloud
             string receivedMessage = encoding.GetString(auxtrim);
                 
 
-            Console.WriteLine("FROM CLIENT: "+receivedMessage);
+            Console.WriteLine("Otrzymałem wiadomość od klienta");
 
                 //tu jest funkcja switchujaca
                 Switch.SwitchBufer(receivedMessage);

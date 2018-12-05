@@ -131,11 +131,11 @@ namespace ClientNode
                     try
                     {
                         client = Int32.Parse(message.Substring(9));
-                        Console.WriteLine("Odbiorca jest klijent: " + client);
+                        Console.WriteLine("Odbiorcą jest klient: " + client);
                     }
                     catch(Exception ex)
                     {
-                        Console.WriteLine("zla komenda");
+                        Console.WriteLine("Zła komenda, spróbuj ponownie.");
                     }
 
                 }

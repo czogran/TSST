@@ -163,7 +163,6 @@ namespace CableCloud
             {
 
                 string clients = Switch.agentCollection.Last().Substring(8);
-                CLI.ClientsCount(clients);
             }
         }
     }

@@ -103,6 +103,13 @@ namespace ManagementCenter
             return isCorrect;
         }
 
+        internal static void Prompt()
+        {
+            Console.WriteLine("Dostępne komendy:");
+            Console.WriteLine("[1] Konfiguracja");
+            Console.WriteLine("[2] Naprawa");
+        }
+
         /// <summary>
         /// Waliduje komendę podania tablicy routingu
         /// format: table id_routera
@@ -126,6 +133,11 @@ namespace ManagementCenter
                 Console.WriteLine(invalidParameters);
                 return false;
             }
+        }
+
+        internal static void RequestXML()
+        {
+            Console.WriteLine("Podaj plik XML:");
         }
 
         public static void ClientNum(string args)
