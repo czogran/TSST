@@ -142,7 +142,7 @@ namespace NetworkNode
                         switch (label.action)
                             {
                             case "push":
-                                Label.SetLabel(label.IDswap, 0, 0, 0);
+                                Label.SetLabel(label.IDswap, 0, Label.S, 0);
                                 content = Label.Swap(content, Label.label);
                                 Label.SetLabel(label.IDpush, 0, 0, 0);
                                 content = Label.Push(content, Label.label);
@@ -154,9 +154,10 @@ namespace NetworkNode
                             case "pop":
                                 content=Label.Pop(content);
                                 //0 znaczy ze nie ma labela
-                                if(Label.GetLabel(content)!=0)
+                                if(Label.GetLabel(content) != 0)
                                 {
-                                    Label.SetLabel(label.IDswap, 0, 0, 0);
+                                    Label.GetLabel(content);
+                                    Label.SetLabel(label.IDswap, 0, Label.S, 0);
                                     content = Label.Swap(content, Label.label);
                                 }
                                 Console.WriteLine("tu jestem");
