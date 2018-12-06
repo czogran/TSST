@@ -159,12 +159,12 @@ namespace NetworkNode
                 address=(message.Substring(start_address, end_address - start_address));
 
               
-                Console.WriteLine("znaleziony address: "+address);
+                //Console.WriteLine("znaleziony address: "+address);
                 return address;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("nie moge znalezc adresu"+ex.ToString());
+                Console.WriteLine("Nie moge znalezc adresu"+ex.ToString());
                 return null;
 
             }
@@ -194,7 +194,7 @@ namespace NetworkNode
                 TC = (label & maskTC) / 1048576;
                 ID = label & maskID;
                 Console.WriteLine("Dane Pakietu:");
-                Console.WriteLine($"Label: {label}");
+                Console.WriteLine($"Etykieta: {label}");
                 Console.WriteLine($"ID: {ID} TC: {TC} S: {S} TTL: {TTL}");
                 return label;
             }
@@ -348,7 +348,7 @@ namespace NetworkNode
 
             string stringLabel ="<label>" +newLabel +"</label>";
             message=message.Insert(indeks, stringLabel);
-            Console.WriteLine("Dodaje etykiete " + newLabel);
+            Console.WriteLine("Dodaje etykiete: " + newLabel);
             return message;
         }
 
@@ -361,8 +361,9 @@ namespace NetworkNode
         {
             int start_label = message.IndexOf("<label>");
             int end_label = message.IndexOf("</label>");
+            Console.WriteLine("Usuwam etykiete: " + 
+                message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7));
             message=message.Remove(start_label, end_label-start_label + 8);
-            //Console.WriteLine(message);
             return message;
         }
 
@@ -379,13 +380,13 @@ namespace NetworkNode
             //message = Label.push(message,newLabel);
             int start_label = message.IndexOf("<label>")+7;
             int end_label = message.IndexOf("</label>");
+            var removedLabel = message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7);
             message = message.Remove(start_label, end_label - start_label);
-          
 
             string stringLabel =  newLabel.ToString();
             message = message.Insert(start_label, stringLabel);
-            Console.WriteLine("Wysyłam wiadomość na port " + 
-                message.Substring(message.IndexOf("<port>")+6, message.IndexOf("</port>") - message.IndexOf("<port>" )-6));
+            Console.WriteLine("Zmieniam etykiete: " + removedLabel + " na: " +
+                message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7));
 
             return message;
         }

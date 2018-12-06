@@ -125,24 +125,20 @@ namespace NetworkNode
                     {
 
                         label =labelZeroDictionary[inPort][address];
-                        Console.WriteLine("znaleziono w slowniku label ZERO");
+                        //Console.WriteLine("znaleziono w slowniku label ZERO");
 
                         if (label.action=="push")
                         {
-                            Console.WriteLine("wykonuję operację push");
+                            //Console.WriteLine("wykonuję operację push");
                             Label.SetLabel(label.IDpush, 0, 1, 0);
                             content = Label.Push(content,Label.label);
                         }
                         
                     }
-                    else if (labelIn == 0 && label.action == "nothing")
-                    {
-                        //zmiana portu jest po ifie, więc tu pusto
-                    }
                     else
                     {
                         label = portDictionary[inPort][labelInId];
-                        Console.WriteLine("znaleziono w slowniku");
+                        //Console.WriteLine("znaleziono w slowniku");
 
                         switch (label.action)
                             {
