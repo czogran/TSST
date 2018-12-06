@@ -69,7 +69,7 @@ namespace ClientNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Od Agenta: " + receivedMessage);
+                Console.WriteLine("Od Agenta: \n" + receivedMessage);
                 lock(agentCollection)
                 {
                     agentCollection.Add(receivedMessage);
@@ -148,7 +148,7 @@ namespace ClientNode
                     portOut =Int32.Parse( node1.InnerText);
                 //var t = new Tuple<address, portOut>;
                 clientDictioinary.Add(id, new Tuple<string,int>(address, portOut) );
-                Console.WriteLine("uzupelniam slownik klientow o klienta:"+id);
+                Console.WriteLine("uzupelniam slownik klientow o klienta: "+id);
             }
              
             

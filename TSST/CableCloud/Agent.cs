@@ -70,7 +70,7 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Od Agenta: " + receivedMessage);
+                Console.WriteLine("Od Agenta:\n " + receivedMessage+"\n");
                 lock (global::CableCloud.Switch.agentCollection)
                 {
                     global::CableCloud.Switch.agentCollection.Add(receivedMessage);

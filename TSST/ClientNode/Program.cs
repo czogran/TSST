@@ -44,7 +44,7 @@ namespace ClientNode
             threadAgent.Start();
 
             Console.WriteLine();
-            Console.WriteLine("COMMANDS:");
+            Console.WriteLine("KOMENDY:");
             Console.WriteLine("wybierz odbiorce, po dwukropku numer odbiorcy://client:");
             Console.WriteLine("po wybraniu odbiorcy zwykle pisanie jest wysylaniem");
             Console.WriteLine();

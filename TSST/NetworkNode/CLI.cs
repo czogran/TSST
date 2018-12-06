@@ -51,7 +51,7 @@ namespace NetworkNode
         /// <param name="port">numer portu</param>
         public static void PrintSentMessage(string port)
         {
-            Console.WriteLine($"Wysyłam wiadomość na port {port}");
+            Console.WriteLine($"Wysyłam wiadomość na port {port}\n");
         }
 
         /// <summary>
