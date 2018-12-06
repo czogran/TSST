@@ -36,8 +36,8 @@ namespace NetworkNode
             //Console.WriteLine("node number "+args[0]);
 
             string[] ips = ArgToIP(args[0]);
-            Console.WriteLine("port: "+ips[0]);
-            Console.WriteLine("agent: "+ips[1]);
+            Console.WriteLine("adres dla chmury: "+ips[0]);
+            Console.WriteLine("adres dla agenta: "+ips[1]);
 
             Port port = new Port();
             Agent agent = new Agent();

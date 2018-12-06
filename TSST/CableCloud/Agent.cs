@@ -46,7 +46,7 @@ namespace CableCloud
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
            // CLI.ConnectedAgent();
-            buffer = new byte[1024];
+            buffer = new byte[30240];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
         new AsyncCallback(MessageCallback), buffer);
@@ -70,12 +70,12 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                //Console.WriteLine("FROM Agent: " + receivedMessage);
+                Console.WriteLine("Od Agenta: " + receivedMessage);
                 lock (global::CableCloud.Switch.agentCollection)
                 {
                     global::CableCloud.Switch.agentCollection.Add(receivedMessage);
                 }
-                buffer = new byte[1024];
+                buffer = new byte[30240];
 
                 mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
                     new AsyncCallback(MessageCallback), buffer);

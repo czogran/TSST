@@ -82,9 +82,9 @@ namespace NetworkNode
                 }
                 labelZeroDictionary.Add(inPort, labelZeroDictionaryHelp);
                 portDictionary.Add(inPort, labelDictionary);
-                Console.WriteLine("Uzupełniam tablicę");
             }
-          
+            Console.WriteLine("Uzupełniłem słownik");
+
         }
         public static void ComputeThread()
         {

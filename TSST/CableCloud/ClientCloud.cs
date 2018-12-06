@@ -70,8 +70,8 @@ namespace CableCloud
             string receivedMessage = encoding.GetString(auxtrim);
                 
 
-            Console.WriteLine("Otrzymałem wiadomość od klienta");
-
+            Console.WriteLine("Wiadomość od klienta: "+receivedMessage);
+           
                 //tu jest funkcja switchujaca
                 Switch.SwitchBufer(receivedMessage);
 
@@ -107,7 +107,7 @@ namespace CableCloud
         
         private void Send(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Console.WriteLine("SENDING");
+            Console.WriteLine("wysylam do klijenta");
             lock (Switch.clientCollection.ElementAt(id - 1))
             {
                 string s = Switch.clientCollection.ElementAt(id - 1).Last();

@@ -48,6 +48,7 @@ namespace ManagementCenter
             //mySocket.Bind(endRemote);
             mySocket.Connect(endRemote);
             buffer = new byte[1024];
+            Console.WriteLine("poloaczono z adresem:" + IP);
 
             mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
                 new AsyncCallback(MessageCallback), buffer);

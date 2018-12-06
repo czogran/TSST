@@ -34,11 +34,11 @@ namespace CableCloud
                 inPort= Int32.Parse(node1.InnerText);
                 node1 = node.SelectSingleNode("port_out");
                 outPort = Int32.Parse(node1.InnerText);
-                Console.WriteLine($"łączę {inPort} z {outPort}");
+             //   Console.WriteLine($"łączę {inPort} z {outPort}");
                 linkDictionary.Add(inPort, outPort);
             }
 
-           
+            Console.WriteLine("uzupelnilem slownik portow");
 
           
         }
@@ -55,8 +55,12 @@ namespace CableCloud
                 //chodzi o to ze jak portOut ma format 4 cyfrowy to w port_In 2 pierwsze cyfry to skad idzie, a w port_out dokad
                 //zatem w port out musimy wyluskac tysiace i sprowadzic je do jednosci
                 nodeOut = (linkOut-(linkOut % 100))/100 - 10;
-                Console.WriteLine("Switching nodes: " + nodeOut);
                 if(nodeOut<80)
+                Console.WriteLine("Przelaczam wezly: " + nodeOut);
+                else
+                    Console.WriteLine("Przelaczam na klijenta: " + (nodeOut-80));
+
+                if (nodeOut<80)
                 {
                     lock(nodeCollection.ElementAt(nodeOut-1))
                     {
