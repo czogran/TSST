@@ -97,7 +97,7 @@ namespace CableCloud
             lock (Switch.nodeCollection.ElementAt(id - 1))
             {
                 string s = Switch.nodeCollection.ElementAt(id - 1).Last();
-                Console.WriteLine("Wysyłam wiadomość\n" + s);
+                Console.WriteLine("Wysyłam wiadomość\n" );
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);

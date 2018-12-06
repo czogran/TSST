@@ -56,7 +56,7 @@ namespace CableCloud
         {
             try
             {
-                byte[] receivedData = new byte[1024];
+                byte[] receivedData = new byte[30240];
                 receivedData = (byte[])result.AsyncState;
 
                 ASCIIEncoding encoding = new ASCIIEncoding();
