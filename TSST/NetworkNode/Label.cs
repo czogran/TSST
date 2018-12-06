@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Runtime.Serialization;
+using System.Security.Principal;
 
 namespace NetworkNode
 {
@@ -388,6 +389,44 @@ namespace NetworkNode
             Console.WriteLine("Zmieniam etykiete: " + removedLabel + " na: " +
                 message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7));
 
+            return message;
+        }
+
+        /// <summary>
+        /// Ustawia path na pierwszym routerze
+        /// </summary>
+        /// <param name="message">wiadomość</param>
+        /// <param name="number">numer routera</param>
+        /// <returns></returns>
+        public static string SetPath(string message, int number)
+        {
+            return message += ("<path>"+ number + "</path>");
+        }
+
+        /// <summary>
+        /// Zwraca ścieżke
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static string GetPath(string message)
+        {
+            var start_path = message.IndexOf("<path>")+6;
+            var end_path = message.IndexOf("</path>");
+
+            return message.Substring(message.IndexOf("<path>") + 6,
+                message.IndexOf("</path>") - message.IndexOf("<path>") - 6);
+        }
+
+        public static string AddToPath(string message, int number)
+        {
+            var path = GetPath(message);
+            path += number;
+            
+            var start_path = message.IndexOf("<path>")+6;
+            var end_path = message.IndexOf("</path>");
+
+            message = message.Remove(start_path, end_path - start_path);
+            message = message.Insert(start_path, path);
             return message;
         }
 

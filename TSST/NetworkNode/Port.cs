@@ -75,15 +75,19 @@ namespace NetworkNode
             Array.Copy(receivedData, auxtrim, i + 1);
 
             string receivedMessage = encoding.GetString(auxtrim);
-                //   string port = receivedMessage.Substring(receivedMessage.IndexOf("<port>") + 6,
-                //     receivedMessage.IndexOf("</port>") - receivedMessage.IndexOf("<port>")-6);
-                //int port = Label.GetPort(receivedMessage);
-                //Console.WriteLine("Otrzymałem wiadomość na porcie " + port);
                
-                Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
+                Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
                 lock (SwitchingMatrix.computingCollection)
                 {
-                    SwitchingMatrix.computingCollection.Add( receivedMessage + Program.number);
+                    if (!receivedMessage.Contains("<path>"))
+                    {
+                        receivedMessage = Label.SetPath(receivedMessage, Program.number);
+                    }
+                    else
+                    {
+                        receivedMessage = Label.AddToPath(receivedMessage, Program.number);
+                    }
+                    SwitchingMatrix.computingCollection.Add(receivedMessage);
                 }
 
 
