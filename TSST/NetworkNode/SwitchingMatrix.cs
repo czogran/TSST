@@ -82,7 +82,7 @@ namespace NetworkNode
                 }
                 labelZeroDictionary.Add(inPort, labelZeroDictionaryHelp);
                 portDictionary.Add(inPort, labelDictionary);
-                Console.WriteLine("Uzupelniam Matrix");
+                Console.WriteLine("Uzupełniam tablicę");
             }
           
         }
@@ -134,6 +134,10 @@ namespace NetworkNode
                             content = Label.Push(content,Label.label);
                         }
                         
+                    }
+                    else if (labelIn == 0 && label.action == "nothing")
+                    {
+                        //zmiana portu jest po ifie, więc tu pusto
                     }
                     else
                     {

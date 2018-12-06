@@ -348,7 +348,7 @@ namespace NetworkNode
 
             string stringLabel ="<label>" +newLabel +"</label>";
             message=message.Insert(indeks, stringLabel);
-            //Console.WriteLine(message);
+            Console.WriteLine("Dodaje etykiete " + newLabel);
             return message;
         }
 
