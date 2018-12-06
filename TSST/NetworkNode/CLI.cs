@@ -49,9 +49,9 @@ namespace NetworkNode
         /// </summary>
         /// <param name="message">treść wiadomości</param>
         /// <param name="port">numer portu</param>
-        public static void PrintSentMessage(string message, int port)
+        public static void PrintSentMessage(string port)
         {
-            Console.WriteLine($"{DateTime.Now} Wysylano: {message} na port {port}");
+            Console.WriteLine($"Wysyłam wiadomość na port {port}");
         }
 
         /// <summary>

@@ -172,6 +172,7 @@ namespace NetworkNode
                     lock (sendCollection)
                     {
                         sendCollection.Add(toSend);
+                        CLI.PrintSentMessage(toSend.Substring(toSend.IndexOf("<port>")+6, toSend.IndexOf("</port>") - toSend.IndexOf("<port>" )-6));
                     }
                 }
               //  content.IndexOf("label");

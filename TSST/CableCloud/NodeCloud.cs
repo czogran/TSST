@@ -74,7 +74,7 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Otrzymałem wiadmość od węzła");
+                Console.WriteLine("Otrzymałem wiadmość od węzła\n" + receivedMessage);
                
                 //tu switchujemy to co przechodzi
                 Switch.SwitchBufer(receivedMessage);
@@ -97,6 +97,7 @@ namespace CableCloud
             lock (Switch.nodeCollection.ElementAt(id - 1))
             {
                 string s = Switch.nodeCollection.ElementAt(id - 1).Last();
+                Console.WriteLine("Wysyłam wiadomość\n" + s);
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);

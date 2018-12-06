@@ -81,6 +81,7 @@ namespace ManagementCenter
             }
             catch(Exception ex)
             {
+                Console.WriteLine("Niepoprawna nazwa pliku");
                 return false;
             }
 
