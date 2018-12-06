@@ -76,13 +76,11 @@ namespace CableCloud
             t3.Start();
 
             //te read line musi byc inaczej wszystko sie konczy
-            Console.ReadLine();
-
-
-            ClientCloud p3 = new ClientCloud(3);
-            p2.CreateSocket("127.0.11.4", 11001);
-            p2.Connect();
-            Thread t4 = new Thread(new ThreadStart(p2.SendThread));
+          
+            ClientCloud p3 = new ClientCloud(4);
+            p3.CreateSocket("127.0.11.4", 11001);
+            p3.Connect();
+            Thread t4 = new Thread(new ThreadStart(p3.SendThread));
             t4.Start();
 
             //te read line musi byc inaczej wszystko sie konczy

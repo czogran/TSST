@@ -47,16 +47,16 @@ namespace ManagementCenter
             for (int i = 1; i <= Int32.Parse(args[1]); i++)
             {
                 managerClient.Add(new Manager());
-                
+                Console.WriteLine("robie managera dla clienta"+ "127.0.12." + i.ToString());
                
                 managerClient[i - 1].CreateSocket("127.0.13." + i.ToString(), 11001);
                 managerClient[i - 1].Connect("127.0.12."+i.ToString(), 11001);
             }
+         
+            //managerCloud.Send("clients:" );
 
-                //managerCloud.Send("clients:" );
 
-
-                for (int i=1;i<=nodeAmount;i++)
+            for (int i=1;i<=nodeAmount;i++)
                {
                    id = 2 * i + 10;
                    port.Add ( "127.0.1." +i.ToString());
@@ -141,10 +141,10 @@ namespace ManagementCenter
                     }
                 }
                 }
-           
-          
-               // Console.WriteLine(XML.StringNode(1));
 
+
+            // Console.WriteLine(XML.StringNode(1));
+            Console.ReadLine();
         }
     }
 }

@@ -46,6 +46,8 @@ namespace ClientNode
             CLI.ConnectedAgent();
             buffer = new byte[1024];
 
+          
+
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
         new AsyncCallback(MessageCallback), buffer);
 
