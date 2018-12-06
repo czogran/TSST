@@ -41,7 +41,7 @@ namespace NetworkNode
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
             CLI.ConnectedAgent();
-            buffer = new byte[1024];
+            buffer = new byte[30240];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
         new AsyncCallback(MessageCallback), buffer);
@@ -70,7 +70,7 @@ namespace NetworkNode
                 {
                     SwitchingMatrix.agentCollection.Add(receivedMessage );
                 }
-                buffer = new byte[1024];
+                buffer = new byte[30240];
 
                 mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
                     new AsyncCallback(MessageCallback), buffer);
