@@ -137,18 +137,6 @@ namespace ManagementCenter
 
                         }
                     }
-                    
-                    for (int i = 1; i <= Int32.Parse(args[1]); i++)
-                    {
-                        try
-                        {
-                            managerClient[i - 1].Send(XML.StringClients());
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
                 }
                 }
            
