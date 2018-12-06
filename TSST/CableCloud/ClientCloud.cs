@@ -107,7 +107,7 @@ namespace CableCloud
         
         private void Send(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Console.WriteLine("wysylam do klijenta");
+            Console.WriteLine("Wysylam do klienta");
             lock (Switch.clientCollection.ElementAt(id - 1))
             {
                 string s = Switch.clientCollection.ElementAt(id - 1).Last();

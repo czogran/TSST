@@ -83,7 +83,7 @@ namespace NetworkNode
                 labelZeroDictionary.Add(inPort, labelZeroDictionaryHelp);
                 portDictionary.Add(inPort, labelDictionary);
             }
-            Console.WriteLine("Uzupełniłem słownik");
+            Console.WriteLine("Uzupełniłem słownik\n");
 
         }
         public static void ComputeThread()

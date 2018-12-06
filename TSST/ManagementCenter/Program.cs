@@ -120,13 +120,11 @@ namespace ManagementCenter
                 else if (choose=="2")
                 {
                     CLI.RequestXML();
-                    string name = "false";
-                    XML.SetName(name);
-                    while (XML.Test() != true)
+                    do
                     {
-                        name = Console.ReadLine();
+                        var name = Console.ReadLine();
                         XML.SetName(name);
-                    }
+                    } while (XML.Test() != true);
 
                     for (int i = 1; i <= nodeAmount; i++)
                     {

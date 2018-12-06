@@ -194,7 +194,6 @@ namespace NetworkNode
                 TTL = (label & maskTTL) / 16777216;
                 TC = (label & maskTC) / 1048576;
                 ID = label & maskID;
-                Console.WriteLine("Dane Pakietu:");
                 Console.WriteLine($"Etykieta: {label}");
                 Console.WriteLine($"ID: {ID} TC: {TC} S: {S} TTL: {TTL}");
                 return label;

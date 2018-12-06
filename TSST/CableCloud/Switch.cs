@@ -59,7 +59,7 @@ namespace CableCloud
                 if(nodeOut<80)
                 Console.WriteLine("Przelaczam wezly: " + nodeOut);
                 else
-                    Console.WriteLine("Przelaczam na klijenta: " + (nodeOut-80));
+                    Console.WriteLine("Przelaczam na klienta: " + (nodeOut-80));
 
                 if (nodeOut<80)
                 {
@@ -81,7 +81,7 @@ namespace CableCloud
             }
             catch (Exception ex)
             {
-                Console.WriteLine("port not catch: "+ex.ToString());
+                Console.WriteLine("Nie znaleziono połączenia");
             }
         }
         
