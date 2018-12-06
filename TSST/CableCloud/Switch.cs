@@ -73,7 +73,7 @@ namespace CableCloud
                     lock (clientCollection.ElementAt(nodeOut - 81))
                     {
                         clientCollection.ElementAt(nodeOut - 81).Add(message);
-                        Console.WriteLine(clientCollection.ElementAt(1).Last());
+                   //     Console.WriteLine(clientCollection.ElementAt(nodeOut - 81).Last());
                     }
                 }
 
