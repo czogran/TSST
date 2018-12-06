@@ -77,7 +77,7 @@ namespace NetworkNode
             string receivedMessage = encoding.GetString(auxtrim);
                 string port = receivedMessage.Substring(receivedMessage.IndexOf("<port>") + 6,
                     receivedMessage.IndexOf("</port>") - receivedMessage.IndexOf("<port>")-6);
-                Console.WriteLine("Otrzymałem wiadomość na porcie " + port);
+                Console.WriteLine("Otrzymałem wiadomość: " + receivedMessage + " na porcie " + port);
                 lock (SwitchingMatrix.computingCollection)
                 {
                     SwitchingMatrix.computingCollection.Add( receivedMessage + Program.number);

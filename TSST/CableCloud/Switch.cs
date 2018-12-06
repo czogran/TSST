@@ -55,7 +55,7 @@ namespace CableCloud
                 //chodzi o to ze jak portOut ma format 4 cyfrowy to w port_In 2 pierwsze cyfry to skad idzie, a w port_out dokad
                 //zatem w port out musimy wyluskac tysiace i sprowadzic je do jednosci
                 nodeOut = (linkOut-(linkOut % 100))/100 - 10;
-                Console.WriteLine("Switching nodes: " + nodeOut);
+                //Console.WriteLine("Switching nodes: " + nodeOut);
                 if(nodeOut<80)
                 {
                     lock(nodeCollection.ElementAt(nodeOut-1))
@@ -76,7 +76,7 @@ namespace CableCloud
             }
             catch (Exception ex)
             {
-                Console.WriteLine("port not catch: "+ex.ToString());
+                Console.WriteLine("Nie znaleziono połączenia");
             }
         }
         

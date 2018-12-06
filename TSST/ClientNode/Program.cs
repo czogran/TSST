@@ -35,7 +35,7 @@ namespace ClientNode
             //watek sluchania agenta
             Agent agent = new Agent();
             string ip = "127.0.12." + args[0];
-            Console.WriteLine(ip);
+            //Console.WriteLine(ip);
             agent.CreateSocket(ip, 11001);
             agent.Connect();
 
