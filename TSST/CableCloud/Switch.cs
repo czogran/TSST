@@ -50,7 +50,8 @@ namespace CableCloud
             {
                 int start = message.IndexOf("<port>");
                 int number = Int32.Parse(message.Substring(start+6, 4));
-                
+                Console.WriteLine("Port: " + number);
+
                 int linkOut = linkDictionary[number];
                 //chodzi o to ze jak portOut ma format 4 cyfrowy to w port_In 2 pierwsze cyfry to skad idzie, a w port_out dokad
                 //zatem w port out musimy wyluskac tysiace i sprowadzic je do jednosci

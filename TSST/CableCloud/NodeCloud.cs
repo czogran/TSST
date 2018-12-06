@@ -75,9 +75,10 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.WriteLine("Otrzymałem wiadmość od węzła\n" + receivedMessage);
-               
-                //tu switchujemy to co przechodzi
-                Switch.SwitchBufer(receivedMessage);
+                
+
+                 //tu switchujemy to co przechodzi
+                 Switch.SwitchBufer(receivedMessage);
 
 
                 buffer = new byte[1024];

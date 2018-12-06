@@ -83,7 +83,7 @@ namespace CableCloud
 
             catch (Exception ex)
             {
-                Console.WriteLine("Message callback execption");
+                Console.WriteLine("Message callback execption:"+ex.ToString());
             }
         }
 
