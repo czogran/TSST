@@ -10,9 +10,66 @@ namespace ManagementCenter
     /// Główna klasa programu
     /// </summary>
     class Program
-    { 
+    {
+        //do testownia xml
+        static void Main(string[] args)
+        {
+            XMLeon client = new XMLeon("client.xml", XMLeon.Type.clients);
+            client.AddClient(1, "127.0.0.1", 11);
+            client.AddClient(2, "111", 33);
+            client.AddClient(3, "127.0.0.1", 11);
+            client.AddClient(4, "111", 33);
+            client.AddClient(5, "127.0.0.1", 11);
+            client.AddClient(6, "111", 33);
+            client.RemoveClient(3);
 
-        /// <summary>
+
+            XMLeon nodes = new XMLeon("nodes.xml", XMLeon.Type.nodes);
+            nodes.AddNode(1, "111", "3333");
+            nodes.AddNode(2, "111", "3333");
+            nodes.AddNode(3, "111", "3333");
+
+            nodes.AddNode(4, "111", "3333");
+            nodes.AddNode(5, "111e", "3333");
+            nodes.AddNode(6, "11q1", "3333");
+            nodes.AddNode(7, "11p1", "3333");
+            nodes.RemoveNode(3);
+
+            nodes.AddMatrix(3, 2);
+            nodes.AddMatrix(3, 4);
+            nodes.AddMatrix(11, 1);
+            nodes.AddMatrix(13, 2);
+            nodes.AddMatrix(23, 2);
+            nodes.AddMatrix(3, 5);
+            nodes.AddMatrix(23, 6);
+            nodes.AddMatrix(93, 2);
+            nodes.AddMatrix(31, 1);
+            nodes.AddMatrix(3, 1);
+
+            nodes.AddConnection(1, 11, 2, 4, 11);
+            nodes.AddConnection(2, 93, 15, 4, 11);
+            nodes.AddConnection(2, 13, 2, 4, 11);
+            nodes.AddConnection(2, 13, 5, 4, 11);
+            nodes.AddConnection(2, 13, 9, 4, 11);
+            nodes.AddConnection(2, 13, 11, 4, 11);
+
+            nodes.RemoveConnection(2, 13, 2);
+            nodes.RemoveConnection(1, 11, 2);
+
+            XMLeon links = new XMLeon("links.xml", XMLeon.Type.cable_cloud);
+
+            links.AddLink(1112, 1, 2, "on", 22, 14);
+            links.AddLink(1114, 1, 2, "on", 22, 14);
+            links.AddLink(1115, 1, 2, "on", 22, 14);
+            links.AddLink(1212, 1, 2, "on", 22, 14);
+            links.RemoveLink(1115);
+            links.ChangeLinkStatus(1112, "off");
+            Console.Read();
+        }
+    }
+}
+
+       /* /// <summary>
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
@@ -146,3 +203,4 @@ namespace ManagementCenter
         }
     }
 }
+*/

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
-
+using System.Threading;
 
 namespace ClientNode
 {
@@ -126,20 +126,29 @@ namespace ClientNode
             while (true)
                 {
                 string message = Console.ReadLine();
-                 if (message.Contains("//client:"))
+                if (message.Contains("//client:"))
                 {
                     try
                     {
                         client = Int32.Parse(message.Substring(9));
                         Console.WriteLine("Odbiorcą jest klient: " + client);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine("Zła komenda, spróbuj ponownie.");
                     }
 
                 }
-                 else
+                else if (message.Contains("//send"))
+                {
+                    message = Console.ReadLine();
+                    for(int i=0;i<10;i++)
+                    {
+                        Send(message, client);
+                        Thread.Sleep(500);
+                    }
+                }
+                else
                 {
                     Send(message, client);
                 }

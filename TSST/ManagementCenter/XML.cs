@@ -17,6 +17,9 @@ using System.Xml;
 /// 
 namespace ManagementCenter
 {
+    
+    
+
   /// <summary>
   /// funkcje:
   /// CreateXML- tworzy xml
@@ -199,6 +202,7 @@ namespace ManagementCenter
             addTo.AppendChild(matrix);
             xmlDefault.Save(name);
         }
+      
 
         public static void AddLabel(int nodeNumber, int matrixNumber,string acction,int label_in,int port,int swap=0, int push=0)
         {
