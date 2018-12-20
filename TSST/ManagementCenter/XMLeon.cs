@@ -9,9 +9,35 @@ using System.Xml;
 namespace ManagementCenter
 {
     class XMLeon
-    {
+    { 
+    
+        //lista funkcji:
+        //AddNode
+        //StringNode -testnac jeszcze
+        //StringCableLinks- testnac
+        //StringClients- testnac- te funkcje kiedy dzialaly
+        //AddClient
+        //AddMatrix
+        //AddConnection
+        //RemoveConnection
+        //AddLink
+        //ChangeLinkStatus
+        //RemoveNode
+        //RemoveClient-testnac
+        //RemoveLink
+
+
+
+        /// <summary>
+        /// plik na ktorym zasowamy
+        /// </summary>
         XmlDocument xmlDoc;
+        ///nazwa dokumentu na ktorym pracujemy
         string name;
+
+        /// <summary>
+        /// typy plikow jakie morzemy utworzyc
+        /// </summary>
         public enum Type { nodes, cable_cloud, clients };
 
         /// <summary>
@@ -20,6 +46,7 @@ namespace ManagementCenter
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type">czy lacze, wezly, </param>
+        /// 
         public XMLeon(string name, Type type)
         {
             this.name = name;
@@ -220,7 +247,7 @@ namespace ManagementCenter
         }
 
         /// <summary>
-        /// zdejmuje całe polaczenie, szuka po pierwszej szczelinie
+        /// zdejmuje polaczenie w danym wezle, szuka po pierwszej szczelinie
         /// 
         /// </summary>
         /// <param name="node"></param>
