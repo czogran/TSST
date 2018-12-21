@@ -287,12 +287,20 @@ namespace ManagementCenter
         }
 
 
-        public void AddLink(int id, int nodeA, int nodeB, string status, int weight, int numberOfSlots)
+        public void AddLink(int id, int nodeA, int nodeB, string status, int cost, int numberOfSlots)
         {
-            nodeA += 10;
-            nodeB += 10;
+            
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
+
+            XmlNode aNode= xmlDefault.CreateElement("node_a");
+            aNode.InnerText = nodeA.ToString();
+            XmlNode bNode = xmlDefault.CreateElement("node_b");
+            bNode.InnerText = nodeB.ToString();
+
+            //do standrdu wyznaczamy wartosc
+            nodeA += 10;
+            nodeB += 10;
 
             XmlNode port = xmlDefault.CreateElement("port");
             XmlAttribute attribute = xmlDefault.CreateAttribute("id");
@@ -305,15 +313,18 @@ namespace ManagementCenter
             XmlNode linkOut = xmlDefault.CreateElement("port_out");
             linkOut.InnerText = nodeB.ToString() + nodeA.ToString();
 
-            XmlNode weightLink = xmlDefault.CreateElement("weight");
-            weightLink.InnerText =weight.ToString();
+            XmlNode costLink = xmlDefault.CreateElement("cost");
+            costLink.InnerText =cost.ToString();
             XmlNode slots = xmlDefault.CreateElement("slots_amount");
             slots.InnerText = numberOfSlots.ToString();
+
+            port.AppendChild(aNode);
+            port.AppendChild(bNode);
 
             port.AppendChild(statusType);
             port.AppendChild(linkIn);
             port.AppendChild(linkOut);
-            port.AppendChild(weightLink);
+            port.AppendChild(costLink);
             port.AppendChild(slots);
 
             try

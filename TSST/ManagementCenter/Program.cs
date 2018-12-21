@@ -64,6 +64,12 @@ namespace ManagementCenter
             links.AddLink(1212, 1, 2, "on", 22, 14);
             links.RemoveLink(1115);
             links.ChangeLinkStatus(1112, "off");
+
+            XMLParser test = new XMLParser("nodes.xml");
+            test.GetNodePorts(2);
+
+            XMLParser test1 = new XMLParser("links.xml");
+            test1.GetLink();
             Console.Read();
         }
     }
