@@ -102,12 +102,164 @@ namespace ManagementCenter
 
             return isCorrect;
         }
-
+        /// <summary>
+        /// opcje dostepnych polecen
+        /// </summary>
         internal static void Prompt()
         {
             Console.WriteLine("Dostępne komendy:");
+            Console.WriteLine("[\"esc\"] Wyjdz z komendy");
             Console.WriteLine("[1] Konfiguracja");
             Console.WriteLine("[2] Naprawa");
+            Console.WriteLine("[3] Zczytaj wezel");
+            Console.WriteLine("[4] Zczytaj port wezla");
+        }
+
+        /// <summary>
+        /// konfiguracja sieci
+        /// </summary>
+        public static void Configure(int nodeAmount, List<Manager> manager,int clientAmount, List<Manager> managerClient,Manager managerCloud)
+        {
+            CLI.RequestXML();
+            string name;
+            do
+            {
+                name = Console.ReadLine();
+               
+                if (name == "esc")
+                {
+                    break;
+                }
+                XML.SetName(name);
+            } while (XML.Test() != true);
+            if (name != "esc")
+            {
+                for (int i = 1; i <= nodeAmount; i++)
+                {
+                    try
+                    {
+                        manager[i - 1].Send(XML.StringNode(i));
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+
+                for (int i = 1; i <= clientAmount; i++)
+                {
+                    try
+                    {
+                        managerClient[i - 1].Send(XML.StringClients());
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+                managerCloud.Send(XML.StringCableLinks());
+                CLI.PrintConfigFilesSent();
+            }
+        }
+        /// <summary>
+        /// naprawa sieci
+        /// </summary>
+        public static void Fix(int nodeAmount,List<Manager> manager)
+        {
+            CLI.RequestXML();
+            string name;
+            do
+            {
+
+               name = Console.ReadLine();
+
+                if (name == "esc")
+                {
+                    break;
+                }
+
+                XML.SetName(name);
+            } while (XML.Test() != true);
+            if (name != "esc")
+            {
+
+                for (int i = 1; i <= nodeAmount; i++)
+                {
+                    try
+                    {
+                        manager[i - 1].Send(XML.StringNode(i));
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// prosi wezel o wpis z niego
+        /// </summary>
+        public static void GetNodeFromNode (List<Manager> manager)
+        {
+            Console.WriteLine("Podaj wezla od ktorego chcesz pobrac plik konfiguracyjny");
+            int number;
+            string input;
+            while (true)
+            {
+                try
+                {
+                    input = Console.ReadLine();
+                    if (input == "esc")
+                    {
+                        break;
+                    }
+                    number = Int32.Parse(input);
+                    manager[number - 1].Send("DAWAJ CONFIGA FRAJERZE,get_config");
+                    break;
+                }
+                catch(Exception ex)
+                {                 
+                    Console.WriteLine("Podaj poprawny numer");
+                }
+            }
+        }
+
+
+
+        public static void GetMatrixFromNode(List<Manager> manager)
+        {
+            Console.WriteLine("Podaj wezla od ktorego chcesz pobrac dane portu");
+            int nodeNumber, matrixNumber;
+            string input;
+            while (true)
+            {
+                try
+                {
+                    nodeNumber = Int32.Parse(Console.ReadLine());
+                    try
+                    {
+                        Console.WriteLine("Podaj id portu");
+                        input = Console.ReadLine();
+                        if (input == "esc")
+                        {
+                            break;
+                        }
+                        matrixNumber = Int32.Parse(input);
+                        manager[nodeNumber - 1].Send("<get_matrix>"+matrixNumber+"</get_matrix>");
+                        break;
+                    }
+                    catch(Exception ex)
+                    {
+
+                    }
+
+                   
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Podaj poprawny numer");
+                }
+            }
         }
 
         /// <summary>

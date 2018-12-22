@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace NetworkNode
     {
         Socket mySocket;
         byte[] buffer;
+
 
         public Agent()
         {
@@ -82,51 +84,79 @@ namespace NetworkNode
             }
         }
 
-
-        public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
+        /// <summary>
+        /// wysyla z powrotem do agenta
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+       // public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
+        public void Send(string message)
         {
             lock (SwitchingMatrix.agentCollection)
             {
-                string s = SwitchingMatrix.agentCollection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
-                sending = enc.GetBytes(s);
+                sending = enc.GetBytes(message);
 
                 mySocket.Send(sending);
 
             }
         }
+
+
+
         public void disconnect_Click()
         {
             mySocket.Disconnect(true);
             mySocket.Close();
         }
 
+        /// <summary>
+        ///  
+        /// </summary>
         public void ComputingThread()
         {
-            
+          
             lock (SwitchingMatrix.agentCollection)
             {
                  SwitchingMatrix.agentCollection.CollectionChanged += SwitchAction;
             }
         }
+      
+        public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
+        {
+
+
+            if (SwitchingMatrix.agentCollection.Last().Contains("node"))
+            {
+                File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+                SwitchingMatrix.portDictionary.Clear();
+                SwitchingMatrix.labelZeroDictionary.Clear();
+                SwitchingMatrix.FillDictionary();
+            }
+            else if (SwitchingMatrix.agentCollection.Last().Contains("get_config"))
+            {
+                //jezeli w wiadomosci jest polecenie by dac konfiguracje wezla, wysyla do wiadomosci zawartosc swojego xml-a
+                Send(XMLParser.StringNode());
+            }
+            else if (SwitchingMatrix.agentCollection.Last().Contains("get_matrix"))
+            {
+                int start = SwitchingMatrix.agentCollection.Last().IndexOf("<get_matrix>");
+                int end= SwitchingMatrix.agentCollection.Last().IndexOf("</get_matrix>");
+                int matrix = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(start + 12,end-start-12));
+                //Console.WriteLine(matrix);
+                Send(XMLParser.StringMatrix(matrix));
+            }
+        }
+
+
+
+        //zdaje sie ze smiec
         public void AgentInfo()
         {
             lock (SwitchingMatrix.agentCollection)
             {
                 SwitchingMatrix.agentCollection.CollectionChanged += SwitchAction;
-            }
-        }
-        public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
-        {
-           
-
-            if (SwitchingMatrix.agentCollection.Last().Contains("node"))
-            {
-                File.WriteAllText("myNode"+Program.number+".xml", SwitchingMatrix.agentCollection.Last());
-                SwitchingMatrix.portDictionary.Clear();
-                SwitchingMatrix.labelZeroDictionary.Clear();
-                SwitchingMatrix.FillDictionary();
             }
         }
     }
