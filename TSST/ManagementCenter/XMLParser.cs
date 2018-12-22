@@ -24,7 +24,7 @@ namespace ManagementCenter
         
 
 
-        public List <Link> GetLink()
+        public List <Link> GetLinks()
         {
             int id;
             int nodeA;

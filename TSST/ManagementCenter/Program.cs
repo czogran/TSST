@@ -58,18 +58,78 @@ namespace ManagementCenter
 
             XMLeon links = new XMLeon("links.xml", XMLeon.Type.cable_cloud);
 
-            links.AddLink(1112, 1, 2, "on", 22, 14);
-            links.AddLink(1114, 1, 2, "on", 22, 14);
-            links.AddLink(1115, 1, 2, "on", 22, 14);
-            links.AddLink(1212, 1, 2, "on", 22, 14);
-            links.RemoveLink(1115);
-            links.ChangeLinkStatus(1112, "off");
+            links.AddLink(9111, 81, 1, "on", 1, 14);
+            links.AddLink(9211, 82, 1, "on", 1, 14);
+
+            links.AddLink(1112, 1, 2, "on", 1, 14);
+            links.AddLink(1114, 1, 4, "on", 22, 14);
+
+            links.AddLink(1215, 2, 5, "on", 22, 14);
+            links.AddLink(1213, 2, 3, "on", 1, 14);
+
+            links.AddLink(1316, 3, 6, "on", 1, 14);
+            links.AddLink(1314, 3, 4, "on", 19, 14);
+
+            links.AddLink(1417,4 , 7, "on", 22, 14);
+            links.AddLink(1411, 4, 1, "on", 1, 14);
+
+            links.AddLink(1516, 5, 6, "on", 22, 14);
+            links.AddLink(1518, 5, 8, "on", 1, 14);
+
+            links.AddLink(1617, 6, 7, "on", 22, 14);
+            links.AddLink(1615, 6, 5, "on", 1, 14);
+
+            links.AddLink(1719, 7, 9, "on", 22, 14);
+
+            links.AddLink(1819, 8, 9, "on", 22, 14);
+
+            links.AddLink(1920, 9, 10, "on", 22, 14);
+
+            links.AddLink(2093, 10, 83, "on", 22, 14);
+            links.AddLink(2094, 10, 84, "on", 22, 14);
+
+
+            // links.AddLink(9111, 81, 1, "on", 22, 14);
+            //links.AddLink(1112, 1, 2, "on", 22, 14);
+            // links.AddLink(1213, 2, 3, "on", 22, 14);
+            // links.AddLink(1392, 2, 82, "on", 22, 14);
+
+            /* links.AddLink(1191, 1, 81, "on", 22, 14);
+             links.AddLink(1211, 2, 1, "on", 22, 14);
+             links.AddLink(1312, 3, 2, "on", 22, 14);
+             links.AddLink(9213, 82, 3, "on", 22, 14);*/
+            // links.RemoveLink(1115);
+            //  links.ChangeLinkStatus(1112, "off");
 
             XMLParser test = new XMLParser("nodes.xml");
-            test.GetNodePorts(2);
+            //test.GetNodePorts(2);
 
             XMLParser test1 = new XMLParser("links.xml");
-            test1.GetLink();
+            //  test1.GetLinks();
+
+
+
+
+            List<Link> linksList = test1.GetLinks();
+            List<Node> nodesList = new List<Node>();
+            nodesList.Add(new Node(81));
+            nodesList.Add(new Node(82));
+            nodesList.Add(new Node(83));
+            nodesList.Add(new Node(84));
+            nodesList.Add(new Node(1));
+            nodesList.Add(new Node(2));
+            nodesList.Add(new Node(3));
+            nodesList.Add(new Node(4));
+            nodesList.Add(new Node(5));
+            nodesList.Add(new Node(6));
+            nodesList.Add(new Node(7));
+            nodesList.Add(new Node(8));
+            nodesList.Add(new Node(9));
+            nodesList.Add(new Node(10));
+            nodesList.Add(new Node(11));
+
+            PathAlgorithm.dijkstra(nodesList, linksList, 81, 83, false);
+
             Console.Read();
         }
     }

@@ -215,7 +215,7 @@ namespace ManagementCenter
                 Console.WriteLine("AddMatrix, ex:" + ex.ToString());
             }
         }
-        public void AddConnection(int node, int matrix, int startSlot, int numberOfSlots, int portOut)
+        public void AddConnection(int node, int matrix, int startSlot, int endSlot   , int portOut)
         {
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
@@ -224,15 +224,15 @@ namespace ManagementCenter
             XmlNode startSlotNode = xmlDefault.CreateElement("start_slot");
             startSlotNode.InnerText = startSlot.ToString();
 
-            XmlNode numberSlotsNode = xmlDefault.CreateElement("number_of_slots");
-            numberSlotsNode.InnerText = numberOfSlots.ToString();
+            XmlNode endSlotNode = xmlDefault.CreateElement("end_slot");
+            endSlotNode.InnerText = endSlot.ToString();
 
             XmlNode portNode = xmlDefault.CreateElement("port_out");
             portNode.InnerText = portOut.ToString();
 
 
             connection.AppendChild(startSlotNode);
-            connection.AppendChild(numberSlotsNode);
+            connection.AppendChild(endSlotNode);
             connection.AppendChild(portNode);
             try
             {

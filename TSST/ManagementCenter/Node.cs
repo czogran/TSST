@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-usi
+
 
 namespace ManagementCenter
 {
+    /// <summary>
+    /// bardzo wazne, jako nody beda liczeni tez klijenci
+    /// </summary>
     class Node
     {
-        int number;
+        public int number;
         //Array ports;
         List<int> ports;
 
@@ -29,7 +32,16 @@ namespace ManagementCenter
 
             connected = false;
             //maksymalny koszt jaki moze miec int
-            costToGetHere =(int) Math.Pow(2, 31);
+            costToGetHere = 2147483647;
+        }
+
+        public Node(int number)
+        {
+            this.number = number;
+
+            connected = false;
+            //maksymalny koszt jaki moze miec int
+            costToGetHere = 2147483647;
         }
     }
 }
