@@ -22,6 +22,12 @@ namespace ManagementCenter
         //wezel ktory jest poprzedni na sciezce
        public int previousNode;
 
+        //z ktorego linku wychodzi z wezla
+        public Link outputLink;
+
+        //z ktorego linku wchodzi do wezla
+        public Link inputLink;
+
         //uzywany do obliczen, czy juz jest na sciezce
         public bool connected; 
 

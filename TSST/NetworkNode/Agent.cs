@@ -139,6 +139,7 @@ namespace NetworkNode
                 //jezeli w wiadomosci jest polecenie by dac konfiguracje wezla, wysyla do wiadomosci zawartosc swojego xml-a
                 Send(XMLParser.StringNode());
             }
+            //gdy agent chce informacje co siedzi w danym porcie
             else if (SwitchingMatrix.agentCollection.Last().Contains("get_matrix"))
             {
                 int start = SwitchingMatrix.agentCollection.Last().IndexOf("<get_matrix>");

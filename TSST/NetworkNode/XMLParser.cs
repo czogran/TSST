@@ -42,7 +42,11 @@ namespace NetworkNode
                 return null;
             }
         }
-
+            /// <summary>
+            /// zwraca dla danego wezla zawartosc dla danego portu
+            /// </summary>
+            /// <param name="number">numer portu ktorego szukamy</param>
+            /// <returns></returns>
             public static string StringMatrix(int number)
             {
                 XmlDocument xmlDefault = new XmlDocument();
@@ -57,18 +61,21 @@ namespace NetworkNode
                 readXML = sw.ToString();
                 try
                 {
+                    //znajduje gdzie jest poczatek w xml informacji o danym numerze
                     start = readXML.IndexOf("<matrix_entry num=\"" + number + "\">");
-                // //node[@id=" + node + "]/matrix_entry[@num=" + matrix + "]"
+                    
+                   //szuka konca tej informacji, szuka poczynajac od miejsca gdzie sie zaczela (start)
+                    end = readXML.IndexOf("</matrix_entry>", start);
 
-                
-                end = readXML.IndexOf("</matrix_entry>", start);
                     file = readXML.Substring(start, end - start);
+                    //niestety wycinajac tracimy znacznik konca informacji, wiec go teraz dodajemy
                     file = file + "</matrix_entry>";
                     return file;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("nie ma matrixa, ex:" + ex.ToString());
+                      //jezeli cos sie pochrzanilo  to zwracamy info ze nie ma takiego portu
                     return "nie ma takiego portu";
                 }
 

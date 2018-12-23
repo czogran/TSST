@@ -60,6 +60,28 @@ namespace ManagementCenter
             xmlDoc.Save(name);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        public void CreatePathXMLs(Path path)
+        {
+            for (int i = 0; i < path.nodes.Count; i++)
+            {
+               
+            }
+            /* XmlDocument xmlDoc = new XmlDocument();
+             XmlNode config = xmlDoc.CreateElement("config");
+             XmlNode nodes = xmlDoc.CreateElement(Type.nodes.ToString());
+
+             config.AppendChild(nodes);
+
+             xmlDoc.AppendChild(config);
+
+             string name = "path" + path.nodes.First().number + path.nodes.Last().number + ".xml";
+             xmlDoc.Save(name);*/
+        }
+
 
         public void AddNode(int id, string addressForCloud, string agent)
         {
@@ -287,7 +309,7 @@ namespace ManagementCenter
         }
 
 
-        public void AddLink(int id, int nodeA, int nodeB, string status, int cost, int numberOfSlots)
+        public void AddLink(int id, int nodeA, int nodeB, string status, int cost, int numberOfSlots, int lenght=10)
         {
             
             XmlDocument xmlDefault = new XmlDocument();
@@ -318,6 +340,9 @@ namespace ManagementCenter
             XmlNode slots = xmlDefault.CreateElement("slots_amount");
             slots.InnerText = numberOfSlots.ToString();
 
+            XmlNode len = xmlDefault.CreateElement("lenght");
+            len.InnerText = lenght.ToString();
+
             port.AppendChild(aNode);
             port.AppendChild(bNode);
 
@@ -326,6 +351,7 @@ namespace ManagementCenter
             port.AppendChild(linkOut);
             port.AppendChild(costLink);
             port.AppendChild(slots);
+            port.AppendChild(len);
 
             try
             {

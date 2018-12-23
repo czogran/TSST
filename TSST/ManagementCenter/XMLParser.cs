@@ -34,6 +34,7 @@ namespace ManagementCenter
             int portOut;
             int cost;
             int slotsAmount;
+            int lenght;
 
             XmlNode node1;
             List<Link> link=new List<Link>();
@@ -63,7 +64,10 @@ namespace ManagementCenter
                 node1 = nodePort.SelectSingleNode("slots_amount");
                 slotsAmount= Int32.Parse(node1.InnerText);
 
-                link.Add(new Link(id, nodeA, nodeB, slotsAmount, cost, status));
+                node1 = nodePort.SelectSingleNode("lenght");
+                lenght = Int32.Parse(node1.InnerText);
+
+                link.Add(new Link(id, nodeA, nodeB, slotsAmount, cost, status,lenght));
                 Console.WriteLine("Wczytalem link o id:"+id);
             }
 

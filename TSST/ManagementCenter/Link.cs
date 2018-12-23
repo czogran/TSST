@@ -11,17 +11,19 @@ namespace ManagementCenter
        public int nodeA;
        public int nodeB;
 
-        int id;
+        public int id;
         public int cost;
+        public int lenght;
 
         string status;
 
         int numberOfSlots;
         int numberOfUsedSlots;
-        //bool[] usedSlots;
-        Array usedSlots;
+        public bool[] usedSlots;
+      // public Array usedSlots;
 
-        public Link(int id, int nodeA, int nodeB, int numberOfSlots, int cost, string status)
+
+        public Link(int id, int nodeA, int nodeB, int numberOfSlots, int cost, string status, int lenght)
         {
             this.id = id;
             this.numberOfSlots = numberOfSlots;
@@ -31,8 +33,10 @@ namespace ManagementCenter
             this.status = status;
 
             this.cost = cost;
+            this.lenght = lenght;
 
-            usedSlots = Array.CreateInstance(typeof(bool), this.numberOfSlots);
+            usedSlots = new bool[numberOfSlots];
+           // usedSlots = Array.CreateInstance(typeof(bool), this.numberOfSlots);
             for(int i=0;i<numberOfSlots;i++)
             {
                 usedSlots.SetValue(false, i);
