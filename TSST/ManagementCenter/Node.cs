@@ -49,5 +49,14 @@ namespace ManagementCenter
             //maksymalny koszt jaki moze miec int
             costToGetHere = 2147483647;
         }
+
+        public static void ResestConnectionStatus(List<Node> nodes)
+        {
+            foreach(Node node in nodes)
+            {
+                node.connected = false;
+                node.costToGetHere = 2147483647;
+            }
+        }
     }
 }

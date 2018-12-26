@@ -61,34 +61,35 @@ namespace ManagementCenter
         }
 
         /// <summary>
-        /// 
+        /// sluzy do dodania w pliku jakiegos pustego xml typu nodes wpisow sciezki
         /// </summary>
         /// <param name="path"></param>
-        public void CreatePathXMLs(Path path)
+        public void CreatePathXML(Path path)
         {
-            for (int i = 0; i < path.nodes.Count; i++)
+            //nie wiem czemu to musi byc na 3 forach ale inaczej nie dziala xd
+            for (int i = 1; i < path.nodes.Count - 1; i++)
             {
-               
+                AddNode(path.nodes[i].number);
             }
-            /* XmlDocument xmlDoc = new XmlDocument();
-             XmlNode config = xmlDoc.CreateElement("config");
-             XmlNode nodes = xmlDoc.CreateElement(Type.nodes.ToString());
-
-             config.AppendChild(nodes);
-
-             xmlDoc.AppendChild(config);
-
-             string name = "path" + path.nodes.First().number + path.nodes.Last().number + ".xml";
-             xmlDoc.Save(name);*/
+            for (int i = 1; i < path.nodes.Count - 1; i++)
+            {
+                AddMatrix(path.nodes[i].inputLink.portIn, path.nodes[i].number);
+            }
+            for (int i = 1; i < path.nodes.Count - 1; i++)
+            {
+                AddConnection(path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
+            }
+          
         }
 
 
-        public void AddNode(int id, string addressForCloud, string agent)
+        public void AddNode(int id, string addressForCloud=null, string agent=null)
         {
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
             XmlNode node = xmlDoc.CreateElement("node");
+
             XmlNode cablePort = xmlDoc.CreateElement("cable_port");
             cablePort.InnerText = addressForCloud;
 
@@ -98,8 +99,11 @@ namespace ManagementCenter
             XmlAttribute attribute = xmlDoc.CreateAttribute("id");
             attribute.Value = id.ToString();
             node.Attributes.Append(attribute);
-            node.AppendChild(cablePort);
-            node.AppendChild(Agent);
+            if (addressForCloud != null && agent != null)
+            {
+                node.AppendChild(cablePort);
+                node.AppendChild(Agent);
+            }
             XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("nodes");
             addTo.AppendChild(node);
             xmlDoc.Save(name);
@@ -214,6 +218,7 @@ namespace ManagementCenter
             {
                 Console.WriteLine("AddClient, zly klijent, ex:" + ex.ToString());
             }
+
         }
 
 

@@ -20,8 +20,11 @@ namespace ManagementCenter
         int numberOfSlots;
         int numberOfUsedSlots;
         public bool[] usedSlots;
-      // public Array usedSlots;
+        // public Array usedSlots;
 
+
+        public int portIn;
+        public int portOut;
 
         public Link(int id, int nodeA, int nodeB, int numberOfSlots, int cost, string status, int lenght)
         {
@@ -29,6 +32,11 @@ namespace ManagementCenter
             this.numberOfSlots = numberOfSlots;
             this.nodeA = nodeA;
             this.nodeB = nodeB;
+
+            portIn=(nodeA+10)*100+(nodeB+10);
+            portOut=(nodeB + 10) * 100 + (nodeA + 10);
+
+       
 
             this.status = status;
 
@@ -47,14 +55,16 @@ namespace ManagementCenter
         /// rezeruwuje lub zwalnie oznaczenie czy szczelina jest zajeta
         /// </summary>
         /// <param name="startSlot"></param>
-        /// <param name="amountOfSlots"></param>
+        /// <param name="endSlot"></param>
         /// <param name="status"></param>
-        public void SetSlots(int startSlot, int amountOfSlots, bool status)
+        public void SetSlots(int startSlot, int endSlot, bool status)
         {
-            for (int i = startSlot-1; i < amountOfSlots; i++)
+            //indeksowanie, sloty od 1, tablice od 0
+            for (int i = startSlot-1; i < endSlot-1; i++)
             {
                 usedSlots.SetValue(status, i);
             }
+           
         }
     }
 }

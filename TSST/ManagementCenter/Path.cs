@@ -20,14 +20,16 @@ namespace ManagementCenter
         /// </summary>
         public List<Link> connection;
         public List<Node> nodes;
+
         /// <summary>
         ///numer slotu poczatkowego
         /// </summary>
-        int startSlot;
+        public int startSlot;
+
         /// <summary>
         /// numer konicowego slotu
         /// </summary>
-        int endSlot;
+        public int endSlot;
 
         /// <summary>
         /// lista linkow ktore najbardziej beda zmniejszaly okno, do obliczen, jak sie nie uda zestawic sciezki by wywalic najgorszy
@@ -129,8 +131,31 @@ namespace ManagementCenter
                     actualWindow = 0;
                 }
             }
+            Console.WriteLine("Max Window: " + maxWindow + "  Start Slot: " + startSlot);
             int[] returnWindow= new int[2] {startSlot,maxWindow };
             return returnWindow;
+        }
+
+        public bool ReserveWindow(int neededSlots, int startWindow, int maxWindow)
+        {
+            if (neededSlots > maxWindow)
+            {
+                Console.WriteLine("Zbyt male okno");
+                return false;
+            }
+            else
+            {
+                startSlot = startWindow;
+                endSlot = startWindow + neededSlots;
+
+
+                //dla kazdego linku na sciezce rezerwujemy szczeliny
+                foreach (Link link in connection)
+                {
+                    link.SetSlots(startWindow, endSlot, true);
+                }
+                return true;
+            }
         }
 
     }

@@ -128,7 +128,18 @@ namespace ManagementCenter
             nodesList.Add(new Node(10));
             nodesList.Add(new Node(11));
 
-            PathAlgorithm.dijkstra(nodesList, linksList, 81, 83, false);
+           // PathAlgorithm.dijkstra(nodesList, linksList, 81, 83, false);
+            Console.WriteLine("qqqqqqqqqqqqqqq");
+            PathAlgorithm.dijkstra(nodesList, linksList, 81, 84, false);
+            Console.WriteLine("qqqqqqqqqqqqqqq");
+
+            PathAlgorithm.dijkstra(nodesList, linksList, 82, 83, false);
+
+
+            for (int i=0;i<14; i++)
+            {
+               Console.WriteLine( linksList[2].usedSlots[i]);
+            }
 
             Console.Read();
         }
