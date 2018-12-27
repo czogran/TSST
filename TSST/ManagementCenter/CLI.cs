@@ -170,6 +170,8 @@ namespace ManagementCenter
             if (name != "esc")
 
             {
+                XMLParser xml = new XMLParser(name);
+                Program.links = xml.GetLinks();
                 managerCloud.Send(XML.StringCableLinks());
                 CLI.PrintConfigFilesSent();
             }

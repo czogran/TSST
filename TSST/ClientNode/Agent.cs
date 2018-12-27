@@ -18,15 +18,19 @@ namespace ClientNode
         byte[] buffer;
 
         //rzeczy do mpls
-        public  ObservableCollection<string> agentCollection = new ObservableCollection<string>();
+        public ObservableCollection<string> agentCollection;// = new ObservableCollection<string>();
         //kluczem jest klijent z jakim sie laczymy, a wartoscia jego adres, port wyjsciowey
         public static Dictionary<int, Tuple<string,int> >clientDictioinary = new Dictionary<int, Tuple<string,int>>();
 
         //rzeczy do EON
        public static int portOut;
+        //pierwsza wartosc to numer klijenta docelowego, druga to slot startowy
+        public static Dictionary<int, int> clientEonDictioinary;// = new Dictionary<int, int>();
 
         public Agent()
         {
+            agentCollection = new ObservableCollection<string>();
+            clientEonDictioinary = new Dictionary<int, int>();
         }
 
         public void CreateSocket(string IP, int port)
@@ -79,6 +83,7 @@ namespace ClientNode
                 lock(agentCollection)
                 {
                     agentCollection.Add(receivedMessage);
+                    Console.WriteLine(agentCollection.Last());
                 }
               
                 buffer = new byte[1024];
@@ -89,7 +94,7 @@ namespace ClientNode
 
             catch (Exception ex)
             {
-                Console.WriteLine("Message callback execption");
+                Console.WriteLine("Message callback execption, ex:"+ex+ToString());
             }
         }
 
@@ -118,6 +123,7 @@ namespace ClientNode
 
             lock (agentCollection)
             {
+                Console.WriteLine("agent");
                agentCollection.CollectionChanged += SwitchAction;
             }
         }
@@ -126,7 +132,7 @@ namespace ClientNode
         {
 
 
-            if (agentCollection.Last().Contains("client"))
+            if (agentCollection.Last().Contains("<client>"))
             {
                 File.WriteAllText("myClient" + Program.number + ".xml", agentCollection.Last());
                 clientDictioinary.Clear();
@@ -136,6 +142,16 @@ namespace ClientNode
             {
                 GetPortOut(agentCollection.Last());
             }
+            else if(agentCollection.Last().Contains("<start_slot>"))
+            {
+               // Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaa");
+                AddToEonDictionary(agentCollection.Last());
+            }
+            else
+            {
+                Console.WriteLine("Nie ma akcji dla tej wiadomosci");
+            }
+
         }
 
         private void GetPortOut(string message)
@@ -144,7 +160,29 @@ namespace ClientNode
             Console.WriteLine("Numer Portu Wychodzacego: "+portOut);
         }
 
-        public void FillDictionary()
+        public void AddToEonDictionary(string message)
+        {
+            int startSlot;
+            int targetClient;
+            int start, end;
+
+            start =message.IndexOf("<start_slot>")+12;
+            end = message.IndexOf("</start_slot>");
+
+            startSlot = Int32.Parse(message.Substring(start, end - start));
+
+            start = message.IndexOf("<target_client>") +15 ;
+            end = message.IndexOf("</target_client>");
+
+            targetClient = Int32.Parse(message.Substring(start, end - start));
+            clientEonDictioinary.Add(targetClient, startSlot);
+            Console.WriteLine("Dodaje do slownika wpis dla klijenta o id:" + targetClient + " i szczelinie start " + startSlot);
+        }
+
+
+
+
+            public void FillDictionary()
         {
 
             XmlDocument doc = new XmlDocument();

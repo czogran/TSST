@@ -53,6 +53,8 @@ namespace ManagementCenter
         /// </summary>
         public int lenght;
 
+        public string xmlName;
+
         public Path()
         {
             //domyslnie sciezka nie jest znaleziona;

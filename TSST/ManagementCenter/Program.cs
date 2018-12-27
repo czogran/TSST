@@ -11,7 +11,14 @@ namespace ManagementCenter
     /// </summary>
     class Program
     {
-     
+
+        public static List<Link> links;
+        // tu w ich dodawaniu bedzie jeden wielki cheat bo bedzie szlo ono po wezlach jakie sa w linkach
+        public static List<Node> nodes;
+
+        public static List<Manager> manager;
+        public static List<Manager> managerClient;
+
         /// <summary>
         /// Main
         /// </summary>
@@ -28,8 +35,10 @@ namespace ManagementCenter
 
             List<string> port = new List<string>();
             List<string> agent = new List<string>();
-            List<Manager> manager = new List<Manager>();
-            List<Manager> managerClient = new List<Manager>();
+             manager = new List<Manager>();
+             managerClient = new List<Manager>();
+            // List<Manager> manager = new List<Manager>();
+            //List<Manager> managerClient = new List<Manager>();
 
             Manager managerCloud = new Manager();
             managerCloud.CreateSocket("127.0.0.1", 11001);
@@ -70,7 +79,7 @@ namespace ManagementCenter
                 manager.Add(new Manager());
                 
               //  socket += i;
-                manager[i - 1].CreateSocket("127.0.0.4" + i.ToString(), 11001);
+                manager[i - 1].CreateSocket("127.0.4." + i.ToString(), 11001);
                 manager[i - 1].Connect(agent[i - 1], 11001);
             }
             //string do ktorego wczytujemy polecenie odbiorcy

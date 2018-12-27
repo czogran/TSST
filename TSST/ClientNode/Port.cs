@@ -92,8 +92,9 @@ namespace ClientNode
             try
             {
                 int port;
+                int startSlot;
                 string address;
-                lock (Agent.clientDictioinary)
+               /* lock (Agent.clientDictioinary)
                 {
                     //bierzemy adres docelowego
                     var tuple = Agent.clientDictioinary[idOfNodeWeAreSendingTo];
@@ -103,12 +104,16 @@ namespace ClientNode
                     tuple = Agent.clientDictioinary[Program.number];
                     port = tuple.Item2;
 
+                }*/
+            lock(Agent.clientEonDictioinary)
+                {
+                    startSlot = Agent.clientEonDictioinary[idOfNodeWeAreSendingTo];
                 }
 
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 //sending = enc.GetBytes(message + "<address>" + address + "</address>"+ "<port>" +port.ToString()+"</port>");
-                sending = enc.GetBytes(message + "<port>" + Agent.portOut+"</port>"+"<start_slot>"+"</start_slot>");
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut+"</port>"+"<start_slot>"+startSlot+"</start_slot>");
 
 
                 mySocket.Send(sending);

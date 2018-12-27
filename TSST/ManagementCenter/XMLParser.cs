@@ -22,8 +22,14 @@ namespace ManagementCenter
             xmlDefault.Load(name);
         }
         
+      
 
-
+       
+        /// <summary>
+        /// sluzy do pobrania listy linkow jakie sa na tej sciezce, bedzie wykorzystywana ta lista w algo
+        /// zestawiania sciezek
+        /// </summary>
+        /// <returns></returns>
         public List <Link> GetLinks()
         {
             int id;
@@ -35,6 +41,9 @@ namespace ManagementCenter
             int cost;
             int slotsAmount;
             int lenght;
+
+            Program.nodes = new List<Node>();
+
 
             XmlNode node1;
             List<Link> link=new List<Link>();
@@ -68,6 +77,21 @@ namespace ManagementCenter
                 lenght = Int32.Parse(node1.InnerText);
 
                 link.Add(new Link(id, nodeA, nodeB, slotsAmount, cost, status,lenght));
+
+                //tu jest wielki cheat dodawania nodow, tak naprawde teraz nie bedziemy potrzebowali do nich configa
+                lock (Program.nodes)
+                {
+                    if (!Program.nodes.Exists(x => x.number == nodeA))
+                    {
+                        Program.nodes.Add(new Node(nodeA));
+                    }
+                    if (!Program.nodes.Exists(x => x.number == nodeB))
+                    {
+                        Program.nodes.Add(new Node(nodeB));
+                    }
+                }
+
+
                 Console.WriteLine("Wczytalem link o id:"+id);
             }
 

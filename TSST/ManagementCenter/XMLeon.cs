@@ -59,6 +59,13 @@ namespace ManagementCenter
             xmlDoc.AppendChild(config);
             xmlDoc.Save(name);
         }
+        public XMLeon(string name)
+        {
+            xmlDoc = new XmlDocument();
+            this.name = name;
+            //nie wiem czy to jest bezpieczne
+            xmlDoc.Load(name);
+        }
 
         /// <summary>
         /// sluzy do dodania w pliku jakiegos pustego xml typu nodes wpisow sciezki

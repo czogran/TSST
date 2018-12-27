@@ -11,6 +11,7 @@ namespace ManagementCenter
     {
         public static Path dijkstra(List<Node>nodes, List<Link>links, int start, int end, bool direction)
         {
+            Console.WriteLine("czas zaczac dijstre");
             //sciezka ktorej szukamy
             Path path=new Path();
 
@@ -83,7 +84,6 @@ namespace ManagementCenter
                 index = nodes.IndexOf(nodes.Find(x => x.number == nodeNumber));
                 nodes[index].connected = true;
                 actualNode = nodeNumber;
-                // Console.WriteLine(actualNode);
 
                 if (actualNode == end)
                 {
@@ -153,6 +153,7 @@ namespace ManagementCenter
                 window= path.FindMaxWindow();
                 path.ReserveWindow(amountOfSlots,window[0],window[1]);
                 XMLeon xml = new XMLeon("path" + start + end + ".xml", XMLeon.Type.nodes);
+                path.xmlName = ("path" + start + end + ".xml");
                 xml.CreatePathXML(path);
             }
             else

@@ -75,6 +75,7 @@ namespace ManagementCenter
 
                 Console.WriteLine(receivedMessage);
 
+                SwitchingActions.Action(receivedMessage, this);
 
                 buffer = new byte[1024];
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
@@ -99,6 +100,7 @@ namespace ManagementCenter
             mySocket.Disconnect(true);
             mySocket.Close();
         }
+
         public void SendThread()
         {
             while (true)

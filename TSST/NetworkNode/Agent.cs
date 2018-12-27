@@ -131,9 +131,10 @@ namespace NetworkNode
                 if (SwitchingMatrix.agentCollection.Last().Contains("node"))
                 {
                     File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-                    SwitchingMatrix.portDictionary.Clear();
-                    SwitchingMatrix.labelZeroDictionary.Clear();
-                    SwitchingMatrix.FillDictionary();
+                    //SwitchingMatrix.portDictionary.Clear();
+                    //SwitchingMatrix.labelZeroDictionary.Clear();
+                    // SwitchingMatrix.FillDictionary();
+                    SwitchingMatrix.FillEonDictionary();
                 }
                 else if (SwitchingMatrix.agentCollection.Last().Contains("get_config"))
                 {
