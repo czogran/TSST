@@ -16,10 +16,14 @@ namespace ClientNode
     {
         Socket mySocket;
         byte[] buffer;
+
+        //rzeczy do mpls
         public  ObservableCollection<string> agentCollection = new ObservableCollection<string>();
         //kluczem jest klijent z jakim sie laczymy, a wartoscia jego adres, port wyjsciowey
         public static Dictionary<int, Tuple<string,int> >clientDictioinary = new Dictionary<int, Tuple<string,int>>();
 
+        //rzeczy do EON
+       public static int portOut;
 
         public Agent()
         {
@@ -128,6 +132,16 @@ namespace ClientNode
                 clientDictioinary.Clear();
                 FillDictionary();
             }
+            else if(agentCollection.Last().Contains("port_out:"))
+            {
+                GetPortOut(agentCollection.Last());
+            }
+        }
+
+        private void GetPortOut(string message)
+        {
+            portOut = Int32.Parse(message.Substring(9));
+            Console.WriteLine("Numer Portu Wychodzacego: "+portOut);
         }
 
         public void FillDictionary()

@@ -47,6 +47,8 @@ namespace NetworkNode
         public uint labelOut;
         public string action;
         public string address;
+
+
         public Label(uint IDswap,uint IDpush,string action,int portOut )
         {
             this.IDpush = IDpush;
@@ -124,6 +126,31 @@ namespace NetworkNode
             catch (Exception ex)
             {
                 Console.WriteLine("nie znalazlem prtu");
+                Console.WriteLine(ex.ToString());
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// bierze z wiadomosci pierwszy slot na ktorym wysylamy
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static int GetStartSlot(string message)
+        {
+
+            try
+            {
+                int start_slot = message.IndexOf("<start_slot>") + 12;
+                int end = message.IndexOf("</start_slot>");
+                int slot = Int32.Parse(message.Substring(start_slot, end - start_slot));
+                Console.WriteLine(slot);
+                return slot;
+               
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("nie znalazlem start_slot");
                 Console.WriteLine(ex.ToString());
                 return -1;
             }

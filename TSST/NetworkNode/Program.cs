@@ -30,7 +30,6 @@ namespace NetworkNode
         
         static void Main(string[] args)
         {
-           
           
             Console.WriteLine("node"+args[0]);
             //Console.WriteLine("node number "+args[0]);

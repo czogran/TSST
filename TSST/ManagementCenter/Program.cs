@@ -18,7 +18,7 @@ namespace ManagementCenter
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-            Tests.TestXML();
+           // Tests.TestXML();
             Console.WriteLine("MANAGER");
             CLI.ClientNum(args[1]);
             int nodeAmount = int.Parse(args[0]);
@@ -83,12 +83,15 @@ namespace ManagementCenter
                 choose = Console.ReadLine();
                 if ( choose== "1")
                 {
-                    CLI.Configure(nodeAmount, manager, clientAmount, managerClient, managerCloud);
+                    CLI.ConfigureLinkConnections(managerCloud);
+                   // CLI.Configure(nodeAmount, manager, clientAmount, managerClient, managerCloud);
                 }
                 else if (choose=="2")
                 {
-                    //naprawa sieci
-                    CLI.Fix(nodeAmount, manager);
+                    //wysylanie konfiguracji do klijenta
+                    
+                    CLI.ConfigureClients(clientAmount, managerClient);
+                   // CLI.Fix(nodeAmount, manager);
                 }
                 //prosba o konfiguracje wezla
                 else if (choose =="3")

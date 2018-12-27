@@ -43,11 +43,8 @@ namespace ClientNode
             Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
             threadAgent.Start();
 
-            Console.WriteLine();
-            Console.WriteLine("KOMENDY:");
-            Console.WriteLine("wybierz odbiorce, po dwukropku numer odbiorcy://client:");
-            Console.WriteLine("po wybraniu odbiorcy zwykle pisanie jest wysylaniem");
-            Console.WriteLine();
+            //wypisywanie polecen konsoli
+            CLI.Promt();
 
         }
     }

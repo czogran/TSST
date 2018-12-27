@@ -26,6 +26,47 @@ namespace NetworkNode
         public static Dictionary<int, Dictionary<uint,Label>> portDictionary = new Dictionary<int, Dictionary<uint, Label>>();
         public static Dictionary<int, Dictionary<string, Label>> labelZeroDictionary = new Dictionary<int, Dictionary<string, Label>>();
 
+        //pierwszy int to port wejsciowy, drugi to start slot, trzeci to port wyjsciowy
+        public static Dictionary<int, Dictionary<int, int>> eonDictionary = new Dictionary<int, Dictionary<int, int>>();
+
+
+
+        //funkcja nie przetestowana, napisana by wszystko razem sklecic
+        public static void FillEonDictionary()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("myEonNode" + Program.number + ".xml");
+            int inPort;
+            int outPort;
+            int startSlot;
+
+            XmlNode node1;
+
+
+            foreach (XmlNode nodePort in doc.SelectNodes("node/matrix_entry"))
+            {
+                Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
+
+                inPort = Int32.Parse(nodePort.Attributes["num"].Value);
+                foreach (XmlNode nodeConnection in nodePort.SelectNodes("connection"))
+                {
+                    node1 = nodeConnection.SelectSingleNode("start_slot");
+                    startSlot = Int32.Parse(nodeConnection.InnerText);
+
+                    node1 = nodeConnection.SelectSingleNode("port_out");
+                    outPort = Int32.Parse(nodeConnection.InnerText);
+
+                    switchingDictionary.Add(startSlot, outPort);
+                }
+
+                eonDictionary.Add(inPort, switchingDictionary);
+
+
+            }
+            Console.WriteLine("Dodalem wpisy sciezki");
+        }
+
+
 
         public static void FillDictionary()
         {
@@ -86,11 +127,42 @@ namespace NetworkNode
             Console.WriteLine("Uzupełniłem słownik\n");
 
         }
+
+
         public static void ComputeThread()
         {
             lock (computingCollection)
             {
-                computingCollection.CollectionChanged += Compute;
+                computingCollection.CollectionChanged += ComputingEon;
+               // computingCollection.CollectionChanged += Compute;
+            }
+        }
+
+
+        //nie przetestowana do switchowania w eon-ie
+        private static void ComputingEon(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            string content;
+            int inPort;
+            int startSlot;
+            int outPort;
+
+            lock(computingCollection)
+            {
+                content = computingCollection.Last();
+
+                inPort = Label.GetPort(content);
+                startSlot = Label.GetStartSlot(content);
+                outPort = eonDictionary[inPort][startSlot];
+
+                content = Label.SwapPort(content, outPort);
+
+                lock(sendCollection)
+                {
+                    sendCollection.Add(content);
+                }
+
+
             }
         }
 

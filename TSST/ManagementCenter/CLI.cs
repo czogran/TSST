@@ -109,14 +109,74 @@ namespace ManagementCenter
         {
             Console.WriteLine("Dostępne komendy:");
             Console.WriteLine("[\"esc\"] Wyjdz z komendy");
-            Console.WriteLine("[1] Konfiguracja");
-            Console.WriteLine("[2] Naprawa");
+            Console.WriteLine("[1] Konfiguracja polaczen");
+            Console.WriteLine("[2] Konfiguracja klijentow");
             Console.WriteLine("[3] Zczytaj wezel");
             Console.WriteLine("[4] Zczytaj port wezla");
         }
 
+        public static void ConfigureClients(int clientAmount,List<Manager> managerClient)
+        {
+            CLI.RequestXML();
+            string name;
+            do
+            {
+                name = Console.ReadLine();
+
+                if (name == "esc")
+                {
+                    break;
+                }
+                XML.SetName(name);
+            } while (XML.Test() != true);
+            if (name != "esc")
+            {
+                List<int> portOut = XMLeon.GetClientPortOut(name);
+                for (int i = 0; i < clientAmount; i++)
+                {
+                    try
+                    {
+                        managerClient[i].Send("port_out:"+portOut[i]);
+                        Console.WriteLine("Wysylam inof o porcie:" + portOut[i]);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Blad wysylania informacji o porcie");
+                    }
+                }
+            }
+        } 
+
         /// <summary>
-        /// konfiguracja sieci
+        /// wysyla chmurze xml z linkami
+        /// </summary>
+        /// <param name="managerCloud"></param>
+        public static void ConfigureLinkConnections(Manager managerCloud)
+        {
+            CLI.RequestXML();
+            string name;
+            do
+            {
+                name = Console.ReadLine();
+
+                if (name == "esc")
+                {
+                    break;
+                }
+                XML.SetName(name);
+            } while (XML.Test() != true);
+
+            if (name != "esc")
+
+            {
+                managerCloud.Send(XML.StringCableLinks());
+                CLI.PrintConfigFilesSent();
+            }
+        }
+
+        /// <summary>
+        /// konfiguracja sieci w mpl
         /// </summary>
         public static void Configure(int nodeAmount, List<Manager> manager,int clientAmount, List<Manager> managerClient,Manager managerCloud)
         {

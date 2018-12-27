@@ -166,6 +166,34 @@ namespace ManagementCenter
                 return null;
             }
         }
+
+        /// <summary>
+        /// sluzy do pobrania portow wyjsciowych klijentow by pozniej kazdemu przeslac na jaki ma wysylac
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static List<int> GetClientPortOut(string name1)
+        {
+            List<int> portOut=new List<int>() ;
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(name1);
+
+          //  Console.WriteLine(name1);
+            XmlNode node1;
+          // node1 = doc.SelectSingleNode("port_out");
+            //Console.WriteLine(node1.InnerText);
+
+            foreach (XmlNode client in doc.SelectNodes("//config/clients/client"))
+                {
+
+
+                node1 = client.SelectSingleNode("port_out");
+                portOut.Add(Int32.Parse(node1.InnerText));
+            }
+             return portOut;
+        }
+
         public string StringClients()
         {
             XmlDocument xmlDefault = new XmlDocument();

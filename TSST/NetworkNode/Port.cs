@@ -77,17 +77,20 @@ namespace NetworkNode
             string receivedMessage = encoding.GetString(auxtrim);
                
                 Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
-                lock (SwitchingMatrix.computingCollection)
+
+                if (receivedMessage.Contains("connection:"))
                 {
-                    if (!receivedMessage.Contains("<path>"))
+                    lock (SwitchingMatrix.agentCollection)
                     {
-                        receivedMessage = Label.SetPath(receivedMessage, Program.number);
+                        SwitchingMatrix.agentCollection.Add(receivedMessage);
                     }
-                    else
+                }
+                else
+                {
+                    lock (SwitchingMatrix.computingCollection)
                     {
-                        receivedMessage = Label.AddToPath(receivedMessage, Program.number);
+                        SwitchingMatrix.computingCollection.Add(receivedMessage);
                     }
-                    SwitchingMatrix.computingCollection.Add(receivedMessage);
                 }
 
 

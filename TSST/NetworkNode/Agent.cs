@@ -126,27 +126,33 @@ namespace NetworkNode
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
-
-            if (SwitchingMatrix.agentCollection.Last().Contains("node"))
+            lock (SwitchingMatrix.agentCollection)
             {
-                File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-                SwitchingMatrix.portDictionary.Clear();
-                SwitchingMatrix.labelZeroDictionary.Clear();
-                SwitchingMatrix.FillDictionary();
-            }
-            else if (SwitchingMatrix.agentCollection.Last().Contains("get_config"))
-            {
-                //jezeli w wiadomosci jest polecenie by dac konfiguracje wezla, wysyla do wiadomosci zawartosc swojego xml-a
-                Send(XMLParser.StringNode());
-            }
-            //gdy agent chce informacje co siedzi w danym porcie
-            else if (SwitchingMatrix.agentCollection.Last().Contains("get_matrix"))
-            {
-                int start = SwitchingMatrix.agentCollection.Last().IndexOf("<get_matrix>");
-                int end= SwitchingMatrix.agentCollection.Last().IndexOf("</get_matrix>");
-                int matrix = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(start + 12,end-start-12));
-                //Console.WriteLine(matrix);
-                Send(XMLParser.StringMatrix(matrix));
+                if (SwitchingMatrix.agentCollection.Last().Contains("node"))
+                {
+                    File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+                    SwitchingMatrix.portDictionary.Clear();
+                    SwitchingMatrix.labelZeroDictionary.Clear();
+                    SwitchingMatrix.FillDictionary();
+                }
+                else if (SwitchingMatrix.agentCollection.Last().Contains("get_config"))
+                {
+                    //jezeli w wiadomosci jest polecenie by dac konfiguracje wezla, wysyla do wiadomosci zawartosc swojego xml-a
+                    Send(XMLParser.StringNode());
+                }
+                //gdy agent chce informacje co siedzi w danym porcie
+                else if (SwitchingMatrix.agentCollection.Last().Contains("get_matrix"))
+                {
+                    int start = SwitchingMatrix.agentCollection.Last().IndexOf("<get_matrix>");
+                    int end = SwitchingMatrix.agentCollection.Last().IndexOf("</get_matrix>");
+                    int matrix = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(start + 12, end - start - 12));
+                    //Console.WriteLine(matrix);
+                    Send(XMLParser.StringMatrix(matrix));
+                }
+                else
+                {
+                    Send(SwitchingMatrix.agentCollection.Last());
+                }
             }
         }
 

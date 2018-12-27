@@ -169,6 +169,9 @@ namespace ManagementCenter
             return file;
         }
 
+      
+
+
         public static void AddClient(int id,string clientAddress, int port_out)
         {
             XmlDocument xmlDefault = new XmlDocument();

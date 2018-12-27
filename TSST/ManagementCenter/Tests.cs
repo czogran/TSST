@@ -15,7 +15,7 @@ namespace ManagementCenter
         public static void TestXML()
         {
             XMLeon client = new XMLeon("client.xml", XMLeon.Type.clients);
-            client.AddClient(1, "127.0.0.1", 11);
+            client.AddClient(1, "127.0.0.1", 9111);
             client.AddClient(2, "111", 33);
             client.AddClient(3, "127.0.0.1", 11);
             client.AddClient(4, "111", 33);

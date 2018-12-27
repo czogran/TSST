@@ -15,7 +15,7 @@ namespace ClientNode
 
         EndPoint endRemote, endLocal;
         byte[] buffer;
-        int client;
+        public int client;
 
         public Port()
         {
@@ -107,7 +107,9 @@ namespace ClientNode
 
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
-                sending = enc.GetBytes(message + "<address>" + address + "</address>"+ "<port>" +port.ToString()+"</port>");
+                //sending = enc.GetBytes(message + "<address>" + address + "</address>"+ "<port>" +port.ToString()+"</port>");
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut+"</port>"+"<start_slot>"+"</start_slot>");
+
 
                 mySocket.Send(sending);
             }
@@ -116,45 +118,39 @@ namespace ClientNode
                 Console.WriteLine("Nie udalo sie wyslac:" + ex.ToString());
             }
         }
+
+
+        public void SendCommand(string message)
+        {
+            try { 
+           
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut + "</port>"+"<my_id>"+Program.number+"</my_id>" );
+
+                mySocket.Send(sending);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Nie udalo sie wyslac:" + ex.ToString());
+            }
+        }
+
+
+
         public void disconnect_Click()
         {
             mySocket.Disconnect(true);
             mySocket.Close();
         }
-        public void SendThread()
-            {
-            while (true)
-                {
-                string message = Console.ReadLine();
-                if (message.Contains("//client:"))
-                {
-                    try
-                    {
-                        client = Int32.Parse(message.Substring(9));
-                        Console.WriteLine("Odbiorcą jest klient: " + client);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Zła komenda, spróbuj ponownie.");
-                    }
 
-                }
-                else if (message.Contains("//send"))
-                {
-                    message = Console.ReadLine();
-                    for(int i=0;i<10;i++)
-                    {
-                        Send(message, client);
-                        Thread.Sleep(500);
-                    }
-                }
-                else
-                {
-                    Send(message, client);
-                }
-              
-            }
-            }
+
+        public void SendThread()
+        {
+                 CLI.SwitchCommands(this);            
+        }
+
+            
     }
 }
    
