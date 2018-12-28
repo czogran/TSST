@@ -21,7 +21,7 @@ namespace ManagementCenter
             client.AddClient(4, "111", 33);
             client.AddClient(5, "127.0.0.1", 11);
             client.AddClient(6, "111", 33);
-            client.RemoveClient(3);
+           // client.RemoveClient(3);
 
 
             XMLeon nodes = new XMLeon("nodes.xml", XMLeon.Type.nodes);

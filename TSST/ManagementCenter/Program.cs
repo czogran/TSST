@@ -25,7 +25,7 @@ namespace ManagementCenter
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
-           // Tests.TestXML();
+            //Tests.TestXML();
             Console.WriteLine("MANAGER");
             CLI.ClientNum(args[1]);
             int nodeAmount = int.Parse(args[0]);

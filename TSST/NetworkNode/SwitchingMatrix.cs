@@ -51,14 +51,10 @@ namespace NetworkNode
                 foreach (XmlNode nodeConnection in nodePort.SelectNodes("connection"))
                 {
                     node1 = nodeConnection.SelectSingleNode("start_slot");
-                    startSlot = Int32.Parse(nodeConnection.InnerText);
-                    Console.WriteLine(nodeConnection.InnerText);
-
-                    node1 = nodeConnection.SelectSingleNode("end_slot");
-                    outPort = Int32.Parse(nodeConnection.InnerText);
+                    startSlot = Int32.Parse(node1.InnerText);
 
                     node1 = nodeConnection.SelectSingleNode("port_out");
-                    outPort = Int32.Parse(nodeConnection.InnerText);
+                    outPort = Int32.Parse(node1.InnerText); 
 
                     switchingDictionary.Add(startSlot, outPort);
                     Console.WriteLine(inPort + "   " + startSlot + "   " + outPort);

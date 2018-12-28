@@ -72,9 +72,11 @@ namespace ClientNode
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 //usuniecie informacji charakterystycznej
-               // receivedMessage=receivedMessage.Substring(receivedMessage.IndexOf("<address>"));
+                // receivedMessage=receivedMessage.Substring(receivedMessage.IndexOf("<address>"));
 
-                Console.WriteLine(receivedMessage.Substring(0,receivedMessage.IndexOf("<address>")));
+                Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
+
+               Console.WriteLine(receivedMessage.Substring(0,receivedMessage.IndexOf("<address>")));
 
 
                 buffer = new byte[1024];

@@ -75,8 +75,9 @@ namespace NetworkNode
             Array.Copy(receivedData, auxtrim, i + 1);
 
             string receivedMessage = encoding.GetString(auxtrim);
-               
-                Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
+                
+
+               Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
 
                 if (receivedMessage.Contains("connection:"))
                 {
@@ -117,6 +118,7 @@ namespace NetworkNode
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
+                Console.WriteLine(s);
 
                 mySocket.Send(sending);
 
