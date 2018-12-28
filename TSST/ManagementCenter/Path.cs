@@ -15,6 +15,10 @@ namespace ManagementCenter
         /// bool mowiacy o tym czy sie udalo pociagnac sciezke od jednego konca do drugiego
         /// </summary>
         public bool endToEnd;
+
+        //czy udalo sie zarezerowac szczeliny
+        public bool pathIsSet;
+
         /// <summary>
         /// lista linkow znajdujaca sie na sciezce
         /// </summary>
@@ -153,11 +157,13 @@ namespace ManagementCenter
         {
             if (neededSlots > maxWindow)
             {
+                pathIsSet = false;
                 Console.WriteLine("Zbyt male okno");
                 return false;
             }
             else
             {
+                pathIsSet = true;
                 startSlot = startWindow;
                 endSlot = startWindow + neededSlots;
 

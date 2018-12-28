@@ -58,8 +58,16 @@ namespace ManagementCenter
                     {
                         // string message1 = "addConnection:start_slot" + path.startSlot + "/start_slot" + "target_client" + targetClient + "/target_client";
                         //string message1 = "aaaaaaaaa111111111111111111111111111111111111aaaaaaaaaaa";
-                        string message1 = "<start_slot>" + path.startSlot + "</start_slot><target_client>"+targetClient+"</target_client>";
-                        //var tup = new Tuple<int,string>(path.nodes[i].number-80,message1);
+                        string message1;
+                        if (path.pathIsSet == true)
+                        {
+                            message1 = "<start_slot>" + path.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
+                        }
+                        else
+                        {
+                            message1 = "zabraklo slotow";
+                        }
+                         //var tup = new Tuple<int,string>(path.nodes[i].number-80,message1);
                         //string message1 = "<start_slot>" + path.startSlot + "</start_slot><target_client>"+targetClient+"</target_client>";
                        //string message1="aaaaa<start_slot>" + path.startSlot + "</start_slot>aaaaa<target_client>"+targetClient+"</target_client>aaa";
                         // managerClientCollection.Add(tup);
