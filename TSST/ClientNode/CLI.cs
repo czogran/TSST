@@ -14,6 +14,9 @@ namespace ClientNode
             Console.WriteLine("Połączono agenta");
         }
 
+        /// <summary>
+        /// polecenia i instrukcja obslugi klijenta
+        /// </summary>
         internal static void Promt()
         {
             Console.WriteLine();
@@ -26,6 +29,11 @@ namespace ClientNode
             Console.WriteLine();
 
         }
+
+        /// <summary>
+        /// przelaczanie polecen w zaleznosci co wybierze user i wywolywanie wtedy odpowiednich akcji
+        /// </summary>
+        /// <param name="clientNode"></param>
         internal static void SwitchCommands(Port clientNode)
         {
             while (true)
@@ -53,6 +61,7 @@ namespace ClientNode
                         Thread.Sleep(500);
                     }
                 }
+                //na razie prosba o zestawienie polaczenia idzie przez wezel
                 else if (message.Contains("//connection:"))
                 {
                     try
@@ -68,6 +77,7 @@ namespace ClientNode
                         Console.WriteLine("Zła komenda, spróbuj ponownie.");
                     }
                 }
+                //jezeli nie sa to polecenia konsolowe wysyla po prostu wiadomosc
                 else
                 {
                     clientNode.Send(message, clientNode.client);

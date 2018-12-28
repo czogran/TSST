@@ -85,8 +85,8 @@ namespace CableCloud
 
 
             ClientCloud p4 = new ClientCloud(5);
-            p3.CreateSocket("127.0.11.5", 11001);
-            p3.Connect();
+            p4.CreateSocket("127.0.11.5", 11001);
+            p4.Connect();
             Thread t5 = new Thread(new ThreadStart(p3.SendThread));
             t5.Start();
 

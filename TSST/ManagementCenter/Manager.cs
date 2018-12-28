@@ -101,6 +101,9 @@ namespace ManagementCenter
             mySocket.Close();
         }
 
+        /// <summary>
+        /// zdaje sie ze not in use
+        /// </summary>
         public void SendThread()
         {
             while (true)

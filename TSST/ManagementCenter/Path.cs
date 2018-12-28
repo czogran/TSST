@@ -52,7 +52,10 @@ namespace ManagementCenter
         /// okresla jak dluga jest sciezka
         /// </summary>
         public int lenght;
-
+        
+        /// <summary>
+        /// jak sie nazywa xml, ktory przechowuje ta sciezke
+        /// </summary>
         public string xmlName;
 
         public Path()
@@ -138,6 +141,14 @@ namespace ManagementCenter
             return returnWindow;
         }
 
+        /// <summary>
+        /// sprawdza czy da sie zarezerwoac sciezke
+        /// i jak sie da to ustawia odpowiednie szczeliny na zajete
+        /// </summary>
+        /// <param name="neededSlots"></param>
+        /// <param name="startWindow"></param>
+        /// <param name="maxWindow"></param>
+        /// <returns></returns>
         public bool ReserveWindow(int neededSlots, int startWindow, int maxWindow)
         {
             if (neededSlots > maxWindow)

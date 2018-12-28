@@ -25,6 +25,10 @@ namespace ManagementCenter
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            //w tescie sie tworzy te sieci i inne xml, wiec raz odpalic
+            //a potem zakomentowac
+            //i znowu skompilowac
+
             //Tests.TestXML();
             Console.WriteLine("MANAGER");
             CLI.ClientNum(args[1]);

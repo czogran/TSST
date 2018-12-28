@@ -9,11 +9,17 @@ namespace ManagementCenter
 {
     class SwitchingActions
     {
+        //chyba sa do wywalki, TODO sprawdzic to
         internal static ObservableCollection<Tuple <int,string>> managerNodeCollection = new ObservableCollection<Tuple<int,string>>();
         internal static ObservableCollection<Tuple<int, string>> managerClientCollection = new ObservableCollection<Tuple<int, string>>();
 
 
-
+        /// <summary>
+        /// przelaczanie tego co ma zrobic manager
+        /// w zaleznosci co do niego doszlo
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="manager"></param>
         internal static void Action(string message, Manager manager)
         {
             if (message.Contains("connection:"))
@@ -33,27 +39,10 @@ namespace ManagementCenter
 
                 Console.WriteLine("asking client" + askingClient);
 
-                //tylko do testow
-                /*  List<Node> nodesList = new List<Node>();
-                  nodesList.Add(new Node(81));
-                  nodesList.Add(new Node(82));
-                  nodesList.Add(new Node(83));
-                  nodesList.Add(new Node(84));
-                  nodesList.Add(new Node(1));
-                  nodesList.Add(new Node(2));
-                  nodesList.Add(new Node(3));
-                  nodesList.Add(new Node(4));
-                  nodesList.Add(new Node(5));
-                  nodesList.Add(new Node(6));
-                  nodesList.Add(new Node(7));
-                  nodesList.Add(new Node(8));
-                  nodesList.Add(new Node(9));
-                  nodesList.Add(new Node(10));
-                  nodesList.Add(new Node(11));*/
+             
                 Path path;
                 lock (Program.nodes)
                 {
-                  //  Console.WriteLine("aaaaaaaaaaaaaa");
                     lock (Program.links)
                     {
                        path = PathAlgorithm.dijkstra(Program.nodes, Program.links, askingClient + 80, targetClient + 80, false);

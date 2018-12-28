@@ -76,12 +76,10 @@ namespace CableCloud
                    //     Console.WriteLine(clientCollection.ElementAt(nodeOut - 81).Last());
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Nie znaleziono połączenia");
+                Console.WriteLine("Nie znaleziono połączenia, ex:"+ex.ToString());
             }
         }
         

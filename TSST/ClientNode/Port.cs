@@ -13,7 +13,7 @@ namespace ClientNode
     {
         Socket mySocket;
 
-        EndPoint endRemote, endLocal;
+        EndPoint endRemote;
         byte[] buffer;
         public int client;
 
@@ -46,6 +46,9 @@ namespace ClientNode
             endRemote = new IPEndPoint(ipAddress, toPort);
             //mySocket.Bind(endRemote);
             mySocket.Connect(endRemote);
+
+            Console.WriteLine("Polaczono z chmura");
+
             buffer = new byte[1024];
 
             mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
@@ -76,7 +79,7 @@ namespace ClientNode
 
                 Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
 
-               Console.WriteLine(receivedMessage.Substring(0,receivedMessage.IndexOf("<address>")));
+             //  Console.WriteLine(receivedMessage.Substring(0,receivedMessage.IndexOf("<address>")));
 
 
                 buffer = new byte[1024];

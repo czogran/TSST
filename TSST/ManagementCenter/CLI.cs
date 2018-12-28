@@ -115,6 +115,11 @@ namespace ManagementCenter
             Console.WriteLine("[4] Zczytaj port wezla");
         }
 
+        /// <summary>
+        /// wysyla klijentom info na jaki port maja wysylac
+        /// </summary>
+        /// <param name="clientAmount"></param>
+        /// <param name="managerClient"></param>
         public static void ConfigureClients(int clientAmount,List<Manager> managerClient)
         {
             CLI.RequestXML();
@@ -137,7 +142,7 @@ namespace ManagementCenter
                     try
                     {
                         managerClient[i].Send("port_out:"+portOut[i]);
-                        Console.WriteLine("Wysylam inof o porcie:" + portOut[i]);
+                        Console.WriteLine("Wysylam info o porcie:" + portOut[i]);
 
                     }
                     catch (Exception ex)
@@ -178,7 +183,7 @@ namespace ManagementCenter
         }
 
         /// <summary>
-        /// konfiguracja sieci w mpl
+        /// konfiguracja sieci w mpls
         /// </summary>
         public static void Configure(int nodeAmount, List<Manager> manager,int clientAmount, List<Manager> managerClient,Manager managerCloud)
         {
@@ -287,7 +292,11 @@ namespace ManagementCenter
         }
 
 
-
+        /// <summary>
+        /// gdy chcemy uzyskac od noda info co siedzi u niego w danym porcie wywolujemy to
+        /// wrzuca ta funkcja zdarzenie- wysylanie z info co chcemy od noda
+        /// </summary>
+        /// <param name="manager"></param>
         public static void GetMatrixFromNode(List<Manager> manager)
         {
             Console.WriteLine("Podaj wezla od ktorego chcesz pobrac dane portu");

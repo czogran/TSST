@@ -7,6 +7,10 @@ using System.Xml;
 
 namespace ManagementCenter
 {
+    /// <summary>
+    /// do parsowania xml jak sama nazwa wskazuje
+    /// i wyciagania z nich wiadomosci
+    /// </summary>
     class XMLParser
     {
         string name;

@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace ManagementCenter
 {
+    /// <summary>
+    /// klasa sluzaca by przechowywac informacje o linkach
+    /// co lacze, jak sa zajet itp
+    /// taki substytut CLI
+    /// </summary>
     class Link
     {
        public int nodeA;

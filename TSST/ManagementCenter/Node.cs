@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace ManagementCenter
 {
     /// <summary>
-    /// bardzo wazne, jako nody beda liczeni tez klijenci
+    /// informacje o wezlach sa tu przechowywane
+    /// bardzo wazne, jako nody beda liczeni tez klijenci w algorytmie sciezek
     /// </summary>
     class Node
     {

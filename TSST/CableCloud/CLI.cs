@@ -13,9 +13,9 @@ namespace CableCloud
             Console.WriteLine($"Znalezniono {clients} klientów");
         }
 
-        internal static void ClientConnected()
+        internal static void ClientConnected(int id)
         {
-            Console.WriteLine($"Połączono z klientem");
+            Console.WriteLine($"Połączono z klientem:"+id);
         }
 
         internal static void ConnectedAgent()

@@ -8,13 +8,16 @@ using System.Xml;
 
 namespace ManagementCenter
 {
+    /// <summary>
+    /// xml do tworzenia eon owych rzeczy
+    /// </summary>
     class XMLeon
     { 
-    
+        //sprawdzic czy wszystkie sa tu wypisane
         //lista funkcji:
         //AddNode
-        //StringNode -testnac jeszcze
-        //StringCableLinks- testnac
+        //StringNode 
+        //StringCableLinks
         //StringClients- testnac- te funkcje kiedy dzialaly
         //AddClient
         //AddMatrix
@@ -59,6 +62,10 @@ namespace ManagementCenter
             xmlDoc.AppendChild(config);
             xmlDoc.Save(name);
         }
+        /// <summary>
+        /// gdy chcemy wczytac juz istniejacy dokument
+        /// </summary>
+        /// <param name="name"></param>
         public XMLeon(string name)
         {
             xmlDoc = new XmlDocument();

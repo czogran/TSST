@@ -28,10 +28,16 @@ namespace NetworkNode
 
         //pierwszy int to port wejsciowy, drugi to start slot, trzeci to port wyjsciowy
         public static Dictionary<int, Dictionary<int, int>> eonDictionary = new Dictionary<int, Dictionary<int, int>>();
+        //pierwszy to start slot, drugi to port wyjsciowy
+        static Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
 
 
 
-        //funkcja nie przetestowana, napisana by wszystko razem sklecic
+
+        public static MultiKeyDictionary<int, Dictionary<int, int>> dictionary =new MultiKeyDictionary<int, Dictionary<int, int>>();
+        /// <summary>
+        /// uzupelnia eono wy slownik
+        /// </summary>
         public static void FillEonDictionary()
         {
             XmlDocument doc = new XmlDocument();
@@ -42,10 +48,9 @@ namespace NetworkNode
 
             XmlNode node1;
 
-
+            //to w sumie mozna wywalic do parsera, bo tam jest tego miejsce zgodnie z konwencja
             foreach (XmlNode nodePort in doc.SelectNodes("node/matrix_entry"))
             {
-                Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
 
                 inPort = Int32.Parse(nodePort.Attributes["num"].Value);
                 foreach (XmlNode nodeConnection in nodePort.SelectNodes("connection"))
@@ -59,16 +64,21 @@ namespace NetworkNode
                     switchingDictionary.Add(startSlot, outPort);
                     Console.WriteLine(inPort + "   " + startSlot + "   " + outPort);
                 }
-
-                eonDictionary.Add(inPort, switchingDictionary);
-
+                if(!eonDictionary.ContainsKey(inPort))
+                {
+                    eonDictionary.Add(inPort, switchingDictionary);
+                }
+               
+                
 
             }
             Console.WriteLine("Dodalem wpisy sciezki");
         }
 
 
-
+        /// <summary>
+        /// do mpls, bedzie do wywalki
+        /// </summary>
         public static void FillDictionary()
         {
 
@@ -123,13 +133,16 @@ namespace NetworkNode
 
                 }
                 labelZeroDictionary.Add(inPort, labelZeroDictionaryHelp);
+
                 portDictionary.Add(inPort, labelDictionary);
             }
             Console.WriteLine("Uzupełniłem słownik\n");
 
         }
 
-
+        /// <summary>
+        /// watek co tam trzyma to by to sie piknie switchowalo
+        /// </summary>
         public static void ComputeThread()
         {
             lock (computingCollection)
@@ -139,8 +152,12 @@ namespace NetworkNode
             }
         }
 
-
-        //nie przetestowana do switchowania w eon-ie
+        /// <summary>
+        /// switchowanie eonowe
+        /// tylko zmiana portow
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void ComputingEon(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             string content;
@@ -167,6 +184,7 @@ namespace NetworkNode
             }
         }
 
+        //z mpls zdaje sie
         static Label label;
         static string content;
         private static void Compute(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -256,9 +274,11 @@ namespace NetworkNode
             }
             
         }
-
-       
-        
-
     }
+
+    public class MultiKeyDictionary<T1, T2>
+    {
+    }
+
+   
 }
