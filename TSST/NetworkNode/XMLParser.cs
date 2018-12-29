@@ -5,11 +5,88 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace NetworkNode
 {
     class XMLParser
     {
+
+        public static void AddNode(string name, string addressForCloud = null, string agent = null)
+        {
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(name);
+
+            xmlDoc.DocumentElement.ParentNode.RemoveAll();
+
+            XmlNode node = xmlDoc.CreateElement("node");
+
+            XmlNode cablePort = xmlDoc.CreateElement("cable_port");
+            cablePort.InnerText = addressForCloud;
+
+            XmlNode Agent = xmlDoc.CreateElement("agent");
+            Agent.InnerText = agent;
+
+            XmlAttribute attribute = xmlDoc.CreateAttribute("id");
+            attribute.Value = Program.number.ToString();
+            node.Attributes.Append(attribute);
+            if (addressForCloud != null && agent != null)
+            {
+                node.AppendChild(cablePort);
+                node.AppendChild(Agent);
+            }
+            xmlDoc.AppendChild(node);
+            xmlDoc.Save(name);
+        }
+
+        public static void AddConnection(string name,string message)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(name);
+
+            XmlDocument xmlMessage = new XmlDocument();
+            // var xxx = XDocument.Parse(message);
+            // xmlMessage.PreserveWhitespace = false;
+             File.WriteAllText("myNodetest" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+            xmlMessage.Load("myNodeconnection" + Program.number + ".xml");
+            XmlNode node,node1;
+
+            node = xmlMessage.SelectSingleNode("/node/matrix_entry");
+
+            try
+            {
+                int matrix = Int32.Parse(node.Attributes["num"].Value);
+                XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry[@num=" + matrix + "]");
+                Console.WriteLine("addtoforst   "+addTo.InnerXml);
+                node = xmlMessage.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry[@num=" + matrix + "]/connection");
+                Console.WriteLine( " node1first        "+ node.InnerXml);
+                node1 = xmlDoc.ImportNode(node, true);
+                addTo.AppendChild(node1);
+                xmlDoc.Save(name);
+            }
+            catch(Exception ex)
+            {
+                try
+                {
+                    //xmlDoc.ImportNode(node,true);
+                    //Console.WriteLine(node.InnerText);
+                    XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]");
+                    node1=xmlDoc.ImportNode(node, true);
+                    Console.WriteLine("addTO   "+addTo.InnerXml);
+                    Console.WriteLine("node1:   "+node1.InnerXml);
+                    addTo.AppendChild(node1);
+                    xmlDoc.Save(name);
+                }
+                catch(Exception ex1)
+                {
+                    Console.WriteLine("Second:"+ex1.ToString());
+                }
+                Console.WriteLine("first:" + ex.ToString());
+            }
+        }
+
+
         /// <summary>
         /// robi stringa z pliku konfiguracyjnego
         /// 

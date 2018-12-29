@@ -32,16 +32,13 @@ namespace NetworkNode
         static Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
 
 
-
-
-        public static MultiKeyDictionary<int, Dictionary<int, int>> dictionary =new MultiKeyDictionary<int, Dictionary<int, int>>();
         /// <summary>
         /// uzupelnia eono wy slownik
         /// </summary>
         public static void FillEonDictionary()
         {
             XmlDocument doc = new XmlDocument();
-            doc.Load("myNode" + Program.number + ".xml");
+            doc.Load("myNodeconnection" + Program.number + ".xml");
             int inPort;
             int outPort;
             int startSlot;
@@ -67,10 +64,7 @@ namespace NetworkNode
                 if(!eonDictionary.ContainsKey(inPort))
                 {
                     eonDictionary.Add(inPort, switchingDictionary);
-                }
-               
-                
-
+                }              
             }
             Console.WriteLine("Dodalem wpisy sciezki");
         }
@@ -276,9 +270,6 @@ namespace NetworkNode
         }
     }
 
-    public class MultiKeyDictionary<T1, T2>
-    {
-    }
-
+   
    
 }

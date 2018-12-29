@@ -130,7 +130,11 @@ namespace NetworkNode
             {
                 if (SwitchingMatrix.agentCollection.Last().Contains("node"))
                 {
-                    File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+                    XMLParser.AddConnection("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+                    // File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+                   // File.AppendAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+
+
                     //SwitchingMatrix.portDictionary.Clear();
                     //SwitchingMatrix.labelZeroDictionary.Clear();
                     // SwitchingMatrix.FillDictionary();

@@ -55,6 +55,8 @@ namespace NetworkNode
             threadPort.Start();
             computeThread.Start();
 
+            XMLParser.AddNode("myNode" + Program.number + ".xml",ips[0],ips[1]);
+
             //!!!!!!!!!!!!
             //bardzo wazne bez tego wyciaganie infromacji z labeli nie bedzie dzialac !!!!
             Label.setMask();

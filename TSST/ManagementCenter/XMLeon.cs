@@ -99,6 +99,7 @@ namespace ManagementCenter
 
         public void AddNode(int id, string addressForCloud=null, string agent=null)
         {
+            //zdaje sie ze te dwie linijki do wywalki
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
