@@ -62,8 +62,10 @@ namespace NetworkNode
             Label.setMask();
 
             Console.ReadLine();
+            Console.ReadLine();
+            Console.ReadLine();
+            Console.ReadLine();
 
-           
         }
         
     }

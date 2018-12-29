@@ -66,8 +66,8 @@ namespace NetworkNode
                 Array.Copy(receivedData, auxtrim, i + 1);
 
                 string receivedMessage = encoding.GetString(auxtrim);
-
-                Console.WriteLine("Od Agenta:\n " + receivedMessage);
+                if(receivedMessage!="ping")
+                     Console.WriteLine("Od Agenta:\n " + receivedMessage);
                 lock (SwitchingMatrix.agentCollection)
                 {
                     SwitchingMatrix.agentCollection.Add(receivedMessage );
@@ -153,6 +153,10 @@ namespace NetworkNode
                     int matrix = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(start + 12, end - start - 12));
                     //Console.WriteLine(matrix);
                     Send(XMLParser.StringMatrix(matrix));
+                }
+                else if(SwitchingMatrix.agentCollection.Last().Contains("ping"))
+                {
+
                 }
                 else
                 {

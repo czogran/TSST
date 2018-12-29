@@ -16,9 +16,14 @@ namespace NetworkNode
         {
 
             XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(name);
-
-            xmlDoc.DocumentElement.ParentNode.RemoveAll();
+          
+            try
+            {
+                xmlDoc.Load(name);
+                xmlDoc.DocumentElement.ParentNode.RemoveAll();
+            }
+            catch
+            { }
 
             XmlNode node = xmlDoc.CreateElement("node");
 
@@ -48,8 +53,11 @@ namespace NetworkNode
             XmlDocument xmlMessage = new XmlDocument();
             // var xxx = XDocument.Parse(message);
             // xmlMessage.PreserveWhitespace = false;
-             File.WriteAllText("myNodetest" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-            xmlMessage.Load("myNodeconnection" + Program.number + ".xml");
+             File.WriteAllText("myNodeconnection" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+           
+                xmlMessage.Load("myNodeconnection" + Program.number + ".xml");
+            
+            
             XmlNode node,node1;
 
             node = xmlMessage.SelectSingleNode("/node/matrix_entry");

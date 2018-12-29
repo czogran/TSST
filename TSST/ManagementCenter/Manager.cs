@@ -18,14 +18,24 @@ namespace ManagementCenter
         EndPoint endRemote, endLocal;
         byte[] buffer;
 
+        string myIp;
+        int myport;
+
+        int number;
+
         public Manager()
         {
         }
 
+        public Manager(int number)
+        {
+            this.number = number;
+        }
+
+
         public void CreateSocket(string IP, int port)
         {
-            string myIp;
-            int myport;
+            
             myIp = IP;
             myport = port;
 
@@ -95,10 +105,28 @@ namespace ManagementCenter
 
             mySocket.Send(sending);
         }
+
         public void disconnect_Click()
         {
             mySocket.Disconnect(true);
             mySocket.Close();
+        }
+
+        public void PingThread()
+        {
+            while(true)
+            {
+                try
+                {
+                    System.Threading.Thread.Sleep(5000);
+                    Send("ping");                   
+                }
+                catch
+                {
+                    break;
+                }
+            }
+            Console.WriteLine("Wezel:" + number + "  is dead");
         }
 
         /// <summary>

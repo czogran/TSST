@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ManagementCenter
@@ -80,12 +81,21 @@ namespace ManagementCenter
             CLI.NodeNum(nodeAmount);
             for (int i = 1; i <= nodeAmount; i++)
             {
-                manager.Add(new Manager());
+                manager.Add(new Manager(i));
                 
               //  socket += i;
                 manager[i - 1].CreateSocket("127.0.4." + i.ToString(), 11001);
                 manager[i - 1].Connect(agent[i - 1], 11001);
+                Thread threadPing = new Thread(new ThreadStart(manager[i - 1].PingThread));
+             //   threadPing.Start();
             }
+            for (int i = 1; i <= nodeAmount; i++)
+            {
+                manager.Add(new Manager(i));
+                Thread threadPing = new Thread(new ThreadStart(manager[i - 1].PingThread));
+                threadPing.Start();
+            }
+
             //string do ktorego wczytujemy polecenie odbiorcy
             string choose;
             while (true)
