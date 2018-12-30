@@ -112,6 +112,14 @@ namespace ManagementCenter
             mySocket.Close();
         }
 
+
+        /// <summary>
+        /// jest wywolywany jako watek i sprawdza czy wezly jeszcze zyja
+        /// jak jakis zdechnie catch powinnien to wylapac
+        /// i wtedy powinny zostac wycofane stare wpisy
+        /// ustawione nowe
+        /// i rozeslane
+        /// </summary>
         public void PingThread()
         {
             while(true)
@@ -123,12 +131,14 @@ namespace ManagementCenter
                 }
                 catch
                 {
+                    Console.WriteLine("\nWezel:" + number + "  is dead");
+                    SwitchingActions.NodeIsDead(number);
                     var item =Program.nodes.SingleOrDefault(x => x.number== number);
                     Program.nodes.Remove(item);
                     break;
                 }
             }
-            Console.WriteLine("Wezel:" + number + "  is dead");
+           
         }
 
         /// <summary>

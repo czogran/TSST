@@ -32,8 +32,41 @@ namespace ManagementCenter
             }
         }
 
+
+
+        internal static void NodeIsDead(int id)
+        {
+            string message1;
+            var toReconfigure = Program.paths.FindAll(x => x.nodes.Contains(x.nodes.Find(y => y.number == id)));
+            foreach (Path path in toReconfigure)
+            {
+                message1 = "remove:" + path.nodes.Last().number + path.nodes[0].number;
+                foreach (Node node in path.nodes)
+                {
+                    if (node.number <= 80 && node.number != id)
+                    {
+
+                        lock (Program.manager)
+                        {
+                            try
+                            {
+                                Program.manager[node.number - 1].Send(message1);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Nie udalo sie automatycznie usunac wpisow");
+                            }
+                        }
+                    }
+                }
+                Console.WriteLine("Po smierci wezla odpowiednie wpisy zostaly usuniete w innych wezlach");
+            }
+        }
+
+
+
         /// <summary>
-        /// sluzy do usuniecia sciezki z listy i rozeslania wiadomosci do wezlow by wywalily je ze swojej pamieci
+        /// sluzy do usuniecia sciezki z listy gdy jest o to prosba i rozeslania wiadomosci do wezlow by wywalily je ze swojej pamieci
         /// </summary>
         /// <param name="message"></param>
         static void DeleteConnection(string message)
@@ -63,6 +96,8 @@ namespace ManagementCenter
                 Console.WriteLine(p.id);
                 try
                 {
+                    //zwalnianie linkow
+                    p.ResetSlotReservation();
                     foreach(Node node in p.nodes)
                     {
                         lock(Program.manager)

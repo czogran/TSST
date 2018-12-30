@@ -61,7 +61,8 @@ namespace NetworkNode
                 Console.WriteLine("Wywalony wpis");
             }
             catch
-            { }
+            {
+            }
         }
 
         public static void AddConnection(string name,string message)
