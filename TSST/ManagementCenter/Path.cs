@@ -62,8 +62,12 @@ namespace ManagementCenter
         /// </summary>
         public string xmlName;
 
+        public string id;
+
         public Path()
         {
+          
+
             //domyslnie sciezka nie jest znaleziona;
             endToEnd = false;
             connection = new List<Link>();
@@ -173,9 +177,21 @@ namespace ManagementCenter
                 {
                     link.SetSlots(startWindow, endSlot, true);
                 }
+              
+                
                 return true;
             }
         }
 
+        /// <summary>
+        /// sluzy przy usowaniu sciezki do odznaczania, ze szczelina jest zajeta
+        /// </summary>
+        public void ResetSlotReservation()
+        {
+            foreach (Link link in connection)
+            {
+                link.SetSlots(startSlot, endSlot, false);
+            }
+        }
     }
 }

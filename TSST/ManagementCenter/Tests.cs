@@ -51,13 +51,7 @@ namespace ManagementCenter
             nodes.AddMatrix(31, 1);
             nodes.AddMatrix(3, 1);
 
-            nodes.AddConnection(1, 11, 2, 4, 11);
-            nodes.AddConnection(2, 93, 15, 4, 11);
-            nodes.AddConnection(2, 13, 2, 4, 11);
-            nodes.AddConnection(2, 13, 5, 4, 11);
-            nodes.AddConnection(2, 13, 9, 4, 11);
-            nodes.AddConnection(2, 13, 11, 4, 11);
-
+        
             nodes.RemoveConnection(2, 13, 2);
             nodes.RemoveConnection(1, 11, 2);
 

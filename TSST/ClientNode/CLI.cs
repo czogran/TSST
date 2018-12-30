@@ -24,7 +24,7 @@ namespace ClientNode
             Console.WriteLine("zestaw polaczenie,po dwukropku id odbiorcy://connection:");
             Console.WriteLine("wybierz odbiorce, po dwukropku numer odbiorcy://client:");
             Console.WriteLine("po wybraniu odbiorcy zwykle pisanie jest wysylaniem");
-            Console.WriteLine("usun polaczenie, po dwukropku numer polaczenia://usun:");
+            Console.WriteLine("usun polaczenie, po dwukropku numer polaczenia://delete:");
             Console.WriteLine("spamuj odbiorce wpisz://send  teraz kliknij enter i wiadomosc ktora chcesz spamowac");
             Console.WriteLine();
 
@@ -71,6 +71,22 @@ namespace ClientNode
                         clientNode.SendCommand(message);
 
                       
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Zła komenda, spróbuj ponownie.");
+                    }
+                }
+                else if(message.Contains("//delete:"))
+                {
+                    try
+                    {
+                        int connection = Int32.Parse(message.Substring(9));
+
+                        Agent.clientEonDictioinary.Remove(connection);
+
+                        Console.WriteLine("Prosze o usuniecie polaczenia z klijentem:" + connection);
+                        clientNode.SendCommand(message);
                     }
                     catch
                     {

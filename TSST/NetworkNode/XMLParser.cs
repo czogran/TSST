@@ -9,6 +9,9 @@ using System.Xml.Linq;
 
 namespace NetworkNode
 {
+    /// <summary>
+    /// nie jest to tylko parser, robi wszystko co ma byc robione na xml
+    /// </summary>
     class XMLParser
     {
 
@@ -43,6 +46,22 @@ namespace NetworkNode
             }
             xmlDoc.AppendChild(node);
             xmlDoc.Save(name);
+        }
+
+        public static void RemoveConnection(string name, int num)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(name);
+            try
+            {
+                XmlNode child = xmlDoc.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry/connection[@num=" + num + "]");
+                var parent = child.ParentNode;
+                parent.RemoveChild(child);
+                xmlDoc.Save(name);
+                Console.WriteLine("Wywalony wpis");
+            }
+            catch
+            { }
         }
 
         public static void AddConnection(string name,string message)

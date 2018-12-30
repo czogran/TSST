@@ -123,6 +123,12 @@ namespace NetworkNode
             }
         }
       
+        /// <summary>
+        /// sluzy do przelaczania akcji w zaleznosci od otrzymanej wiadomosci
+        ///docelowo powinna zostac wywalona do innej klasy, by to ladnie zrobic
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
@@ -158,6 +164,14 @@ namespace NetworkNode
                 {
 
                 }
+                else if (SwitchingMatrix.agentCollection.Last().Contains("remove:"))
+                {
+                    int numer = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(7));
+                    SwitchingMatrix.RemoveEonDictionary(numer);
+
+                    XMLParser.RemoveConnection("myNode" + Program.number + ".xml", numer);
+                }
+
                 else
                 {
                     Send(SwitchingMatrix.agentCollection.Last());

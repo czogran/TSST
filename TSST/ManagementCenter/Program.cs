@@ -16,6 +16,8 @@ namespace ManagementCenter
         public static List<Link> links;
         // tu w ich dodawaniu bedzie jeden wielki cheat bo bedzie szlo ono po wezlach jakie sa w linkach
         public static List<Node> nodes;
+        public static List<Path> paths=new List<Path>();
+
 
         public static List<Manager> manager;
         public static List<Manager> managerClient;

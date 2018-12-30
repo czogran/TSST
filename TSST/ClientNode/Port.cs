@@ -129,7 +129,10 @@ namespace ClientNode
             }
         }
 
-
+        /// <summary>
+        /// sluzy do wysylania do managera przez noda
+        /// </summary>
+        /// <param name="message"></param>
         public void SendCommand(string message)
         {
             try { 

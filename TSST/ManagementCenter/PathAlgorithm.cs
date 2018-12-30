@@ -14,6 +14,7 @@ namespace ManagementCenter
             Console.WriteLine("czas zaczac dijstre");
             //sciezka ktorej szukamy
             Path path=new Path();
+            path.id = start.ToString() + end.ToString();
 
             //resetowanie statusu nodow z informacji ze sa na sciezce, z poprzedniego zestawiania
             Node.ResestConnectionStatus(nodes);
@@ -55,14 +56,21 @@ namespace ManagementCenter
                 {
                     if (links[i].nodeA == actualNode)
                     {
-                        index = nodes.IndexOf(nodes.Find(x => x.number == links[i].nodeB));
-
-                        index2 = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
-                        if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)          // (wezel[krawendz[i].wezel_b - 1].wejscie == 0 &(wezel[krawendz[i].wezel_b - 1].koszt == 0 || wezel[krawendz[i].wezel_b - 1].koszt > krawendz[i].dlugosc + wezel[aktualny_nr - 1].koszt))
+                        try
                         {
-                            nodes[index].costToGetHere = links[i].cost + nodes[index2].costToGetHere;
-                            nodes[index].previousNode = links[i].nodeA;
-                            nodes[index].inputLink = links[i];
+                            index = nodes.IndexOf(nodes.Find(x => x.number == links[i].nodeB));
+
+                            index2 = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
+                            if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)          // (wezel[krawendz[i].wezel_b - 1].wejscie == 0 &(wezel[krawendz[i].wezel_b - 1].koszt == 0 || wezel[krawendz[i].wezel_b - 1].koszt > krawendz[i].dlugosc + wezel[aktualny_nr - 1].koszt))
+                            {
+                                nodes[index].costToGetHere = links[i].cost + nodes[index2].costToGetHere;
+                                nodes[index].previousNode = links[i].nodeA;
+                                nodes[index].inputLink = links[i];
+                            }
+                        }
+                        catch
+                        {
+
                         }
                     }
 

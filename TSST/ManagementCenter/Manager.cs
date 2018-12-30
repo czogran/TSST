@@ -123,6 +123,8 @@ namespace ManagementCenter
                 }
                 catch
                 {
+                    var item =Program.nodes.SingleOrDefault(x => x.number== number);
+                    Program.nodes.Remove(item);
                     break;
                 }
             }

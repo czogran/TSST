@@ -33,6 +33,28 @@ namespace NetworkNode
 
 
         /// <summary>
+        /// sluzy do wywalania wpisow ze slownika
+        /// </summary>
+        /// <param name="num"></param>
+        public static void RemoveEonDictionary(int num)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load("myNode" + Program.number + ".xml");
+            int startSlot;
+            XmlNode node1;
+
+            //to w sumie mozna wywalic do parsera, bo tam jest tego miejsce zgodnie z konwencja
+            XmlNode node =doc.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry/connection[@num=" + num + "]");
+           
+            node1 = node.SelectSingleNode("start_slot");
+            startSlot = Int32.Parse(node1.InnerText);     
+            
+            switchingDictionary.Remove(startSlot);   
+            
+            Console.WriteLine("Usunnalem wpisy ze slownika sciezki:"+num);
+        }
+
+        /// <summary>
         /// uzupelnia eono wy slownik
         /// </summary>
         public static void FillEonDictionary()

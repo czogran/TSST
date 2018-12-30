@@ -30,13 +30,16 @@ namespace ManagementCenter
         public Link inputLink;
 
         //uzywany do obliczen, czy juz jest na sciezce
-        public bool connected; 
+        public bool connected;
+
+        public List<Tuple<int, int>> connections;
 
         public Node(int number,List<int> ports)
         {
             this.number = number;
             this.ports = ports;
 
+            
             connected = false;
             //maksymalny koszt jaki moze miec int
             costToGetHere = 2147483647;

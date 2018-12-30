@@ -91,7 +91,7 @@ namespace ManagementCenter
             }
             for (int i = 1; i < path.nodes.Count - 1; i++)
             {
-                AddConnection(path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
+                AddConnection(path.nodes.Last().number,path.nodes[0].number,  path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
             }
           
         }
@@ -285,12 +285,18 @@ namespace ManagementCenter
                 Console.WriteLine("AddMatrix, ex:" + ex.ToString());
             }
         }
-        public void AddConnection(int node, int matrix, int startSlot, int endSlot   , int portOut)
+        public void AddConnection(int startNode, int endNode,int node, int matrix, int startSlot, int endSlot   , int portOut)
         {
+          
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
             XmlNode connection = xmlDefault.CreateElement("connection");
+            XmlAttribute attribute= xmlDefault.CreateAttribute("num");
+           // zmienic id polaczenia
+            attribute.Value = startNode.ToString() + endNode.ToString();
+            connection.Attributes.Append(attribute);
+
             XmlNode startSlotNode = xmlDefault.CreateElement("start_slot");
             startSlotNode.InnerText = startSlot.ToString();
 

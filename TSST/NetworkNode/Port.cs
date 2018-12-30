@@ -79,7 +79,15 @@ namespace NetworkNode
 
                Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
 
+                //polecenia przesyslane do managera
                 if (receivedMessage.Contains("connection:"))
+                {
+                    lock (SwitchingMatrix.agentCollection)
+                    {
+                        SwitchingMatrix.agentCollection.Add(receivedMessage);
+                    }
+                }
+                else if (receivedMessage.Contains("delete:"))
                 {
                     lock (SwitchingMatrix.agentCollection)
                     {
