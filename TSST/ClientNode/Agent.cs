@@ -142,11 +142,20 @@ namespace ClientNode
             {
                 GetPortOut(agentCollection.Last());
             }
+
+            //gdy trzeba zmienic 
+            //wazna kolejnosc else if, poniewaz to tez zawiera start slot, a nastepna nie zawiera juz replace
+            else if (agentCollection.Last().Contains("replace:"))
+            {
+                ReplaceEonDictionary(agentCollection.Last());
+            }
+
             else if(agentCollection.Last().Contains("<start_slot>"))
             {
                // Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaa");
                 AddToEonDictionary(agentCollection.Last());
             }
+           
             else
             {
                 Console.WriteLine("Nie ma akcji dla tej wiadomosci");
@@ -166,23 +175,42 @@ namespace ClientNode
             int targetClient;
             int start, end;
 
-            start =message.IndexOf("<start_slot>")+12;
+            start = message.IndexOf("<start_slot>") + 12;
             end = message.IndexOf("</start_slot>");
 
             startSlot = Int32.Parse(message.Substring(start, end - start));
 
-            start = message.IndexOf("<target_client>") +15 ;
+            start = message.IndexOf("<target_client>") + 15;
             end = message.IndexOf("</target_client>");
 
             targetClient = Int32.Parse(message.Substring(start, end - start));
             clientEonDictioinary.Add(targetClient, startSlot);
             Console.WriteLine("Dodaje do slownika wpis dla klijenta o id:" + targetClient + " i szczelinie start " + startSlot);
         }
+        public void ReplaceEonDictionary(string message)
+        {
+            int startSlot;
+            int targetClient;
+            int start, end;
+
+            start = message.IndexOf("<start_slot>") + 12;
+            end = message.IndexOf("</start_slot>");
+
+            startSlot = Int32.Parse(message.Substring(start, end - start));
+
+            start = message.IndexOf("<target_client>") + 15;
+            end = message.IndexOf("</target_client>");
+
+            targetClient = Int32.Parse(message.Substring(start, end - start));
+            clientEonDictioinary.Remove(targetClient);
+            clientEonDictioinary.Add(targetClient, startSlot);
+            Console.WriteLine("Wymienilem wpis dla klijenta o id:" + targetClient + " i szczelinie start " + startSlot);
+        }
 
 
 
 
-            public void FillDictionary()
+        public void FillDictionary()
         {
 
             XmlDocument doc = new XmlDocument();

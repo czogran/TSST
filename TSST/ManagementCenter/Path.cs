@@ -122,7 +122,7 @@ namespace ManagementCenter
         public int[]  FindMaxWindow()
         {
             int maxWindow = 0;
-            int startSlot=0;
+             startSlot=0;
             int actualWindow = 0;
             for(int i=0;i<possibleWindow.Length;i++)
             {
