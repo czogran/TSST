@@ -14,9 +14,8 @@ namespace CableCloud
     class ClientCloud
     { 
         Socket mySocket;
-        Socket listeningSocket;
         int id;
-    byte[] buffer;
+        byte[] buffer;
         
     public ClientCloud(int id)
     {
@@ -38,11 +37,13 @@ namespace CableCloud
         mySocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         mySocket.Bind(localEndPoint);
     }
+
     public void Connect()
     {
         mySocket.Listen(10);
         mySocket= mySocket.Accept();
-            CLI.ClientConnected(id);
+
+        CLI.ClientConnected(id);
     
         buffer = new byte[1024];
 
@@ -54,7 +55,6 @@ namespace CableCloud
 
         try
         {
-
             byte[] receivedData = new byte[1024];
             receivedData = (byte[])result.AsyncState;
 
@@ -69,15 +69,14 @@ namespace CableCloud
 
             string receivedMessage = encoding.GetString(auxtrim);
                 
-
             Console.WriteLine("Wiadomość od klienta: "+receivedMessage);
            
                 //tu jest funkcja switchujaca
                 Switch.SwitchBufer(receivedMessage);
 
-                buffer = new byte[1024];
+            buffer = new byte[1024];
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
-                new AsyncCallback(MessageCallback), buffer);
+            new AsyncCallback(MessageCallback), buffer);
 
         }
         catch (Exception ex)
@@ -94,15 +93,10 @@ namespace CableCloud
 
     public void SendThread()
         {
-
-
-            //Console.ReadLine();
            lock (Switch.clientCollection.ElementAt(id - 1))
             {
                 Switch.clientCollection.ElementAt(id - 1).CollectionChanged += Send;
-            }
-            //Console.ReadLine();
-            
+            }            
         }
         
         private void Send(object sender, NotifyCollectionChangedEventArgs e)

@@ -186,8 +186,6 @@ namespace NetworkNode
 
             }
 
-
-
         /// <summary>
         /// Słownik portów wejścia/wyjścia
         /// label_in, label_out, port_out

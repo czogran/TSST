@@ -14,9 +14,7 @@ namespace CableCloud
     class Agent
     {
         Socket mySocket;
-        Socket listeningSocket;
 
-        EndPoint endRemote, endLocal;
         byte[] buffer;
 
         List<NodeCloud> node = new List<NodeCloud>();
@@ -135,21 +133,17 @@ namespace CableCloud
                 lock (Program.nodeAmount)
                 {
                     Program.nodeAmount = nodes;
-                    Switch.data.Add(Int32.Parse(nodes));
+                    //Switch.data.Add(Int32.Parse(nodes));
                   
                     string localIP;
-                    int localHost;
-                    int remoteID;
+
                     for (int i = 1; i <= Int32.Parse(nodes); i++)
                     {
-                        //int i = 1;
-                        localHost = 150 + i;
+                       
                         node.Add(new NodeCloud(i));
                         localIP = "127.0.2." +i.ToString();
                         node[i - 1].CreateSocket(localIP, 11001);
-
-                      //  remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
-                        //Console.WriteLine("127.0.2." + i.ToString());
+                   
                         node[i - 1].Connect("127.0.1." + i.ToString(), 11001);
                         Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
                         threadNode.Start();
@@ -161,7 +155,6 @@ namespace CableCloud
             }
             else if(Switch.agentCollection.Last().Contains("clients"))
             {
-
                 string clients = Switch.agentCollection.Last().Substring(8);
             }
         }

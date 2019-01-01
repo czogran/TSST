@@ -15,7 +15,7 @@ namespace ManagementCenter
     {
         Socket mySocket;
 
-        EndPoint endRemote, endLocal;
+        EndPoint endRemote;
         byte[] buffer;
 
         string myIp;
@@ -55,7 +55,6 @@ namespace ManagementCenter
             IPAddress ipAddress = IPAddress.Parse(toIp);
 
             endRemote = new IPEndPoint(ipAddress, toPort);
-            //mySocket.Bind(endRemote);
             mySocket.Connect(endRemote);
             buffer = new byte[1024];
             Console.WriteLine("polaczono z adresem: " + IP);
@@ -65,10 +64,8 @@ namespace ManagementCenter
         }
         private void MessageCallback(IAsyncResult result)
         {
-
             try
             {
-
                 byte[] receivedData = new byte[1024];
                 receivedData = (byte[])result.AsyncState;
 
@@ -142,22 +139,6 @@ namespace ManagementCenter
            
         }
 
-        /// <summary>
-        /// zdaje sie ze not in use
-        /// </summary>
-        public void SendThread()
-        {
-            while (true)
-            {
-                string message = Console.ReadLine();
-                if (message == "end")
-                {
-                    disconnect_Click();
-                    break;
-                }
-                else
-                    Send(message);
-            }
-        }
+        
     }
 }

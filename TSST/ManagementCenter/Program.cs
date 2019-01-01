@@ -134,9 +134,6 @@ namespace ManagementCenter
                 }
             }
 
-
-            // Console.WriteLine(XML.StringNode(1));
-            Console.ReadLine();
         }
     }
 }

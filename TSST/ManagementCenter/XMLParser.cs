@@ -103,11 +103,10 @@ namespace ManagementCenter
             return link;
         }
 
-
+        ///nie w uzyciu, po cos robile to, ale juz nie pamietam po co
         public List<int> GetNodePorts(int nodeId)
         {
             List<int> ports = new List<int>();
-            ////node[@id=" + id+"]"
             int i = 0;
             foreach (XmlNode nodePort in xmlDefault.SelectNodes("//node[@id=" + nodeId+"]/matrix_entry"))
             {
@@ -122,6 +121,7 @@ namespace ManagementCenter
 
 
         /// <summary>
+        /// tez nigdzie nie uzyty i juz nie wiem po co zrobiony
         /// Odczyt pliku XML i zapis portów do słownika
         /// <param name="filePath">ścieżka do pliku konfiguracyjnego</param>
         /// </summary>

@@ -15,21 +15,19 @@ namespace CableCloud
         public static BlockingCollection<ObservableCollection<string>> nodeCollection = new BlockingCollection<ObservableCollection<string>>();
         public static BlockingCollection<ObservableCollection<string>> clientCollection = new BlockingCollection<ObservableCollection<string>>();
 
-        public static BlockingCollection<int> data = new BlockingCollection<int>();
+       // public static BlockingCollection<int> data = new BlockingCollection<int>();
 
         public static Dictionary<int, int> linkDictionary = new Dictionary<int, int>();
 
         public static void FillDictionary()
-        {
-            
+        {           
             XmlDocument doc = new XmlDocument();
             doc.Load("myLinks.xml");
             int inPort;
             int outPort;
             XmlNode node1;
             foreach (XmlNode node in doc.SelectNodes("cable_cloud/port"))
-            {
-                
+            {               
                 node1 = node.SelectSingleNode("port_in");
                 inPort= Int32.Parse(node1.InnerText);
                 node1 = node.SelectSingleNode("port_out");

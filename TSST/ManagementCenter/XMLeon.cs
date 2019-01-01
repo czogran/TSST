@@ -13,11 +13,15 @@ namespace ManagementCenter
     /// </summary>
     class XMLeon
     { 
+        //lista konstruktorow
+        //
+
         //sprawdzic czy wszystkie sa tu wypisane
         //lista funkcji:
         //AddNode
         //StringNode 
         //StringCableLinks
+        //GetClientPortOut
         //StringClients- testnac- te funkcje kiedy dzialaly
         //AddClient
         //AddMatrix

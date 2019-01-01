@@ -56,12 +56,14 @@ namespace ManagementCenter
                 {
                     if (links[i].nodeA == actualNode)
                     {
+                        //try jest tutaj gdyz pozniej sa zabijane juz jakies wezly, a linki wziaz zyja
+                        //wiec tak jest prosciej sprawdzic czy jeszcze jest taki wpis w liscie nodow
                         try
                         {
                             index = nodes.IndexOf(nodes.Find(x => x.number == links[i].nodeB));
 
                             index2 = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
-                            if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)          // (wezel[krawendz[i].wezel_b - 1].wejscie == 0 &(wezel[krawendz[i].wezel_b - 1].koszt == 0 || wezel[krawendz[i].wezel_b - 1].koszt > krawendz[i].dlugosc + wezel[aktualny_nr - 1].koszt))
+                            if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)        
                             {
                                 nodes[index].costToGetHere = links[i].cost + nodes[index2].costToGetHere;
                                 nodes[index].previousNode = links[i].nodeA;
@@ -80,8 +82,7 @@ namespace ManagementCenter
                 for (int i=0;i<nodes.Count;i++)
                 {
                     if(nodes[i].connected==false && nodes[i].costToGetHere < cheapestPath)
-                    {
-                        
+                    {                       
                         cheapestPath = nodes[i].costToGetHere;
 
                         //indeksuje od zera, by sie nie powalilo

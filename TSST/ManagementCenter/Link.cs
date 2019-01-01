@@ -23,10 +23,8 @@ namespace ManagementCenter
         string status;
 
         int numberOfSlots;
-        int numberOfUsedSlots;
+        
         public bool[] usedSlots;
-        // public Array usedSlots;
-
 
         public int portIn;
         public int portOut;

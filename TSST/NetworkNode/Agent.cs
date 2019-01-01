@@ -99,7 +99,6 @@ namespace NetworkNode
                 sending = enc.GetBytes(message);
 
                 mySocket.Send(sending);
-
             }
         }
 
@@ -137,13 +136,7 @@ namespace NetworkNode
                 if (SwitchingMatrix.agentCollection.Last().Contains("node"))
                 {
                     XMLParser.AddConnection("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-                    // File.WriteAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-                   // File.AppendAllText("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-
-
-                    //SwitchingMatrix.portDictionary.Clear();
-                    //SwitchingMatrix.labelZeroDictionary.Clear();
-                    // SwitchingMatrix.FillDictionary();
+  
                     SwitchingMatrix.FillEonDictionary();
                 }
                 else if (SwitchingMatrix.agentCollection.Last().Contains("get_config"))
@@ -157,7 +150,7 @@ namespace NetworkNode
                     int start = SwitchingMatrix.agentCollection.Last().IndexOf("<get_matrix>");
                     int end = SwitchingMatrix.agentCollection.Last().IndexOf("</get_matrix>");
                     int matrix = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(start + 12, end - start - 12));
-                    //Console.WriteLine(matrix);
+
                     Send(XMLParser.StringMatrix(matrix));
                 }
                 else if(SwitchingMatrix.agentCollection.Last().Contains("ping"))
@@ -171,22 +164,10 @@ namespace NetworkNode
 
                     XMLParser.RemoveConnection("myNode" + Program.number + ".xml", numer);
                 }
-
                 else
                 {
                     Send(SwitchingMatrix.agentCollection.Last());
                 }
-            }
-        }
-
-
-
-        //zdaje sie ze smiec
-        public void AgentInfo()
-        {
-            lock (SwitchingMatrix.agentCollection)
-            {
-                SwitchingMatrix.agentCollection.CollectionChanged += SwitchAction;
             }
         }
     }

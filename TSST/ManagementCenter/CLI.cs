@@ -102,6 +102,8 @@ namespace ManagementCenter
 
             return isCorrect;
         }
+
+
         /// <summary>
         /// opcje dostepnych polecen
         /// </summary>

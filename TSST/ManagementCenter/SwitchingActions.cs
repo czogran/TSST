@@ -9,11 +9,6 @@ namespace ManagementCenter
 {
     class SwitchingActions
     {
-        //chyba sa do wywalki, TODO sprawdzic to
-        internal static ObservableCollection<Tuple<int, string>> managerNodeCollection = new ObservableCollection<Tuple<int, string>>();
-        internal static ObservableCollection<Tuple<int, string>> managerClientCollection = new ObservableCollection<Tuple<int, string>>();
-
-
         /// <summary>
         /// przelaczanie tego co ma zrobic manager
         /// w zaleznosci co do niego doszlo
@@ -33,7 +28,13 @@ namespace ManagementCenter
         }
 
 
-
+        /// <summary>
+        /// gdy zdechnie wezel by od nowa zrekonfigurowac polaczenia i 
+        /// rozsyla info wezlom co byly na poprzedniej sciezce by wywlaily co maja na nia
+        /// potem wysyla klijentowi nowe info jak ma wysylac
+        /// i wezlom co sa na tej nowej sciezce
+        /// </summary>
+        /// <param name="id"></param>
         internal static void NodeIsDead(int id)
         {
             string message1;
@@ -93,47 +94,42 @@ namespace ManagementCenter
 
                
 
-                var xml = new XMLeon(path.xmlName);
-                //taka indkesacja, bo bierzemy od konca i nie potrzebujemy do odbiorcy niczego wysylac
-                for (int i = pathForFunction.nodes.Count - 1; i >= 1; i--)
-                {
-                    if (pathForFunction.nodes[i].number > 80)
+                    var xml = new XMLeon(path.xmlName);
+
+                    //rozeslanie informacji do klijenta wysylajacego o zmianie sciezki
+                      var targetClient = pathForFunction.nodes.First().number - 80;
+                      message1 = "replace:<start_slot>" + pathForFunction.startSlot + "</start_slot><target_client>" +targetClient + "</target_client>";
+                          
+                      try
+                      {
+                                
+                       Program.managerClient[path.nodes.Last().number - 80 - 1].Send(message1);
+                      }
+                      catch(Exception ex)
+                      {
+                       Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta, ex: "+ex.ToString());
+                      }
+                    //koniec rozsylo do klijenta
+
+                    //taka indkesacja, bo bierzemy od konca i nie potrzebujemy do odbiorcy niczego wysylac
+                    for (int i = pathForFunction.nodes.Count - 1; i >= 1; i--)
                     {
+                        if (pathForFunction.nodes[i].number < 80)
+           
+                        {
 
-                        if (pathForFunction.pathIsSet == true)
-                        {
-                            var targetClient = pathForFunction.nodes.First().number - 80;
-                            message1 = "replace:<start_slot>" + pathForFunction.startSlot + "</start_slot><target_client>" +targetClient + "</target_client>";
-                        }
-                        else
-                        {
-                            message1 = "zabraklo slotow";
-                        }
-
-                        try
-                        {
-                            Program.managerClient[path.nodes[i].number - 80 - 1].Send(message1);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta");
+                            message1 = xml.StringNode(pathForFunction.nodes[i].number);
+                            Console.WriteLine(message1);
+                            try
+                            {
+                                Program.manager[pathForFunction.nodes[i].number - 1].Send(message1);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                            }
                         }
                     }
-                    else
-                    {
-
-                        message1 = xml.StringNode(pathForFunction.nodes[i].number);
-                        Console.WriteLine(message1);
-                        try
-                        {
-                            Program.manager[pathForFunction.nodes[i].number - 1].Send(message1);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
-                        }
-                    }
-                }
                 }
                 else
                 {
@@ -157,6 +153,7 @@ namespace ManagementCenter
 
 
         /// <summary>
+        /// gdy client prosi o usuniecie polaczenia
         /// sluzy do usuniecia sciezki z listy gdy jest o to prosba i rozeslania wiadomosci do wezlow by wywalily je ze swojej pamieci
         /// </summary>
         /// <param name="message"></param>
@@ -166,7 +163,6 @@ namespace ManagementCenter
             int askingClient, targetClient;
             int start, end;
 
-            XMLeon xml;
 
             end = message.IndexOf("<port>");
             //9 stad ze //delete: konczy sie na 9 znaku
@@ -230,7 +226,12 @@ namespace ManagementCenter
         }
 
 
-
+        /// <summary>
+        /// gdy klijent prosi o zestawienie polaczenua jest wywolywana ta funkcja
+        /// wywoluje ona ustawianie sciezki
+        /// i potem rozsyla istotne informacje dalej
+        /// </summary>
+        /// <param name="message"></param>
         static void AddConnection(string message)
         {
             Console.WriteLine("Prosba o zestawienie polaczenia");
@@ -282,8 +283,6 @@ namespace ManagementCenter
                 {
                     if (path.nodes[i].number > 80)
                     {
-                        // string message1 = "addConnection:start_slot" + path.startSlot + "/start_slot" + "target_client" + targetClient + "/target_client";
-                        //string message1 = "aaaaaaaaa111111111111111111111111111111111111aaaaaaaaaaa";
                         string message1;
                         if (path.pathIsSet == true)
                         {
@@ -293,10 +292,6 @@ namespace ManagementCenter
                         {
                             message1 = "zabraklo slotow";
                         }
-                        //var tup = new Tuple<int,string>(path.nodes[i].number-80,message1);
-                        //string message1 = "<start_slot>" + path.startSlot + "</start_slot><target_client>"+targetClient+"</target_client>";
-                        //string message1="aaaaa<start_slot>" + path.startSlot + "</start_slot>aaaaa<target_client>"+targetClient+"</target_client>aaa";
-                        // managerClientCollection.Add(tup);
                         try
                         {
                             Program.managerClient[path.nodes[i].number - 80 - 1].Send(message1);
@@ -319,9 +314,7 @@ namespace ManagementCenter
                         {
                             Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
                         }
-                        //var tup = new Tuple<int, string>(path.nodes[i].number - 80, message1);
-                        // managerClientCollection.Add(tup);
-
+                   
                     }
                 }
             }

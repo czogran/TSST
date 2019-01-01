@@ -131,14 +131,14 @@ namespace ClientNode
         public  void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
-
-            if (agentCollection.Last().Contains("<client>"))
+            //zdaje sie ze z mpls i do wywalki
+            /*if (agentCollection.Last().Contains("<client>"))
             {
                 File.WriteAllText("myClient" + Program.number + ".xml", agentCollection.Last());
                 clientDictioinary.Clear();
                 FillDictionary();
-            }
-            else if(agentCollection.Last().Contains("port_out:"))
+            }*/
+             if(agentCollection.Last().Contains("port_out:"))
             {
                 GetPortOut(agentCollection.Last());
             }
@@ -209,7 +209,7 @@ namespace ClientNode
 
 
 
-
+        //zdaje sie ze z mpls i do wywalki
         public void FillDictionary()
         {
 

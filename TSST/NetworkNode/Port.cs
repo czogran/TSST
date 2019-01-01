@@ -94,6 +94,7 @@ namespace NetworkNode
                         SwitchingMatrix.agentCollection.Add(receivedMessage);
                     }
                 }
+                //w przeciwnym przypadku wysyla do watki liczacego i ten nastepnie do wsysylajacego z powrotem do chmury
                 else
                 {
                     lock (SwitchingMatrix.computingCollection)
@@ -114,7 +115,7 @@ namespace NetworkNode
                 Console.WriteLine(ex.ToString());
         }
     }
-        private static int counter = 0;
+
     public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
@@ -142,9 +143,6 @@ namespace NetworkNode
             lock (SwitchingMatrix.sendCollection)
             {
                 SwitchingMatrix.sendCollection.CollectionChanged += Send;
-                
-              
-               // SwitchingMatrix.collection.
             }
     }
 

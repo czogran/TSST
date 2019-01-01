@@ -35,6 +35,7 @@ namespace ClientNode
             mySocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             mySocket.Bind(localEndPoint);
         }
+
         public void Connect(string IP, int port)
         {
             string toIp = IP;
@@ -44,7 +45,6 @@ namespace ClientNode
             IPAddress ipAddress = IPAddress.Parse(toIp);
 
             endRemote = new IPEndPoint(ipAddress, toPort);
-            //mySocket.Bind(endRemote);
             mySocket.Connect(endRemote);
 
             Console.WriteLine("Polaczono z chmura");
@@ -54,6 +54,7 @@ namespace ClientNode
             mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
                 new AsyncCallback(MessageCallback), buffer);
         }
+
         private void MessageCallback(IAsyncResult result)
         {
 
@@ -79,9 +80,6 @@ namespace ClientNode
 
                 Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
 
-             //  Console.WriteLine(receivedMessage.Substring(0,receivedMessage.IndexOf("<address>")));
-
-
                 buffer = new byte[1024];
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
                     new AsyncCallback(MessageCallback), buffer);
@@ -96,30 +94,16 @@ namespace ClientNode
         {
             try
             {
-                int port;
                 int startSlot;
-                string address;
-               /* lock (Agent.clientDictioinary)
-                {
-                    //bierzemy adres docelowego
-                    var tuple = Agent.clientDictioinary[idOfNodeWeAreSendingTo];
-                    
-                    address = tuple.Item1;
-                    
-                    tuple = Agent.clientDictioinary[Program.number];
-                    port = tuple.Item2;
-
-                }*/
-            lock(Agent.clientEonDictioinary)
+                lock(Agent.clientEonDictioinary)
                 {
                     startSlot = Agent.clientEonDictioinary[idOfNodeWeAreSendingTo];
                 }
 
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
-                //sending = enc.GetBytes(message + "<address>" + address + "</address>"+ "<port>" +port.ToString()+"</port>");
-                sending = enc.GetBytes(message + "<port>" + Agent.portOut+"</port>"+"<start_slot>"+startSlot+"</start_slot>");
 
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut+"</port>"+"<start_slot>"+startSlot+"</start_slot>");
 
                 mySocket.Send(sending);
             }

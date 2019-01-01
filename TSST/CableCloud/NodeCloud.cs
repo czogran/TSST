@@ -12,10 +12,9 @@ namespace CableCloud
 {
     class NodeCloud
     {
-
         Socket mySocket;
 
-        EndPoint endRemote, endLocal;
+        EndPoint endRemote;
         byte[] buffer;
         int id;
         public NodeCloud(int id)
@@ -92,8 +91,6 @@ namespace CableCloud
         }
         public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-
-
             lock (Switch.nodeCollection.ElementAt(id - 1))
             {
                 string s = Switch.nodeCollection.ElementAt(id - 1).Last();
@@ -111,6 +108,7 @@ namespace CableCloud
             mySocket.Disconnect(true);
             mySocket.Close();
         }
+
         public void SendThread()
         {
             lock (Switch.nodeCollection.ElementAt(id - 1))
