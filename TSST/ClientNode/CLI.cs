@@ -66,9 +66,17 @@ namespace ClientNode
                 {
                     try
                     {
+                        
                         int connection = Int32.Parse(message.Substring(13));
                         Console.WriteLine("Prosze o zestawienie polaczenia z klijentem:" + connection);
-                        clientNode.SendCommand(message);
+
+                        lock (Agent.agentCollection)
+                        {
+                            Console.WriteLine("aa");
+                            Agent.agentCollection.Add(message);
+                            Console.WriteLine("baa");
+
+                        }//clientNode.SendCommand(message);
 
                       
                     }
@@ -86,7 +94,12 @@ namespace ClientNode
                         Agent.clientEonDictioinary.Remove(connection);
 
                         Console.WriteLine("Prosze o usuniecie polaczenia z klijentem:" + connection);
-                        clientNode.SendCommand(message);
+
+                        lock (Agent.agentCollection)
+                        {
+                            Agent.agentCollection.Add(message);
+                        }
+                            //clientNode.SendCommand(message);
                     }
                     catch
                     {

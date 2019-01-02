@@ -18,7 +18,7 @@ namespace ClientNode
         byte[] buffer;
 
         //rzeczy do mpls
-        public ObservableCollection<string> agentCollection;// = new ObservableCollection<string>();
+        public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
         //kluczem jest klijent z jakim sie laczymy, a wartoscia jego adres, port wyjsciowey
         public static Dictionary<int, Tuple<string,int> >clientDictioinary = new Dictionary<int, Tuple<string,int>>();
 
@@ -29,7 +29,7 @@ namespace ClientNode
 
         public Agent()
         {
-            agentCollection = new ObservableCollection<string>();
+           // agentCollection = new ObservableCollection<string>();
             clientEonDictioinary = new Dictionary<int, int>();
         }
 
@@ -118,6 +118,24 @@ namespace ClientNode
             mySocket.Close();
         }
 
+
+        public void SendCommand(string message)
+        {
+            try
+            {
+
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut + "</port>" + "<my_id>" + Program.number + "</my_id>");
+
+                mySocket.Send(sending);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Nie udalo sie wyslac:" + ex.ToString());
+            }
+        }
+
         public void ComputingThread()
         {
 
@@ -155,7 +173,14 @@ namespace ClientNode
                // Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaa");
                 AddToEonDictionary(agentCollection.Last());
             }
-           
+           else if(agentCollection.Last().Contains("//connection:"))
+            {
+                SendCommand(agentCollection.Last());
+            }
+            else if (agentCollection.Last().Contains("//delete:"))
+            {
+                SendCommand(agentCollection.Last());
+            }
             else
             {
                 Console.WriteLine("Nie ma akcji dla tej wiadomosci");

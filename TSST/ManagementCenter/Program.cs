@@ -39,7 +39,7 @@ namespace ManagementCenter
             int clientAmount = int.Parse(args[1]);
           
             int id;
-
+            
             List<string> port = new List<string>();
             List<string> agent = new List<string>();
              manager = new List<Manager>();
