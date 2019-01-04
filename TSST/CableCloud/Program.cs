@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,20 +14,36 @@ namespace CableCloud
     class Program
     {
         public static String nodeAmount = "0";
+        static List<ClientCloud> client=new List<ClientCloud>();
+        static List<Thread> clientThread = new List<Thread>();
+        static List<Thread> connectClientThread = new List<Thread>();
+
+        //static ProcessThreadCollection clientThread;
         /// <summary>
         /// Main
         /// </summary>
         /// <param name="args">Nieużywane</param>
         static void Main(string[] args)
         {
+            
+          
+
+
+
+
+
+
+
             Console.WriteLine("CABLE CLOUD");
 
             //utworzenie agenta
             Agent agent = new Agent();
             agent.CreateSocket("127.0.0.2", 11001);
-            agent.Connect();
+            Thread threadConnect = new Thread(new ThreadStart(agent.Connect));
+            threadConnect.Start();
             Thread threadAgent = new Thread(new ThreadStart(agent.ComputingThread));
             threadAgent.Start();
+
 
             //wezly
             List<NodeCloud> node = new List<NodeCloud>();
@@ -37,23 +54,44 @@ namespace CableCloud
             //{
                 int num = Int32.Parse(nodeAmount);
 
-                /*for (int i = 1; i <= Switch.data.ElementAt(0); i++)
-                {
-                //int i = 1;
-                    localHost = 150 + i;
-                    node.Add(new NodeCloud(i));
-                    localIP = "127.0.0." + localHost.ToString();
-                    node[i - 1].CreateSocket(localIP, 11001);
+            /*for (int i = 1; i <= Switch.data.ElementAt(0); i++)
+            {
+            //int i = 1;
+                localHost = 150 + i;
+                node.Add(new NodeCloud(i));
+                localIP = "127.0.0." + localHost.ToString();
+                node[i - 1].CreateSocket(localIP, 11001);
 
-                    remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
-                    Console.WriteLine("127.0.0." + (remoteID - 1).ToString());
-                    node[i - 1].Connect("127.0.0." + (remoteID - 1).ToString(), 11001);
-                    Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
-                    threadNode.Start();
-                }*/
+                remoteID = 2 * i + 10;//+ (remoteID - 1).ToString()
+                Console.WriteLine("127.0.0." + (remoteID - 1).ToString());
+                node[i - 1].Connect("127.0.0." + (remoteID - 1).ToString(), 11001);
+                Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
+                threadNode.Start();
+            }*/
             //}
-            
-            //klijenci
+
+
+
+            for (int i = 1; i <= Int32.Parse(args[0]); i++)
+            {
+                try
+                {
+                    client.Add(new ClientCloud(i));
+                    client[i - 1].CreateSocket("127.0.11." + i.ToString(), 11001);
+                    connectClientThread.Add(new Thread(new ThreadStart(client[i - 1].Connect)));
+                    connectClientThread[i - 1].Start();
+                    clientThread.Add(new Thread(new ThreadStart(client[i - 1].SendThread)));
+                    clientThread[i - 1].Start();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Tworze polaczenia dla kabli, ex:" + ex.ToString());
+                }
+
+                Console.WriteLine("127.0.11." + i.ToString());
+            }
+
+         /*   //klijenci
             ClientCloud p = new ClientCloud(1);
             p.CreateSocket("127.0.11.1", 11001);
             p.Connect();
@@ -95,9 +133,9 @@ namespace CableCloud
             p3.CreateSocket("127.0.11.6", 11001);
             p3.Connect();
             Thread t6 = new Thread(new ThreadStart(p3.SendThread));
-            t6.Start();
+            t6.Start();*/
 
-
+    
             //te read line musi byc inaczej wszystko sie konczy
             Console.ReadLine();
 

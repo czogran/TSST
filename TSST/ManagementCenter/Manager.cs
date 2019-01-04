@@ -21,7 +21,7 @@ namespace ManagementCenter
         string myIp;
         int myport;
 
-        int number;
+        public int number;
 
         public Manager()
         {

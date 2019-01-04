@@ -9,6 +9,9 @@ namespace ManagementCenter
 {
     class SwitchingActions
     {
+
+       // internal static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
+
         /// <summary>
         /// przelaczanie tego co ma zrobic manager
         /// w zaleznosci co do niego doszlo
@@ -25,6 +28,7 @@ namespace ManagementCenter
             {
                 DeleteConnection(message);
             }
+            
         }
 
 

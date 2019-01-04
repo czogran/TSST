@@ -117,6 +117,63 @@ namespace ManagementCenter
             Console.WriteLine("[4] Zczytaj port wezla");
         }
 
+        public static void ConfigureSubnetworks()
+        {
+            CLI.RequestXML();
+            string name;
+            do
+            {
+                name = Console.ReadLine();
+
+                if (name == "esc")
+                {
+                    break;
+                }
+                XML.SetName(name);
+            } while (XML.Test() != true);
+            if (name != "esc")
+            {
+
+                XMLeonSubnetwork file = new XMLeonSubnetwork(name);
+               lock(Program.subnetworksList)
+                {
+                    Program.subnetworksList = file.GetSubnetworks();
+                    foreach(Subnetwork sub in Program.subnetworksList)
+                    {
+                        lock (Program.subnetworkManager)
+                        {
+                            try
+                            {
+                                Program.subnetworkManager.Find(x => x.number == sub.id).Send(sub.myContent);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("nie udala sie konfiguracja podsieci, ex:" + ex.ToString());
+                            }
+                        }
+                    }
+                }
+                string client;
+                client = file.GetClientFile();
+
+                List<int> portOut = XMLeon.GetClientPortOut(client);
+                for (int i = 0; i < Program.amountOfclients; i++)
+                {
+                    try
+                    {
+                        Program.managerClient[i].Send("port_out:" + portOut[i]);
+                        Console.WriteLine("Wysylam info o porcie:" + portOut[i]);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Blad wysylania informacji o porcie");
+                    }
+                }
+            }
+        }
+
+
         /// <summary>
         /// wysyla klijentom info na jaki port maja wysylac
         /// </summary>

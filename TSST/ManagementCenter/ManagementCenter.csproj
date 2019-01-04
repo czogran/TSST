@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agent.cs" />
+    <Compile Include="AgentSwitchingAction.cs" />
     <Compile Include="CLI.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="Manager.cs" />
@@ -51,10 +53,12 @@
     <Compile Include="PathAlgorithm.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Subnetwork.cs" />
     <Compile Include="SwitchingActions.cs" />
     <Compile Include="Tests.cs" />
     <Compile Include="XML.cs" />
     <Compile Include="XMLeon.cs" />
+    <Compile Include="XMLeonSubnetwork.cs" />
     <Compile Include="XMLParser.cs" />
   </ItemGroup>
   <ItemGroup>
