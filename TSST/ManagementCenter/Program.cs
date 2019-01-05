@@ -12,6 +12,12 @@ namespace ManagementCenter
     /// </summary>
     class Program
     {
+        /// <summary>
+        /// okresla czy dany manager jest na samym dole sieci- czy juz nie ma pod nim podsieci
+        /// jezeli ==true znaczy ze jest na samym dole
+        /// </summary>
+        public static bool isTheBottonSub = false;
+
         public static int amountOfnodes;
         public static int amountOfclients;
         public static int amountOfSubnetworks;
@@ -23,7 +29,7 @@ namespace ManagementCenter
         public static List<Subnetwork> subnetworksList = new List<Subnetwork>();
 
 
-        public static List<Manager> manager;
+        public static List<Manager> managerNodes=new List<Manager>();
         public static List<Manager> managerClient= new List<Manager>();
         public static Manager managerCloud;
 
@@ -43,44 +49,38 @@ namespace ManagementCenter
             //Tests.TestXML();
             Console.WriteLine("MANAGER:"+args[0]);
             subnetworkManager = new List<Manager>();
-
+            
+            //ustalenie wartosci ile mamy czego
             amountOfnodes = Int32.Parse(args[1]);
             amountOfclients = Int32.Parse(args[2]);
             amountOfSubnetworks = Int32.Parse(args[3]);
 
 
 
+            //laczenie sie z chmura
+            managerCloud = new Manager();
+            managerCloud.CreateSocket("127.0.31."+args[0], 11001);
 
-            XMLeonSubnetwork test = new XMLeonSubnetwork("test.xml","client.xml","links.xml");
+            
+            //sie tu czasem wywalalo, to pomaga
+            //laczenie sie z chmura
+            while (true)
+            {
+                try
+                {
+                    managerCloud.Connect("127.0.30." + args[0], 11001);
+                    break;
+                }
+                catch { }
+            }
 
-            List<int> links = new List<int>();
-            List<int> nodes = new List<int>();
-            List<int> links1 = new List<int>();
-            List<int> nodes1 = new List<int>();
-            links.Add(1);
-            links.Add(3);
-            nodes.Add(4);
 
-            test.AddSubnetwork(3,"11111", "linkxd");
-            test.AddSubnetwork(2, "1.1.1.1",links1 ,nodes1);
-            test.AddSubSubNetwork(2,4, "3.3.3", links, nodes);
-            test.AddSubnetwork(3, "33333", links, nodes);
-
-            test.GetSubnetworks();
-
-         
             Agent agent;
 
             if (args[0]=="1")
             {
                 Console.WriteLine("Centralny Manager");
-                managerCloud = new Manager();
-                managerCloud.CreateSocket("127.0.0.1", 11001);
-
-               // System.Threading.Thread.Sleep(100);
-                managerCloud.Connect("127.0.0.2", 11001);
-
-
+             
                   for(int i=2; i<=amountOfSubnetworks;i++)
                   {
                       subnetworkManager.Add(new Manager(i));
@@ -88,7 +88,7 @@ namespace ManagementCenter
                       subnetworkManager[i-2].Connect("127.0.20." + i, 11001);
 
                   }
-
+                  //laczenie sie z klientami
                 for (int i = 1; i <= amountOfclients; i++)
                 {
                     managerClient.Add(new Manager());
@@ -98,13 +98,17 @@ namespace ManagementCenter
                     managerClient[i - 1].Connect("127.0.12." + i.ToString(), 11001);
                 }
             }
+            //jezeli nie jest to glowny manager to tworzymy agenta
+            //polaczenia z nodami sa po tym jak agent dostanie info ktory plik koniguracyjny ma brac;
             else
             {
                 agent = new Agent();
 
                 agent.CreateSocket("127.0.20."+args[0].ToString(),11001);
-               Thread thread=new Thread( new ThreadStart(agent.Connect));
+                Thread thread=new Thread( new ThreadStart(agent.Connect));
                 thread.Start();
+                Thread threadComputing = new Thread(new ThreadStart(agent.ComputingThread));
+                threadComputing.Start();
 
             }
 
@@ -135,14 +139,14 @@ namespace ManagementCenter
                 {
                    
                     {
-                        CLI.GetNodeFromNode(manager);
+                        CLI.GetNodeFromNode(managerNodes);
                     }
 
                 }
                 //prosba o konfiguracje konkretnego portu konkretnego wezla
                 else if (choose=="4")
                 {
-                    CLI.GetMatrixFromNode(manager);
+                    CLI.GetMatrixFromNode(managerNodes);
                 }
             }
 

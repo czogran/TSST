@@ -112,8 +112,9 @@ namespace ManagementCenter
         /// <param name="e"></param>
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-
+            AgentSwitchingAction.AgentAction(AgentSwitchingAction.agentCollection.Last(),Program.managerCloud);
         }
+
             public void disconnect_Click()
         {
             mySocket.Disconnect(true);

@@ -423,6 +423,63 @@ namespace ManagementCenter
             }
         }
 
+
+        public void AddLink(int id, int nodeA, int nodeB, int portIn, int portOut,string status, int cost, int numberOfSlots, int lenght = 10)
+        {
+
+            XmlDocument xmlDefault = new XmlDocument();
+            xmlDefault.Load(name);
+
+            XmlNode aNode = xmlDefault.CreateElement("node_a");
+            aNode.InnerText = nodeA.ToString();
+            XmlNode bNode = xmlDefault.CreateElement("node_b");
+            bNode.InnerText = nodeB.ToString();
+
+         
+            XmlNode port = xmlDefault.CreateElement("port");
+            XmlAttribute attribute = xmlDefault.CreateAttribute("id");
+            attribute.InnerText = id.ToString();
+            port.Attributes.Append(attribute);
+            XmlNode statusType = xmlDefault.CreateElement("status");
+            statusType.InnerText = status;
+            XmlNode linkIn = xmlDefault.CreateElement("port_in");
+            linkIn.InnerText = portIn.ToString();
+            XmlNode linkOut = xmlDefault.CreateElement("port_out");
+            linkOut.InnerText = portOut.ToString();
+
+            XmlNode costLink = xmlDefault.CreateElement("cost");
+            costLink.InnerText = cost.ToString();
+            XmlNode slots = xmlDefault.CreateElement("slots_amount");
+            slots.InnerText = numberOfSlots.ToString();
+
+            XmlNode len = xmlDefault.CreateElement("lenght");
+            len.InnerText = lenght.ToString();
+
+            port.AppendChild(aNode);
+            port.AppendChild(bNode);
+
+            port.AppendChild(statusType);
+            port.AppendChild(linkIn);
+            port.AppendChild(linkOut);
+            port.AppendChild(costLink);
+            port.AppendChild(slots);
+            port.AppendChild(len);
+
+            try
+            {
+                XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("cable_cloud");
+                addTo.AppendChild(port);
+                xmlDefault.Save(name);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("AddLink, ex:" + ex.ToString());
+            }
+        }
+
+
+
+
         public void ChangeLinkStatus(int portId, string status)
         {
             XmlDocument xmlDefault = new XmlDocument();

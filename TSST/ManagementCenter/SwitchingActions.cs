@@ -20,7 +20,12 @@ namespace ManagementCenter
         /// <param name="manager"></param>
         internal static void Action(string message, Manager manager)
         {
-            if (message.Contains("connection:"))
+            //jezeli ma zostac polaczenie w podsieci
+            if(message.Contains("subconection"))
+            {
+                Console.WriteLine("Prosba o zestawienie polaczenia w podsieci");
+            }
+            else if (message.Contains("connection:"))
             {
                 AddConnection(message);
             }
@@ -56,11 +61,11 @@ namespace ManagementCenter
                 {
                     if (node.number <= 80 && node.number != id)
                     {
-                        lock (Program.manager)
+                        lock (Program.managerNodes)
                         {
                             try
                             {
-                                Program.manager[node.number - 1].Send(message1);
+                                Program.managerNodes[node.number - 1].Send(message1);
                             }
                             catch
                             {
@@ -126,7 +131,7 @@ namespace ManagementCenter
                             Console.WriteLine(message1);
                             try
                             {
-                                Program.manager[pathForFunction.nodes[i].number - 1].Send(message1);
+                                Program.managerNodes[pathForFunction.nodes[i].number - 1].Send(message1);
                             }
                             catch
                             {
@@ -191,12 +196,12 @@ namespace ManagementCenter
                     p.ResetSlotReservation();
                     foreach(Node node in p.nodes)
                     {
-                        lock(Program.manager)
+                        lock(Program.managerNodes)
                         {
                             if (node.number < 80)
                             {
                                 string message1 = "remove:" + p.nodes.Last().number + p.nodes[0].number;
-                                Program.manager[node.number - 1].Send(message1);
+                                Program.managerNodes[node.number - 1].Send(message1);
                             }
                         }
                     }
@@ -312,7 +317,7 @@ namespace ManagementCenter
                         Console.WriteLine(message1);
                         try
                         {
-                            Program.manager[path.nodes[i].number - 1].Send(message1);
+                            Program.managerNodes[path.nodes[i].number - 1].Send(message1);
                         }
                         catch
                         {

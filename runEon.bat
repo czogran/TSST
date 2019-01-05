@@ -42,7 +42,7 @@ for /l %%x in (1, 1, %ile_klient%) do (
 
 echo Uruchamiam chmure kablowa
 
-start /d "TSST\CableCloud\bin\Debug" CableCloud.exe %ile_klient%
+start /d "TSST\CableCloud\bin\Debug" CableCloud.exe %ile_wezlow% %ile_klient% %ile_managerow%
 
 REM echo Uruchamiam centrum zarzadzania
 

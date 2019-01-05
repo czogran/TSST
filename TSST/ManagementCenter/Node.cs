@@ -49,6 +49,7 @@ namespace ManagementCenter
         {
             this.number = number;
 
+
             connected = false;
             //maksymalny koszt jaki moze miec int
             costToGetHere = 2147483647;

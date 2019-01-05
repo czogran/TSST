@@ -25,16 +25,18 @@ namespace ManagementCenter
             //nie wiem czy to jest bezpieczne
             xmlDefault.Load(name);
         }
-        
-      
 
-       
-        /// <summary>
-        /// sluzy do pobrania listy linkow jakie sa na tej sciezce, bedzie wykorzystywana ta lista w algo
-        /// zestawiania sciezek
-        /// </summary>
-        /// <returns></returns>
-        public List <Link> GetLinks()
+        public XMLParser(XmlDocument xmlDoc)
+        {
+            xmlDefault = xmlDoc;
+        }
+
+            /// <summary>
+            /// sluzy do pobrania listy linkow jakie sa na tej sciezce, bedzie wykorzystywana ta lista w algo
+            /// zestawiania sciezek
+            /// </summary>
+            /// <returns></returns>
+            public List <Link> GetLinks()
         {
             int id;
             int nodeA;

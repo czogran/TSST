@@ -17,8 +17,13 @@ namespace ManagementCenter
         public XMLeonSubnetwork()
         {
         }
+        public XMLeonSubnetwork(XmlDocument xmlDoc)
+        {
+            this.xmlDoc =xmlDoc;
+        }
 
-            public XMLeonSubnetwork(string name)
+
+        public XMLeonSubnetwork(string name)
         {
             this.name = name;
             xmlDoc = new XmlDocument();
@@ -53,6 +58,7 @@ namespace ManagementCenter
 
             config.AppendChild(myNetwork);
             config.AppendChild(clients);
+            config.AppendChild(links);
 
             xmlDoc.AppendChild(config);
             xmlDoc.Save(name);
@@ -72,7 +78,8 @@ namespace ManagementCenter
         {
             string file;
 
-            XmlNode node = xmlDoc.DocumentElement.SelectSingleNode("//link");
+            //to powninno wskazywac na pierwsze wystapienie linka
+            XmlNode node = xmlDoc.DocumentElement.SelectSingleNode("//links");
             file = node.InnerText;
             return file;
         }
@@ -91,7 +98,7 @@ namespace ManagementCenter
 
 
             XmlNode node;
-            node = xmlDoc.CreateElement("link");
+            node = xmlDoc.CreateElement("links");
             node.InnerText = linksFile;
             sub.AppendChild(node);
             XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//config");
@@ -122,6 +129,7 @@ namespace ManagementCenter
             {
                 foreach (int i in links)
                 {
+                    //tu pojedynczo dodajemy wiec stad link a nie links
                     node = xmlDoc.CreateElement("link");
                     node.InnerText = i.ToString();
                     sub.AppendChild(node);
@@ -168,6 +176,7 @@ namespace ManagementCenter
             XmlNode node;
             foreach (int i in links)
             {
+                //tu gdy dodajemy pojedynczo linki
                 node = xmlDoc.CreateElement("link");
                 node.InnerText = i.ToString();
                 sub.AppendChild(node);

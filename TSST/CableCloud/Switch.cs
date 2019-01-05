@@ -11,7 +11,7 @@ namespace CableCloud
 {
     class Switch
     {
-        public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
+       // public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
         public static BlockingCollection<ObservableCollection<string>> nodeCollection = new BlockingCollection<ObservableCollection<string>>();
         public static BlockingCollection<ObservableCollection<string>> clientCollection = new BlockingCollection<ObservableCollection<string>>();
 
@@ -19,10 +19,15 @@ namespace CableCloud
 
         public static Dictionary<int, int> linkDictionary = new Dictionary<int, int>();
 
-        public static void FillDictionary()
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">numer agenta ktory przyslal konfiga</param>
+        public static void FillDictionary(int id)
         {           
             XmlDocument doc = new XmlDocument();
-            doc.Load("myLinks.xml");
+            doc.Load("myLinks"+id+".xml");
             int inPort;
             int outPort;
             XmlNode node1;
@@ -32,11 +37,18 @@ namespace CableCloud
                 inPort= Int32.Parse(node1.InnerText);
                 node1 = node.SelectSingleNode("port_out");
                 outPort = Int32.Parse(node1.InnerText);
-             //   Console.WriteLine($"łączę {inPort} z {outPort}");
-                linkDictionary.Add(inPort, outPort);
+                //   Console.WriteLine($"łączę {inPort} z {outPort}");
+                try
+                {
+                    linkDictionary.Add(inPort, outPort);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Dla agenta:"+id+"Nie udalo sie dodac portu:" + inPort + " ex:" + ex.ToString());
+                }
             }
 
-            Console.WriteLine("uzupelnilem slownik portow");
+            Console.WriteLine("uzupelnilem slownik portow dla agenta:"+id);
 
           
         }

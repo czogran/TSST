@@ -130,7 +130,7 @@ namespace ManagementCenter
             file = file + "</node>";
             return file;
         }
-        public static string StringCableLinks()
+        public static string StringCableLinks(string name1)
         {
             XmlDocument xmlDefault = new XmlDocument();
             StringWriter sw = new StringWriter();
@@ -139,7 +139,7 @@ namespace ManagementCenter
             string file;
             string readXML;
             int start, end;
-            xmlDefault.Load(name);
+            xmlDefault.Load(name1);
             xmlDefault.WriteTo(tx);
             readXML = sw.ToString();
             start = readXML.IndexOf("<cable_cloud");

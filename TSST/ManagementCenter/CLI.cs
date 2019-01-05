@@ -133,9 +133,13 @@ namespace ManagementCenter
             } while (XML.Test() != true);
             if (name != "esc")
             {
-
+                Program.managerCloud.Send("clean_dictionary");
                 XMLeonSubnetwork file = new XMLeonSubnetwork(name);
-               lock(Program.subnetworksList)
+                
+
+                CLI.PrintConfigFilesSent();
+
+                lock (Program.subnetworksList)
                 {
                     Program.subnetworksList = file.GetSubnetworks();
                     foreach(Subnetwork sub in Program.subnetworksList)
@@ -169,6 +173,14 @@ namespace ManagementCenter
                     {
                         Console.WriteLine("Blad wysylania informacji o porcie");
                     }
+                }
+                string linksFile = file.GetLinkFile();
+                XMLParser xml = new XMLParser(linksFile);
+                Program.links = xml.GetLinks();
+                lock (Program.managerCloud)
+                {
+                    Program.managerCloud.Send(XML.StringCableLinks(linksFile));
+                    Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
                 }
             }
         }
@@ -236,7 +248,7 @@ namespace ManagementCenter
             {
                 XMLParser xml = new XMLParser(name);
                 Program.links = xml.GetLinks();
-                managerCloud.Send(XML.StringCableLinks());
+                managerCloud.Send(XML.StringCableLinks(name));
                 CLI.PrintConfigFilesSent();
             }
         }
@@ -283,7 +295,7 @@ namespace ManagementCenter
 
                     }
                 }
-                managerCloud.Send(XML.StringCableLinks());
+                managerCloud.Send(XML.StringCableLinks(name));
                 CLI.PrintConfigFilesSent();
             }
         }

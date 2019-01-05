@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -16,13 +17,13 @@ namespace CableCloud
         Socket mySocket;
 
         byte[] buffer;
+        ObservableCollection<string> agentCollection;
+        int id;
 
-        List<NodeCloud> node = new List<NodeCloud>();
-        List<ClientCloud> client = new List<ClientCloud>();
-
-
-        public Agent()
+        public Agent(int id)
         {
+            this.id = id;
+            agentCollection = new ObservableCollection<string>();
         }
 
         public void CreateSocket(string IP, int port)
@@ -68,10 +69,10 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Od Agenta:\n " + receivedMessage+"\n");
-                lock (global::CableCloud.Switch.agentCollection)
+                Console.WriteLine("Od Agenta "+  id+"  "+":\n " + receivedMessage+"\n");
+                lock (agentCollection)
                 {
-                    global::CableCloud.Switch.agentCollection.Add(receivedMessage);
+                   agentCollection.Add(receivedMessage);
                 }
                 buffer = new byte[30240];
 
@@ -88,9 +89,9 @@ namespace CableCloud
 
         public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-            lock (global::CableCloud.Switch.agentCollection)
+            lock (agentCollection)
             {
-                string s = Switch.agentCollection.Last();
+                string s =agentCollection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
@@ -107,9 +108,9 @@ namespace CableCloud
 
         public void ComputingThread()
         {
-            lock (Switch.agentCollection)
+            lock (agentCollection)
             {
-                Switch.agentCollection.CollectionChanged += SwitchAction;
+                agentCollection.CollectionChanged += SwitchAction;
             }
         }
        
@@ -117,46 +118,25 @@ namespace CableCloud
         {
 
 
-            if (Switch.agentCollection.Last().Contains("cloud"))
+            if (agentCollection.Last().Contains("cloud"))
             {
-                File.WriteAllText("myLinks.xml", Switch.agentCollection.Last());
-                lock(Switch.linkDictionary)
+                File.WriteAllText("myLinks"+id+".xml", agentCollection.Last());
+                lock (Switch.linkDictionary)
                 {
-                    Switch.linkDictionary.Clear();
-                    Switch.FillDictionary();
+                    Console.WriteLine("Proba dodania do slownika konfiuracji agenta:"+id.ToString());
+
+                    //  Switch.linkDictionary.Clear();
+                    Switch.FillDictionary(id);
                 }
             }
-            else if (Switch.agentCollection.Last().Contains("nodes"))
+            else if (agentCollection.Last().Contains("clean_dictionary"))
             {
-                int start = Switch.agentCollection.Last().IndexOf("nodes");
-                string nodes = Switch.agentCollection.Last().Substring(6);
-                lock (Program.nodeAmount)
-                {
-                    Program.nodeAmount = nodes;
-                    //Switch.data.Add(Int32.Parse(nodes));
-                  
-                    string localIP;
-
-                    for (int i = 1; i <= Int32.Parse(nodes); i++)
-                    {
-                       
-                        node.Add(new NodeCloud(i));
-                        localIP = "127.0.2." +i.ToString();
-                        node[i - 1].CreateSocket(localIP, 11001);
-                   
-                        node[i - 1].Connect("127.0.1." + i.ToString(), 11001);
-                        Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
-                        threadNode.Start();
-                    }
-
-                    // Console.WriteLine("nodesAmount:" + Program.nodeAmount);
-                } 
-
+                Console.WriteLine("Czyszcze polaczenia");
+                Switch.linkDictionary.Clear();
             }
-            else if(Switch.agentCollection.Last().Contains("clients"))
-            {
-                string clients = Switch.agentCollection.Last().Substring(8);
-            }
+
+
+
         }
     }
 }
