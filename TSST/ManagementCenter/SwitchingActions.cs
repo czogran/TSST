@@ -28,6 +28,10 @@ namespace ManagementCenter
             else if (message.Contains("connection:"))
             {
                 AddConnection(message);
+                if (Program.isTheBottonSub == false)
+                {
+
+                }
             }
             else if (message.Contains("delete"))
             {
@@ -312,18 +316,28 @@ namespace ManagementCenter
                     }
                     else
                     {
-
-                        string message1 = xml.StringNode(path.nodes[i].number);
-                        Console.WriteLine(message1);
-                        try
+                        if (Program.isTheBottonSub == false)
                         {
-                            Program.managerNodes[path.nodes[i].number - 1].Send(message1);
+                            string message1 ="connection<port_in>"+path.nodes[i].inputLink.id+"</port_in><port_out>"+path.nodes[i].outputLink.id+"</port_out>";
+                            lock(Program.subnetworkManager)
+                            {
+                                Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
+                                Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
+                            }
                         }
-                        catch
+                        else
                         {
-                            Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                            string message1 = xml.StringNode(path.nodes[i].number);
+                            Console.WriteLine(message1);
+                            try
+                            {
+                                Program.managerNodes[path.nodes[i].number - 1].Send(message1);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                            }
                         }
-                   
                     }
                 }
             }

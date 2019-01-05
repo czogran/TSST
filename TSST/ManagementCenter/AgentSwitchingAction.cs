@@ -38,8 +38,20 @@ namespace ManagementCenter
                     //connection:<port_in>port</port_in><port_out>port<port_out>
                     int start, end;
                     int portIn, portOut;
+                    int startNode, endNode;
+                    start = message.IndexOf("<port_in>")+9;
+                    end = message.IndexOf("</port_in>");
+                    portIn = Int32.Parse(message.Substring(start, end - start));
 
+                    start = message.IndexOf("<port_out>") + 10;
+                    end = message.IndexOf("</port_out>");
+                    portOut = Int32.Parse(message.Substring(start, end - start));
 
+                    startNode = portIn % 100-10;
+                    endNode = portOut / 100 - 10;
+
+                    Console.WriteLine("port_in:" + portIn + "  port_out:" + portOut);
+                    Console.WriteLine("start node:" + startNode + "  end node:" + endNode);
                 }
                 //TODO
                 //w przeciwnym razie slemy nizej, czyli jak sa podspodem jeszcze inne polaczenia bedziemy musieli slac nizej

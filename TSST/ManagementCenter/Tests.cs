@@ -35,10 +35,10 @@ namespace ManagementCenter
             linksgen.AddLink(2693, 5, 83, 2693, 9326, "on", 1, 14);
             linksgen.AddLink(2694, 5, 84, 2694, 9426, "on", 1, 14);
 
-            linksgen.AddLink(1213, 2, 3, 1415, 1514, "on", 1, 14);
-            linksgen.AddLink(1214, 2, 4, 1419, 1914, "on", 1, 14);
-            linksgen.AddLink(1315, 3, 5, 1823, 2318, "on", 1, 14);
-            linksgen.AddLink(1415, 4, 5, 2223, 2322, "on", 1, 14);
+            linksgen.AddLink(1415, 2, 3, 1415, 1514, "on", 1, 14);
+            linksgen.AddLink(1419, 2, 4, 1419, 1914, "on", 1, 14);
+            linksgen.AddLink(1823, 3, 5, 1823, 2318, "on", 1, 14);
+            linksgen.AddLink(2223, 4, 5, 2223, 2322, "on", 1, 14);
 
             linksgen = new XMLeon("sub2links.xml", XMLeon.Type.cable_cloud);
             linksgen.AddLink(1112, 1, 2, "on", 1, 14);
