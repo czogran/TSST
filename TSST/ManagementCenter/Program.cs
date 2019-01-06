@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +20,7 @@ namespace ManagementCenter
         /// jezeli ==true znaczy ze jest na samym dole
         /// </summary>
         public static bool isTheBottonSub = false;
+        public static bool isTheTopSub = false;
 
         public static int amountOfnodes;
         public static int amountOfclients;
@@ -47,6 +51,20 @@ namespace ManagementCenter
             //i znowu skompilowac
 
             //Tests.TestXML();
+
+        /*    bool[] a = new[] { true, false };
+
+            MemoryStream stream = new MemoryStream();
+            IFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(stream, a);
+
+            IFormatter formatter1= new BinaryFormatter();
+            stream.Seek(0, SeekOrigin.Begin);
+            var b = formatter1.Deserialize(stream);
+
+            Console.WriteLine(b);*/
+
+
             Console.WriteLine("MANAGER:"+args[0]);
             subnetworkManager = new List<Manager>();
             
@@ -80,7 +98,8 @@ namespace ManagementCenter
             if (args[0]=="1")
             {
                 Console.WriteLine("Centralny Manager");
-             
+                isTheTopSub = true;
+
                   for(int i=2; i<=amountOfSubnetworks;i++)
                   {
                       subnetworkManager.Add(new Manager(i));

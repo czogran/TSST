@@ -12,12 +12,14 @@ namespace ManagementCenter
     /// xml do tworzenia eon owych rzeczy
     /// </summary>
     class XMLeon
-    { 
+    {
         //lista konstruktorow
         //
 
         //sprawdzic czy wszystkie sa tu wypisane
         //lista funkcji:
+        //SavePathToFile
+        //CreatePathXML
         //AddNode
         //StringNode 
         //StringCableLinks
@@ -79,6 +81,19 @@ namespace ManagementCenter
         }
 
         /// <summary>
+        /// zapis sciezki do pliku
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="path"></param>
+        public static void SavePathToFile(int start, int end, Path path)           
+        {
+            XMLeon xml = new XMLeon("path" + start.ToString() + end.ToString() + ".xml", XMLeon.Type.nodes);
+            path.xmlName = ("path" + start + end + ".xml");
+            xml.CreatePathXML(path);
+        }
+
+        /// <summary>
         /// sluzy do dodania w pliku jakiegos pustego xml typu nodes wpisow sciezki
         /// </summary>
         /// <param name="path"></param>
@@ -96,13 +111,15 @@ namespace ManagementCenter
                 if(path.nodes[i].number<80)
                      AddNode(path.nodes[i].number);
             }
-            for (int i = 1; i < path.nodes.Count - 1; i++)
+            for (int i = 0; i < path.nodes.Count; i++)
             {
-                AddMatrix(path.nodes[i].inputLink.portIn, path.nodes[i].number);
+                if (path.nodes[i].number < 80)
+                    AddMatrix(path.nodes[i].inputLink.portIn, path.nodes[i].number);
             }
-            for (int i = 1; i < path.nodes.Count - 1; i++)
+            for (int i = 0; i < path.nodes.Count ; i++)
             {
-                AddConnection(path.nodes.Last().number,path.nodes[0].number,  path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
+                if (path.nodes[i].number < 80)
+                    AddConnection(path.nodes.Last().number,path.nodes[0].number,  path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
             }
           
         }
@@ -301,13 +318,13 @@ namespace ManagementCenter
           
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
-
+           
             XmlNode connection = xmlDefault.CreateElement("connection");
             XmlAttribute attribute= xmlDefault.CreateAttribute("num");
            // zmienic id polaczenia
             attribute.Value = startNode.ToString() + endNode.ToString();
             connection.Attributes.Append(attribute);
-
+         
             XmlNode startSlotNode = xmlDefault.CreateElement("start_slot");
             startSlotNode.InnerText = startSlot.ToString();
 

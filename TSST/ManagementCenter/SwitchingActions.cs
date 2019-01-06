@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,8 +10,44 @@ namespace ManagementCenter
 {
     class SwitchingActions
     {
+        /// <summary>
+        /// ma przechowywac polecenia wydawane  agentowi
+        ///
+        /// </summary>
+        internal static BlockingCollection<string> orderCollection = new BlockingCollection<string>();
 
-       // internal static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
+        /// <summary>
+        /// z zwiazku z tym ze zakladam ze komp jest szybszy od nas
+        /// zakaldam ze na raz bedzie zestawiana tylko jedna sciezka
+        /// co bardzo ulatwia sprawe
+        ///ale w zupelnosci nie emuluje prawdziwego zachowania sie sieci
+        /// </summary>
+        internal static Path pathToCount;
+
+        /// <summary>
+        /// jakie jest mozliwe okno dla jakiejs podsieci, ktora je przesyla
+        /// i jest w rzucane w ta zmienna
+        /// a nizej aktualizowana jest sciezka
+        /// i zliaczane czy doszlo to info od wszystkich podsieci
+        /// </summary>
+        public static bool[] possibleWindow;
+
+
+
+
+        /// <summary>
+        /// zlicza ile wiadomosci possible window przyszlo
+        /// by jak doszlo od wszystkich pod sieci stwierdzic ze 
+        ///albo mozna rezultat wyslac wyzej
+        ///albo juz mozna wybrac okno
+        /// </summary>
+        static int messageCounterPossibleWindow;
+
+        static int messageCounterPossibleReservation;
+
+        static int amountOfSlots;
+        static int[] window;
+        static int[] data;
 
         /// <summary>
         /// przelaczanie tego co ma zrobic manager
@@ -20,26 +57,366 @@ namespace ManagementCenter
         /// <param name="manager"></param>
         internal static void Action(string message, Manager manager)
         {
-            //jezeli ma zostac polaczenie w podsieci
-            if(message.Contains("subconection"))
+            
+            //jezeli ma zostac polaczenie w podsieci czyl
+            if (message.Contains("subconection"))
             {
                 Console.WriteLine("Prosba o zestawienie polaczenia w podsieci");
             }
+            //ta wiadomosc moze przyjsc tylko do glownego managera
             else if (message.Contains("connection:"))
             {
-                AddConnection(message);
-                if (Program.isTheBottonSub == false)
-                {
+                //zerujemy licznik
+                messageCounterPossibleWindow = 0;
+                messageCounterPossibleReservation = 0;
 
-                }
+                //data[0] = askingClient;
+                //data[1] = targetClient;
+                data = GetStartAndEndNode(message);
+
+                    lock (Program.nodes)
+                    {
+                        lock (Program.links)
+                        {
+                            pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, data[0] + 80, data[1] + 80, false);
+                        }
+                    }
+                SendToSubnetworks(pathToCount);
+              
             }
             else if (message.Contains("delete"))
             {
                 DeleteConnection(message);
             }
+            else if(message.Contains("lenght"))
+            {
+                int lenght = GetLenght(message);
+                pathToCount.lenght += lenght;
+            }
+            else if(message.Contains("possible_window"))
+            {
+                pathToCount.ChangeWindow(possibleWindow);
+                messageCounterPossibleWindow++;
+
+                //jezeli jest to najwyza sciezka i doszly juz wszystkie wiadomosci
+                //minus 2 jest, bo na samej gorze sa jeszcze klijenci ich nie uwzgledniamy
+                if (Program.isTheTopSub && messageCounterPossibleWindow==pathToCount.nodes.Count-2)
+                {
+                     amountOfSlots = PathAlgorithm.AmountNeededSlots(pathToCount.lenght);
+                    //returnWindow= new int[2] {startSlot,maxWindow };
+                     window = pathToCount.FindMaxWindow();
+
+                    bool isReservationPossible = pathToCount.IsReservingWindowPossible(amountOfSlots, window[0]);
+
+                    if(isReservationPossible)
+                    {
+                        SendAskIfReservationIsPossible(window[0], amountOfSlots);
+                    }
+                    //to trzeba zrobic jakies inne polecania na zestawianie sciezko na okolo
+                    else
+                    {
+                        Console.WriteLine("Nie mozna zestawic sciezki");
+                    }
+                    Console.WriteLine("Here I am");
+                }
+            }
+
+            else if (message.Contains("possible_path"))
+            {
+                messageCounterPossibleReservation++;
+                //jezeli jest na samym szczycie by wyslal nizej zadnia
+                if(messageCounterPossibleReservation==pathToCount.nodes.Count-2 && Program.isTheTopSub==true)
+                {
+
+                    pathToCount.ReserveWindow(amountOfSlots, window[0]);
+
+                    SendSubToReserveWindow(window[0], amountOfSlots);
+                    //data[1] target client
+                    SendClientsToReserveWindow(window[0], data[1]);
+
+
+                    
+                    XMLeon xml = new XMLeon("path" + data[0] + data[1] + ".xml", XMLeon.Type.nodes);
+                    pathToCount.xmlName = ("path" + data[0] + data[1] + ".xml");
+                    xml.CreatePathXML(pathToCount);
+                }
+            }
+            
             
         }
+        static void SendClientsToReserveWindow(int startSlot, int targetClient)
+        {
+            //sprawdzic czy indeksowanie OK jest
+            for (int i =  SwitchingActions.pathToCount.nodes.Count - 1; i >= 1; i--)
+            {
+                if (SwitchingActions.pathToCount.nodes[i].number > 80)
+                {
+                    string message1;
+                    if (SwitchingActions.pathToCount.pathIsSet == true)
+                    {
+                        message1 = "<start_slot>" + SwitchingActions.pathToCount.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
+                    }
+                    else
+                    {
+                        message1 = "zabraklo slotow";
+                    }
+                    try
+                    {
+                        Program.managerClient[SwitchingActions.pathToCount.nodes[i].number - 80 - 1].Send(message1);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta");
+                    }
+                }
+            }
+            }
 
+        static void SendSubToReserveWindow(int startSlot, int amountOfSlots)
+        {
+            //sprawdzic czy indeksowanie OK jest
+            for (int i = pathToCount.nodes.Count - 1; i >= 0; i--)
+            {
+                if (Program.isTheBottonSub == false && pathToCount.nodes[i].number < 80)
+                {
+                    string message1 = "reserve:<start_slot>" + startSlot + "</start_slot><amount>" + amountOfSlots + "</amount>";
+                    lock (Program.subnetworkManager)
+                    {
+                        Program.subnetworkManager.Find(x => x.number == pathToCount.nodes[i].number).Send(message1);
+                        Console.WriteLine("Wysylam do podsieci prosbe by zarezerwowala okna:" + pathToCount.nodes[i].number);
+                    }
+                }
+            }
+        }
+
+
+        static void SendAskIfReservationIsPossible(int startSlot, int amountOfSlots)
+        {
+            //sprawdzic czy indeksowanie OK jest
+            for (int i = pathToCount.nodes.Count - 1; i >= 0; i--)
+            {
+                if (Program.isTheBottonSub == false && pathToCount.nodes[i].number < 80)
+                {
+                    string message1 = "check:<start_slot>"+startSlot+"</start_slot><amount>"+amountOfSlots+"</amount>";
+                    lock (Program.subnetworkManager)
+                    {
+                        Program.subnetworkManager.Find(x => x.number == pathToCount.nodes[i].number).Send(message1);
+                        Console.WriteLine("Wysylam pytanie do podsieci czy sa w stanie zarezerwowac okna:" + pathToCount.nodes[i].number);
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// bierze dlugosc z wiadomosci ktora doszla od podsieci
+        /// format wiadomosci
+        /// <lenght>i tu jest dlugosc</lenght>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        static int GetLenght(string message)
+        {
+            int lenght;
+            int start, end;
+
+            start = message.IndexOf("<lenght>")+8;
+            end = message.IndexOf("</lenght>");
+
+            lenght = Int32.Parse(message.Substring(start, end - start));
+
+            return lenght;
+        }
+
+        static int[] GetStartAndEndNode(string message)
+        {
+            int[] result = new int[2];
+            int askingClient, targetClient;
+            int start, end;
+
+
+            end = message.IndexOf("<port>");
+            //13 stad ze //connection: konczy sie na 13 znaku
+            targetClient = Int32.Parse(message.Substring(13, end - 13));
+            Console.WriteLine("target client" + targetClient);
+            start = message.IndexOf("<my_id>") + 7;
+            end = message.IndexOf("</my_id>");
+            askingClient = Int32.Parse(message.Substring(start, end - start));
+            result[0] = askingClient;
+            result[1] = targetClient;
+
+            return result;
+        }
+
+        public static void SendToSubnetworks(Path path)
+        {
+            if (path.endToEnd == true)
+            {
+
+                //sprawdzic czy indeksowanie OK jest
+                for (int i = path.nodes.Count - 1; i >= 0; i--)
+                {
+                    if (Program.isTheBottonSub == false && path.nodes[i].number < 80)
+                    {
+                        string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out>";
+                        lock (Program.subnetworkManager)
+                        {
+                            Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
+                            Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+            /// <summary>
+            /// gdy klijent prosi o zestawienie polaczenua jest wywolywana ta funkcja
+            /// wywoluje ona ustawianie sciezki
+            /// i potem rozsyla istotne informacje dalej
+            /// </summary>
+            /// <param name="message"></param>
+            static void AddConnection(string message)
+        {
+            Console.WriteLine("Prosba o zestawienie polaczenia");
+            int askingClient, targetClient;
+            int start, end;
+
+            XMLeon xml;
+
+            end = message.IndexOf("<port>");
+            //13 stad ze //connection: konczy sie na 13 znaku
+            targetClient = Int32.Parse(message.Substring(13, end - 13));
+            Console.WriteLine("target client" + targetClient);
+            start = message.IndexOf("<my_id>") + 7;
+            end = message.IndexOf("</my_id>");
+            askingClient = Int32.Parse(message.Substring(start, end - start));
+
+            Console.WriteLine("asking client" + askingClient);
+
+
+            Path path;
+            lock (Program.nodes)
+            {
+                lock (Program.links)
+                {
+                    //plus 80 bo taka glupia konwencje dalem ze klijenty to nody o numerach od 80 dla algo
+                    path = PathAlgorithm.dijkstra(Program.nodes, Program.links, askingClient + 80, targetClient + 80, false);
+                }
+
+            }
+
+            if (path.endToEnd==true)
+            {
+              
+
+                for (int i = path.nodes.Count-2 ; i >= 1; i--)
+                {
+                    if (Program.isTheBottonSub == false && path.nodes[i].number<80 )
+                    {
+                        string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out>";
+                        lock (Program.subnetworkManager)
+                        {
+                            Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
+                            Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
+                        }
+                    }
+                   /* else if (path.nodes[i].number < 80)
+                    {
+                        Console.WriteLine("00000000bbbbbbaaaaa");
+
+                        string message1 = xml.StringNode(path.nodes[i].number);
+                        Console.WriteLine(message1);
+                        try
+                        {
+                            Program.managerNodes[path.nodes[i].number - 1].Send(message1);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                        }
+                    }*/
+
+                }
+            }
+
+
+
+
+
+
+
+
+            if (path.pathIsSet == true)
+            {
+                lock (Program.paths)
+                {
+                    try
+                    {
+                        Program.paths.Add(path);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Nie no");
+                    }
+                }
+
+
+                xml = new XMLeon(path.xmlName);
+                //taka indkesacja, bo bierzemy od konca i nie potrzebujemy do odbiorcy niczego wysylac
+                for (int i = path.nodes.Count - 1; i >= 1; i--)
+                {
+                    if (path.nodes[i].number > 80)
+                    {
+                        string message1;
+                        if (path.pathIsSet == true)
+                        {
+                            message1 = "<start_slot>" + path.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
+                        }
+                        else
+                        {
+                            message1 = "zabraklo slotow";
+                        }
+                        try
+                        {
+                            Program.managerClient[path.nodes[i].number - 80 - 1].Send(message1);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta");
+                        }
+                    }
+                    else
+                    {
+                        //nie testnieniete
+                        if (Program.isTheBottonSub == false)
+                        {
+                            string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out>";
+                            lock (Program.subnetworkManager)
+                            {
+                                Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
+                                Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
+                            }
+                        }
+                        else
+                        {
+                            string message1 = xml.StringNode(path.nodes[i].number);
+                            Console.WriteLine(message1);
+                            try
+                            {
+                                Program.managerNodes[path.nodes[i].number - 1].Send(message1);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                            }
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("Zakonczona obsluga zadania connection");
+        }
 
         /// <summary>
         /// gdy zdechnie wezel by od nowa zrekonfigurowac polaczenia i 
@@ -239,110 +616,6 @@ namespace ManagementCenter
         }
 
 
-        /// <summary>
-        /// gdy klijent prosi o zestawienie polaczenua jest wywolywana ta funkcja
-        /// wywoluje ona ustawianie sciezki
-        /// i potem rozsyla istotne informacje dalej
-        /// </summary>
-        /// <param name="message"></param>
-        static void AddConnection(string message)
-        {
-            Console.WriteLine("Prosba o zestawienie polaczenia");
-            int askingClient, targetClient;
-            int start, end;
-
-            XMLeon xml;
-
-            end = message.IndexOf("<port>");
-            //13 stad ze //connection: konczy sie na 13 znaku
-            targetClient = Int32.Parse(message.Substring(13, end - 13));
-            Console.WriteLine("target client" + targetClient);
-            start = message.IndexOf("<my_id>") + 7;
-            end = message.IndexOf("</my_id>");
-            askingClient = Int32.Parse(message.Substring(start, end - start));
-
-            Console.WriteLine("asking client" + askingClient);
-
-
-            Path path;
-            lock (Program.nodes)
-            {
-                lock (Program.links)
-                {
-                    //plus 80 bo taka glupia konwencje dalem ze klijenty to nody o numerach od 80 dla algo
-                    path = PathAlgorithm.dijkstra(Program.nodes, Program.links, askingClient + 80, targetClient + 80, false);          
-                }
-
-            }
-
-            if (path.pathIsSet == true)
-            {
-                lock (Program.paths)
-                {
-                    try
-                    {
-                        Program.paths.Add(path);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Nie no");
-                    }
-                }
-
-
-                xml = new XMLeon(path.xmlName);
-                //taka indkesacja, bo bierzemy od konca i nie potrzebujemy do odbiorcy niczego wysylac
-                for (int i = path.nodes.Count - 1; i >= 1; i--)
-                {
-                    if (path.nodes[i].number > 80)
-                    {
-                        string message1;
-                        if (path.pathIsSet == true)
-                        {
-                            message1 = "<start_slot>" + path.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
-                        }
-                        else
-                        {
-                            message1 = "zabraklo slotow";
-                        }
-                        try
-                        {
-                            Program.managerClient[path.nodes[i].number - 80 - 1].Send(message1);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta");
-                        }
-                    }
-                    else
-                    {
-                        //nie testnieniete
-                        if (Program.isTheBottonSub == false)
-                        {
-                            string message1 ="connection<port_in>"+path.nodes[i].inputLink.id+"</port_in><port_out>"+path.nodes[i].outputLink.id+"</port_out>";
-                            lock(Program.subnetworkManager)
-                            {
-                                Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
-                                Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
-                            }
-                        }
-                        else
-                        {
-                            string message1 = xml.StringNode(path.nodes[i].number);
-                            Console.WriteLine(message1);
-                            try
-                            {
-                                Program.managerNodes[path.nodes[i].number - 1].Send(message1);
-                            }
-                            catch
-                            {
-                                Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
-                            }
-                        }
-                    }
-                }
-            }
-            Console.WriteLine("Zakonczona obsluga zadania connection");
-        }
+        
     }
 }

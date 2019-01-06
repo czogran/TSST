@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,11 +81,38 @@ namespace ManagementCenter
                 byte[] auxtrim = new byte[i + 1];
                 Array.Copy(receivedData, auxtrim, i + 1);
 
-                string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine(receivedMessage);
+                try
+                {
+                    SwitchingActions.possibleWindow = (bool[])DeserializeFromStream(auxtrim);
+                    
+                    Console.WriteLine("deserializacja");
+                }
+                catch
+                {
+                   // Console.WriteLine("Nie udalo sie deserializacja");
+                }
+                try
+                {
+                    string receivedMessage = encoding.GetString(auxtrim);
+                    Console.WriteLine(receivedMessage);
+                    try
+                    {
+                        SwitchingActions.Action(receivedMessage, this);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("zla akcja"+receivedMessage);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Blad odkodowywania:");
+                   
 
-                SwitchingActions.Action(receivedMessage, this);
+                }
+               
+
 
                 buffer = new byte[1024];
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
@@ -94,6 +124,18 @@ namespace ManagementCenter
 
             }
         }
+
+
+
+        public static object DeserializeFromStream(byte[] receivedData)
+        {
+            MemoryStream stream = new MemoryStream(receivedData);
+            IFormatter formatter = new BinaryFormatter();
+            stream.Seek(0, SeekOrigin.Begin);
+            object objectType = formatter.Deserialize(stream);
+            return objectType;
+        }
+
         public void Send(string message)
         {
             ASCIIEncoding enc = new ASCIIEncoding();

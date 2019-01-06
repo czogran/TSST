@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,10 +88,36 @@ namespace ManagementCenter
        // public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         public void Send(string message)
         {
-          
+          lock(mySocket)
+            {
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes(message);
+
+                mySocket.Send(sending);
+            }
         }
 
+        /// <summary>
+        /// wielki cheat wysylam najpierw znacznik, ktory mowi co bedzie w nastepnej wiadomosci
+        /// bo inaczej nie umiem
+        /// </summary>
+        /// <param name="stream"></param>
+        public void Send(MemoryStream stream)
+        {
+            lock (mySocket)
+            {
+                ASCIIEncoding enc = new ASCIIEncoding();
+                byte[] sending = new byte[1024];
+                sending = enc.GetBytes("possible_window");
+               // byte[] c = sending.Concat();
+                
+               
 
+                mySocket.Send(stream.ToArray());
+                mySocket.Send(sending);
+            }
+        }
 
 
 
@@ -112,7 +140,7 @@ namespace ManagementCenter
         /// <param name="e"></param>
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-            AgentSwitchingAction.AgentAction(AgentSwitchingAction.agentCollection.Last(),Program.managerCloud);
+            AgentSwitchingAction.AgentAction(AgentSwitchingAction.agentCollection.Last(),Program.managerCloud,this);
         }
 
             public void disconnect_Click()

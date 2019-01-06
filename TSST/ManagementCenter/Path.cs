@@ -16,7 +16,7 @@ namespace ManagementCenter
         /// </summary>
         public bool endToEnd;
 
-        //czy udalo sie zarezerowac szczeliny
+        //czy udalo sie zarezerowac szczeliny gdy jest juz sciezka od jednego konca do drugiego
         public bool pathIsSet;
 
         /// <summary>
@@ -113,6 +113,25 @@ namespace ManagementCenter
             }
         }
 
+        public void ChangeWindow(bool[] window)
+        {
+            for (int i = 0; i < window.Length; i++)
+            {
+                //zmieniamy gdy tylko jestesmy w obszarze dostepnych okien
+                if (possibleWindow[i] == true)
+                {
+                    //jezeli okno jest dostepne nadal bedzie dostepne a jak nie to juz nie
+                    possibleWindow[i] = window[i];
+                }
+            }
+            //gdy skonczy sie ilosc szczelin w swiatlowodzie na reszcie sie juz nie da zestawic polaczenia
+            //nie podoba mi sie tu indeksownie
+            for (int i = possibleWindow.Length; i < possibleWindow.Length; i++)
+            {
+                possibleWindow[i] = false;
+            }
+        }
+
 
         /// <summary>
         /// sluzy do znalezienia maksymalnego okna na szlaku, by w ogole stwierdzic czy zestawienie polaczenia
@@ -148,25 +167,45 @@ namespace ManagementCenter
             int[] returnWindow= new int[2] {startSlot,maxWindow };
             return returnWindow;
         }
-
         /// <summary>
-        /// sprawdza czy da sie zarezerwoac sciezke
-        /// i jak sie da to ustawia odpowiednie szczeliny na zajete
+        /// sprawdza czy dostepne okno jest wystarczajaco duze by umiescic w nim polaczenie
         /// </summary>
         /// <param name="neededSlots"></param>
         /// <param name="startWindow"></param>
         /// <param name="maxWindow"></param>
         /// <returns></returns>
-        public bool ReserveWindow(int neededSlots, int startWindow, int maxWindow)
+        public bool IsReservingWindowPossible(int neededSlots, int startWindow)
         {
-            if (neededSlots > maxWindow)
+            for(int i=startWindow-1;i< startWindow - 1+neededSlots;i++)
+            {
+                //
+                if(possibleWindow[i]==false)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        ///
+        ///  ustawia odpowiednie szczeliny na zajete
+        /// </summary>
+        /// <param name="neededSlots"></param>
+        /// <param name="startWindow"></param>
+        /// <param name="maxWindow"></param>
+        /// <returns></returns>
+        public bool ReserveWindow(int neededSlots, int startWindow, int maxWindow=0)
+        {
+          /*  if (neededSlots > maxWindow)
             {
                 pathIsSet = false;
                 Console.WriteLine("Zbyt male okno");
                 return false;
             }
             else
-            {
+            {*/
                 pathIsSet = true;
                 startSlot = startWindow;
                 endSlot = startWindow + neededSlots;
@@ -176,11 +215,9 @@ namespace ManagementCenter
                 foreach (Link link in connection)
                 {
                     link.SetSlots(startWindow, endSlot, true);
-                }
-              
-                
+                }               
                 return true;
-            }
+          //  }
         }
 
         /// <summary>

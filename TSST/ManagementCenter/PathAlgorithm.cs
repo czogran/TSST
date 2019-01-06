@@ -161,12 +161,13 @@ namespace ManagementCenter
 
                 }
                 Console.WriteLine("Path Lenght:" + path.lenght);
-                amountOfSlots=AmountNeededSlots(path.lenght);
-                window= path.FindMaxWindow();
-                path.ReserveWindow(amountOfSlots,window[0],window[1]);
+               // amountOfSlots=AmountNeededSlots(path.lenght);
+               // window= path.FindMaxWindow();
+               // path.ReserveWindow(amountOfSlots,window[0],window[1]);
+                /*
                 XMLeon xml = new XMLeon("path" + start + end + ".xml", XMLeon.Type.nodes);
                 path.xmlName = ("path" + start + end + ".xml");
-                xml.CreatePathXML(path);
+                xml.CreatePathXML(path);*/
             }
             else
             {
@@ -180,7 +181,7 @@ namespace ManagementCenter
         /// </summary>
         /// <param name="lengthOfPath"></param>
         /// <returns></returns>
-        static int AmountNeededSlots(int lengthOfPath)
+       internal static int AmountNeededSlots(int lengthOfPath)
         {
             int amountNeeded=0;
 
