@@ -316,6 +316,7 @@ namespace ManagementCenter
                     }
                     else
                     {
+                        //nie testnieniete
                         if (Program.isTheBottonSub == false)
                         {
                             string message1 ="connection<port_in>"+path.nodes[i].inputLink.id+"</port_in><port_out>"+path.nodes[i].outputLink.id+"</port_out>";

@@ -129,9 +129,12 @@ namespace ManagementCenter
                 catch
                 {
                     Console.WriteLine("\nWezel:" + number + "  is dead");
-                    
-                    var item =Program.nodes.SingleOrDefault(x => x.number== number);
-                    Program.nodes.Remove(item);
+
+                    //zamiast wywalac ustawiamy ze jest wylaczony
+                    Program.nodes.Find(x => x.number == number).isAlive=false;
+                    //var item =Program.nodes.SingleOrDefault(x => x.number== number);
+                    //Program.nodes.Remove(item);
+
                     SwitchingActions.NodeIsDead(number);
                     break;
                 }

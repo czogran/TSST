@@ -54,7 +54,7 @@ namespace ManagementCenter
             {
                 for (int i = 0; i < links.Count; i++)
                 {
-                    if (links[i].nodeA == actualNode)
+                    if (links[i].nodeA == actualNode )
                     {
                         //try jest tutaj gdyz pozniej sa zabijane juz jakies wezly, a linki wziaz zyja
                         //wiec tak jest prosciej sprawdzic czy jeszcze jest taki wpis w liscie nodow
@@ -63,11 +63,14 @@ namespace ManagementCenter
                             index = nodes.IndexOf(nodes.Find(x => x.number == links[i].nodeB));
 
                             index2 = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
-                            if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)        
+                            if (nodes[index].isAlive && nodes[index2].isAlive)
                             {
-                                nodes[index].costToGetHere = links[i].cost + nodes[index2].costToGetHere;
-                                nodes[index].previousNode = links[i].nodeA;
-                                nodes[index].inputLink = links[i];
+                                if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)
+                                {
+                                    nodes[index].costToGetHere = links[i].cost + nodes[index2].costToGetHere;
+                                    nodes[index].previousNode = links[i].nodeA;
+                                    nodes[index].inputLink = links[i];
+                                }
                             }
                         }
                         catch
@@ -209,6 +212,7 @@ namespace ManagementCenter
 
             return amountNeeded;
         }
+
 
     }
 }

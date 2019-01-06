@@ -17,6 +17,8 @@ namespace ManagementCenter
         //Array ports;
         List<int> ports;
 
+         public bool isAlive;
+
         //koszt dotaracia do tego wezla, potrzebna do dijxtry
         public int costToGetHere;
 
@@ -34,12 +36,14 @@ namespace ManagementCenter
 
         public List<Tuple<int, int>> connections;
 
+
+
         public Node(int number,List<int> ports)
         {
             this.number = number;
             this.ports = ports;
 
-            
+            isAlive = true;
             connected = false;
             //maksymalny koszt jaki moze miec int
             costToGetHere = 2147483647;
@@ -49,7 +53,7 @@ namespace ManagementCenter
         {
             this.number = number;
 
-
+            isAlive = true;
             connected = false;
             //maksymalny koszt jaki moze miec int
             costToGetHere = 2147483647;

@@ -85,9 +85,16 @@ namespace ManagementCenter
         public void CreatePathXML(Path path)
         {
             //nie wiem czemu to musi byc na 3 forach ale inaczej nie dziala xd
-            for (int i = 1; i < path.nodes.Count - 1; i++)
+            /* for (int i = 1; i < path.nodes.Count - 1; i++)
+             {
+                 AddNode(path.nodes[i].number);
+             }*/
+
+            //testnac tego fora
+            for (int i = 0; i < path.nodes.Count; i++)
             {
-                AddNode(path.nodes[i].number);
+                if(path.nodes[i].number<80)
+                     AddNode(path.nodes[i].number);
             }
             for (int i = 1; i < path.nodes.Count - 1; i++)
             {

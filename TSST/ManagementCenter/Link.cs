@@ -22,12 +22,22 @@ namespace ManagementCenter
 
         string status;
 
-        int numberOfSlots;
+        public int numberOfSlots;
         
         public bool[] usedSlots;
 
         public int portIn;
         public int portOut;
+
+        public Link()
+        { }
+
+        //jak jest w podsieci na brzegu, by dac go do brzegowego portu jako link wejsciowy lub wyjsciowy w zaleznosci od potrzeby
+        public Link(int portCheat)
+        {
+            portIn = portCheat;
+            portOut = portCheat;
+        }
 
         public Link(int id, int nodeA, int nodeB, int numberOfSlots, int cost, string status, int lenght)
         {
