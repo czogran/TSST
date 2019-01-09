@@ -61,7 +61,6 @@ namespace ClientNode
                         Thread.Sleep(500);
                     }
                 }
-                //na razie prosba o zestawienie polaczenia idzie przez wezel
                 else if (message.Contains("//connection:"))
                 {
                     try
@@ -72,9 +71,9 @@ namespace ClientNode
 
                         lock (Agent.agentCollection)
                         {
-                            Console.WriteLine("aa");
-                            Agent.agentCollection.Add(message);
-                            Console.WriteLine("baa");
+                           // Console.WriteLine("aa");
+                            Agent.agentCollection.Add("//connection:<target_client>"+connection+"</target_client>");
+                            //Console.WriteLine("baa");
 
                         }//clientNode.SendCommand(message);
 
@@ -97,7 +96,7 @@ namespace ClientNode
 
                         lock (Agent.agentCollection)
                         {
-                            Agent.agentCollection.Add(message);
+                            Agent.agentCollection.Add("//delete:<target_client>" + connection + "</target_client>");
                         }
                             //clientNode.SendCommand(message);
                     }

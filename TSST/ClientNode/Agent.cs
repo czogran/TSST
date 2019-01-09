@@ -175,6 +175,7 @@ namespace ClientNode
             }
            else if(agentCollection.Last().Contains("//connection:"))
             {
+                
                 SendCommand(agentCollection.Last());
             }
             else if (agentCollection.Last().Contains("//delete:"))

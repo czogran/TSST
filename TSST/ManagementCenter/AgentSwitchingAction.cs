@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -34,7 +35,7 @@ namespace ManagementCenter
             //jezeli ma wyslac jeszcze dalej
             if (message.Contains("subsubnetwork"))
             {
-                
+
             }
 
             //jezeli jest na samym dole hierarchi to nie ma juz wewnatrz podsicei
@@ -43,120 +44,163 @@ namespace ManagementCenter
                 ConnectSubnetwork(message);
                 Program.isTheBottonSub = true;
             }
-            else if(message.Contains("connection"))
+            else if (message.Contains("connection"))
             {
-                //dodajemy to do polecen jakie do Nas doszly
-                requestCollection.Add(message);
-
-                
-
-                //jezeli jest to juz najnizsza podsiec to na jej poziomie juz konfigurujemy
-                if(Program.isTheBottonSub==true)
-                {
-                    //format wiadomosci
-                    //connection:<port_in>port</port_in><port_out>port<port_out>
-
-                   messageData = GetStartAndEndNode(message);
-
-
-                   var path= PathAlgorithm.dijkstra(Program.nodes, Program.links, messageData[0], messageData[1], false);
-                    if(path.endToEnd)
-                    {
-                        //by byla tylko jedna sciezka ta globalna na ktorej pracujemy
-
-                        SwitchingActions.pathToCount = path;
-                        Console.WriteLine("Istnieje polaczenie EndToEnd");
-
-                        //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
-                        Link inPort= new Link(messageData[2]);
-                        Link outPort = new Link(messageData[3]);
-                        path.nodes.First().outputLink = outPort;
-                        path.nodes.Last().inputLink = inPort;
-                        //path.nodes.Last().outputLink = outPort;
-                        //path.nodes.First().inputLink = inPort;
-
-                        // XmlSerializer serializer = new XmlSerializer(typeof(bool[]));
-                        //    bool[] a = new[] { true, false };
-                        //  int[] numbers = new[] { 0, 1, 2, 3 };
-                        // XmlSerializer serializer = new XmlSerializer(typeof(int[]));
-
-                        string message1 = "<lenght>" + path.lenght + "</lenght>";
-
-                        // string message1="<order>"+message+"</order><lenght>"+path.lenght+"</lenght>";
-                        agent.Send(message1);
-
-                        MemoryStream stream = new MemoryStream();
-                        IFormatter formatter = new BinaryFormatter();
-                        formatter.Serialize(stream, path.possibleWindow);
-
-                       
-
-                        agent.Send(stream);
-
-                        //
-                        //System.IO.MemoryStream stream = SerializeToStream(path);
-                        // serializer.Serialize(numbers);
-                        //var myString = serializer.Deserialize(numbers);
-                    }
-
-                }
-                //TODO
-                //w przeciwnym razie slemy nizej, czyli jak sa podspodem jeszcze inne polaczenia bedziemy musieli slac nizej
-                else
-                {
-
-                }
+                ConnectionRequest(message, agent);
             }
-            else if(message.Contains("check"))
+            else if (message.Contains("check"))
             {
-                int[] data;
-                data = GetStartAndAmountOfSlots(message);
-                bool res;
-                res=SwitchingActions.pathToCount.IsReservingWindowPossible(data[1], data[0]);
-                if(res==true)
-                {
-                  //  string message1= "possible_path:"+agent.
-                    //wysylamy info 
-                    agent.Send("possible_path");
-                }
-                //jezeli nie bedzie mozliwa reserwacja trzeba bedzie to wyslac wyzej
-                else
-                {
-                    Console.WriteLine("Nie uda sie zarezerwowac slotow");
-                }
+                CheckRequest(message, agent);
             }
-            else if(message.Contains("reserve"))
+            else if (message.Contains("reserve"))
             {
-                int[] data;
-                data = GetStartAndAmountOfSlots(message);
-                SwitchingActions.pathToCount.ReserveWindow(data[1],data[0]);
-                XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
-                SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
-                xml.CreatePathXML(SwitchingActions.pathToCount);
+                ReserveRequest(message);
+                Program.paths.Add(SwitchingActions.pathToCount);
+            }
+            else if (message.Contains("delete"))
+            {
+                messageData = GetStartAndEndNode(message);
 
-                if (Program.isTheBottonSub == true)
+                string pathId = (messageData[0] ).ToString() + (messageData[1] ).ToString();
+                SwitchingActions.pathToCount = Program.paths.Find(x => x.id == pathId);
+                SendNodesToDeleteConnection(SwitchingActions.pathToCount);
+                SwitchingActions.pathToCount.ResetSlotReservation();
+                lock (Program.paths)
                 {
-                    foreach(Manager nod in Program.managerNodes)
+                    Program.paths.Remove(SwitchingActions.pathToCount);
+                }
+                Console.WriteLine("Wyslalem do wezlow prosbe o usuniecie polaczenia");
+            }
+
+        }
+
+        private static void SendNodesToDeleteConnection(Path pathToCount)
+        {
+            string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number;
+            foreach (Node node in pathToCount.nodes)
+            {
+                if (node.number <= 80 )
+                {
+                    lock (Program.managerNodes)
                     {
-                        Console.WriteLine(nod.number);
-                    }
-                    foreach(Node node in SwitchingActions.pathToCount.nodes)
-                    {
-                        string message1 = xml.StringNode(node.number);
-                        Console.WriteLine(message1);
                         try
                         {
-                            Console.WriteLine(node.number);
                             Program.managerNodes.Find(x=>x.number==node.number).Send(message1);
                         }
                         catch
                         {
-                            Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                            Console.WriteLine("Nie udalo sie automatycznie usunac wpisow");
                         }
                     }
                 }
             }
+        }
 
+        private static void ConnectionRequest(string message, Agent agent)
+        {
+
+
+            //jezeli jest to juz najnizsza podsiec to na jej poziomie juz konfigurujemy
+            if (Program.isTheBottonSub == true)
+            {
+                //format wiadomosci
+                //connection:<port_in>port</port_in><port_out>port<port_out>
+
+                messageData = GetStartAndEndNode(message);
+
+
+                var path = PathAlgorithm.dijkstra(Program.nodes, Program.links, messageData[0], messageData[1], false);
+                if (path.endToEnd)
+                {
+                    //by byla tylko jedna sciezka ta globalna na ktorej pracujemy
+
+                    SwitchingActions.pathToCount = path;
+                    Console.WriteLine("Istnieje polaczenie EndToEnd");
+
+                    //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
+                    Link inPort = new Link(messageData[2]);
+                    Link outPort = new Link(messageData[3]);
+                    path.nodes.First().outputLink = outPort;
+                    path.nodes.Last().inputLink = inPort;
+
+
+                    string message1 = "<lenght>" + path.lenght + "</lenght>";
+
+                    // string message1="<order>"+message+"</order><lenght>"+path.lenght+"</lenght>";
+                    agent.Send(message1);
+
+                    MemoryStream stream = new MemoryStream();
+                    IFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, path.possibleWindow);
+
+
+
+                    agent.Send(stream);
+
+                }
+            }
+            //TODO
+            // w przeciwnym razie slemy nizej, czyli jak sa podspodem jeszcze inne polaczenia bedziemy musieli slac nizej
+            else
+            {
+
+            }
+        }
+
+        private static void CheckRequest(string message, Agent agent)
+        {
+            int[] data = GetStartAndAmountOfSlots(message);
+            bool res;
+            res = SwitchingActions.pathToCount.IsReservingWindowPossible(data[1], data[0]);
+            if (res == true)
+            {
+                //wysylamy info 
+                agent.Send("possible_path");
+            }
+            //jezeli nie bedzie mozliwa reserwacja trzeba bedzie to wyslac wyzej
+            else
+            {
+                Console.WriteLine("Nie uda sie zarezerwowac slotow");
+            }
+        }
+
+
+
+        /// <summary>
+        /// sluzy do obslugi wiadomosci "reserve" mowiacej o to ktore okno mamy zarezerwowac
+        ///ta wiadomosc moze przyjsc tylko gdy juz zostalo sprawdzone ze wszedzie te okno jest dostepne
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ReserveRequest(string message)
+        {
+            int[] data;
+            data = GetStartAndAmountOfSlots(message);
+            SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
+            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
+            SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
+            xml.CreatePathXML(SwitchingActions.pathToCount);
+
+            if (Program.isTheBottonSub == true)
+            {
+                foreach (Manager nod in Program.managerNodes)
+                {
+                    Console.WriteLine(nod.number);
+                }
+                foreach (Node node in SwitchingActions.pathToCount.nodes)
+                {
+                    string message1 = xml.StringNode(node.number);
+                    Console.WriteLine(message1);
+                    try
+                    {
+                        Console.WriteLine(node.number);
+                        Program.managerNodes.Find(x => x.number == node.number).Send(message1);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -255,6 +299,7 @@ namespace ManagementCenter
             //laczenie sie z wezlami w podsieci
             lock (Program.managerNodes)
             {
+                //i jest do indeksacji Program.managerNodes
                 int i = 0;
                 foreach (Node node in Program.nodes)
                 {
@@ -271,7 +316,19 @@ namespace ManagementCenter
                         {
 
                         }
+                        
                     }
+
+                    try
+                    {
+                        Thread threadPing = new Thread(new ThreadStart(Program.managerNodes[i].PingThread));
+                        threadPing.Start();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("nie udalo sie wlaczyc pinga");
+                    }
+
                     i++;
                 }
 
