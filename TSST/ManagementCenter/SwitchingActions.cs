@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ManagementCenter
@@ -28,8 +29,11 @@ namespace ManagementCenter
         /// </summary>
         public static bool[] possibleWindow;
 
-
-
+        /// <summary>
+        /// stwierdza czy sciezka zostala zrekonfigurowana
+        /// 
+        /// </summary>
+         static bool reconfigured;
 
         /// <summary>
         /// zlicza ile wiadomosci possible window przyszlo
@@ -58,7 +62,7 @@ namespace ManagementCenter
         /// <param name="manager"></param>
         internal static void Action(string message, Manager manager)
         {
-            
+
             //jezeli ma zostac polaczenie w podsieci czyl
             if (message.Contains("subconection"))
             {
@@ -76,60 +80,63 @@ namespace ManagementCenter
                 //data[1] = targetClient;
                 data = GetStartAndEndNode(message);
 
-                    lock (Program.nodes)
+                lock (Program.nodes)
+                {
+                    lock (Program.links)
                     {
-                        lock (Program.links)
-                        {
-                            pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, data[0] + 80, data[1] + 80, false);
-                        }
+                        pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, data[0] + 80, data[1] + 80, false);
                     }
-                SendToSubnetworks(pathToCount);             
+                }
+                SendToSubnetworks(pathToCount);
             }
             //klijent prosi o usuniecie podsieci
             else if (message.Contains("delete"))
             {
                 data = GetStartAndEndNode(message);
-                string pathId= (data[0] + 80).ToString() + (data[1] + 80).ToString();
-                pathToCount= Program.paths.Find(x => x.id == pathId);
+                string pathId = (data[0] + 80).ToString() + (data[1] + 80).ToString();
+                pathToCount = Program.paths.Find(x => x.id == pathId);
                 SendSubToDeleteConnection(pathToCount);
                 pathToCount.ResetSlotReservation();
-                lock(Program.paths)
+                lock (Program.paths)
                 {
                     Program.paths.Remove(pathToCount);
                 }
 
             }
-           
-            else if(message.Contains("lenght"))
+            //gdy dostaje z podesieci wiadomosc jak dluga jest droga w podsieci
+            //info jest potrzebne do wyliczenia ile slotow potrzebujemy
+            else if (message.Contains("lenght"))
             {
                 int lenght = GetLenght(message);
                 pathToCount.lenght += lenght;
             }
-            else if(message.Contains("possible_window"))
+            else if (message.Contains("possible_window"))
             {
                 pathToCount.ChangeWindow(possibleWindow);
                 messageCounterPossibleWindow++;
 
                 //jezeli jest to najwyza sciezka i doszly juz wszystkie wiadomosci
                 //minus 2 jest, bo na samej gorze sa jeszcze klijenci ich nie uwzgledniamy
-                if (Program.isTheTopSub && messageCounterPossibleWindow==pathToCount.nodes.Count-2)
+                if (Program.isTheTopSub && messageCounterPossibleWindow == pathToCount.nodes.Count - 2)
                 {
-                     amountOfSlots = PathAlgorithm.AmountNeededSlots(pathToCount.lenght);
+                    amountOfSlots = PathAlgorithm.AmountNeededSlots(pathToCount.lenght);
                     //returnWindow= new int[2] {startSlot,maxWindow };
-                     window = pathToCount.FindMaxWindow();
+                    window = pathToCount.FindMaxWindow();
 
                     bool isReservationPossible = pathToCount.IsReservingWindowPossible(amountOfSlots, window[0]);
 
-                    if(isReservationPossible)
+                    if (isReservationPossible)
                     {
                         SendAskIfReservationIsPossible(window[0], amountOfSlots);
                     }
                     //to trzeba zrobic jakies inne polecania na zestawianie sciezko na okolo
                     else
                     {
+                        //znaczy to ze w tym miejscu sie nie udalo zrobic rekonfiguracji
+                        reconfigured = true;
                         Console.WriteLine("Nie mozna zestawic sciezki");
                     }
-                 
+
                 }
             }
 
@@ -137,29 +144,103 @@ namespace ManagementCenter
             {
                 messageCounterPossibleReservation++;
                 //jezeli jest na samym szczycie by wyslal nizej zadnia
-                if(messageCounterPossibleReservation==pathToCount.nodes.Count-2 && Program.isTheTopSub==true)
+                //minus dwa bo nie uwzgledniamu klientow
+                //jezeli licznik wybil ze u wszystkich mozliwa jest rezerwacja okna to rozsylane jest prosba, by zarezerwowali to okno
+                if (messageCounterPossibleReservation == pathToCount.nodes.Count - 2 && Program.isTheTopSub == true)
                 {
-
                     pathToCount.ReserveWindow(amountOfSlots, window[0]);
 
                     SendSubToReserveWindow(window[0], amountOfSlots);
                     //data[1] target client
                     SendClientsToReserveWindow(window[0], data[1]);
 
-
-                    
                     XMLeon xml = new XMLeon("path" + data[0] + data[1] + ".xml", XMLeon.Type.nodes);
                     pathToCount.xmlName = "path" + data[0] + data[1] + ".xml";
                     xml.CreatePathXML(pathToCount);
-                    
+
                     //dodawania sciezki do listy sciezek 
-                    lock(Program.paths)
+                    lock (Program.paths)
                     {
                         Program.paths.Add(pathToCount);
                     }
-    
+
+                    //jak jest przypadek z rekonfiguracja, gdy sie uda
+                    if (reconfigured==false)
+                    {
+                        reconfigured = true;
+                        //rozeslanie informacji do klijenta wysylajacego o zmianie sciezki
+                        var targetClient = SwitchingActions.pathToCount.nodes.First().number - 80;
+                        var message1 = "replace:<start_slot>" + SwitchingActions.pathToCount.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
+
+                        try
+                        {
+
+                            Program.managerClient[SwitchingActions.pathToCount.nodes.Last().number - 80 - 1].Send(message1);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta, ex: " + ex.ToString());
+                        }
+                    }
+                    
+
+                    Console.WriteLine("Zestawianie Sciezki sie powiodlo");
                 }
-            }    
+            }
+            //jezeli zepsula sie podsiec, by naprawic to na wyzszym poziomie
+            else if (message.Contains("subnetwork_dead"))
+            {
+                //tu jest maly cheat- taki ze numery podsieci sa takie same jak ich managerow
+                //by nie parsowac ich wiadomosci ze wzgledu na numer
+
+                //TODO zrobic ze podsiec wysyla tylko te scezki ktorych nie moze naprawic
+                int deadSub = manager.number;
+                Console.WriteLine("Zepsula sie podsciec: "+manager.number);
+
+                var toReconfigure = Program.paths.FindAll(x => x.nodes.Contains(x.nodes.Find(y => y.number == deadSub)));
+                //tu robimy porzadek
+                foreach (Path path in toReconfigure)
+                {
+                    path.ResetSlotReservation();
+                    SendSubToDeleteConnection(path);
+                   
+                }
+                //a tu zestawiamy od nowa
+                //musza byc dwie petle, bo robimy sycnhronicznie zestawianie
+                foreach (Path path in toReconfigure)
+                {
+                    lock (Program.nodes)
+                    {
+                        lock (Program.links)
+                        {
+                            SwitchingActions.pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
+                        }
+
+                    }
+                    reconfigured = false;
+                    SendToSubnetworks(SwitchingActions.pathToCount);
+                    
+                    //kolejny cheat
+                    while(reconfigured!=true)
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+
+                //wywalamy ta podsiec z listy wezlow ktore mamy do algorytmu
+                var item = Program.nodes.SingleOrDefault(x => x.number == deadSub);
+                Program.nodes.Remove(item);
+
+
+            }
+            //jezeli nie mozliwe jest zestawienie polaczenia w podsieci
+            else if (message.Contains("connection_impossible"))
+            {
+                //jak nie mozna w jakiejs podsieci zestawic to wtedy pomijamy to polaczenie
+                //TODO zrobic ze jak nies niemozliwe to by szukac innego rozwiazania
+                reconfigured = true;
+                Console.WriteLine();
+            }
         }
 
 
@@ -248,6 +329,13 @@ namespace ManagementCenter
             return lenght;
         }
 
+        /// <summary>
+        /// pobiera startowy i koncowy wezel
+        /// czyli klienta proszacego i docelowego
+        /// gdy to jest najwyzszyw ezel
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         static int[] GetStartAndEndNode(string message)
         {
             int[] result = new int[2];

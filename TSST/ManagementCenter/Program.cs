@@ -34,11 +34,10 @@ namespace ManagementCenter
 
 
         public static List<Manager> managerNodes=new List<Manager>();
-        public static List<Manager> managerClient= new List<Manager>();
-        public static Manager managerCloud;
-
-
+        public static List<Manager> managerClient= new List<Manager>();      
         public static List<Manager> subnetworkManager;
+
+        public static Manager managerCloud;
 
         /// <summary>
         /// Main

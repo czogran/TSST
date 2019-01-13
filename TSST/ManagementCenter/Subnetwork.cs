@@ -14,6 +14,8 @@ namespace ManagementCenter
          public int id;
          public string myContent;
 
+     
+
        public Subnetwork(int id,string address, List<int> linksId, List<int> nodeId,string myContent)
         {
             this.id = id;

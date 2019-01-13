@@ -74,6 +74,72 @@ namespace ManagementCenter
 
         }
 
+
+        internal static void NodeIsDead(int id)
+        {
+            var toReconfigure = Program.paths.FindAll(x => x.nodes.Contains(x.nodes.Find(y => y.number == id)));
+            foreach (Path path in toReconfigure)
+            {
+                path.ResetSlotReservation();
+                SendNodesToDeleteConnection(path);
+            }
+            foreach (Path path in toReconfigure)
+            {                       
+                lock (Program.nodes)
+                {
+                    lock (Program.links)
+                    {
+                        SwitchingActions.pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
+                    }
+
+                }
+                if (!SwitchingActions.pathToCount.endToEnd)
+                {
+                    //TODO napisac do managera ze nie udalo sie zestawic sciezki
+                    Console.WriteLine("Nie mozna ustawic innej sciezki zapasowej w tej podsieci");
+                }
+
+                else
+                {
+                    Link inPort = path.nodes.Last().inputLink;
+                    Link outPort = path.nodes.First().outputLink;
+                    SwitchingActions.pathToCount.nodes.First().outputLink = outPort;
+                    SwitchingActions.pathToCount.nodes.Last().inputLink = inPort;
+
+                    Console.WriteLine("aaaaaaaaaa");
+
+                    //sprawdzamy czy mamy takie okno na tej sciezce jakie potrzebowalismy na starej
+                    //tu moze cos byc namieszane ze slotami
+                    if (SwitchingActions.pathToCount.IsReservingWindowPossible(path.endSlot - path.startSlot, path.startSlot))
+                    {
+                        //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
+                        Console.WriteLine("nbbbbbbbbbbbbbbbbbbbb");
+
+                        ReserveRequest(SwitchingActions.pathToCount.startSlot, path.endSlot - path.startSlot);
+                        Program.paths.Remove(Program.paths.Find(x => x == path));
+                        Program.paths.Add(SwitchingActions.pathToCount);
+                    }
+                    else
+                    {
+                        lock (Program.paths)
+                        {
+                            try
+                            {
+                                //jezeli nie udalo sie zestawic polaczenia to jest ono wywalane z listy polaczen
+                                Program.paths.Remove(Program.paths.Find(x => x == path));
+                            }
+                            catch
+                            {
+                                //TODO napisac do managera ze nie udalo sie zrekonfigurwac w tym miejscu
+                                Console.WriteLine("Nie udalo sie wywalic sciezki");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         private static void SendNodesToDeleteConnection(Path pathToCount)
         {
             string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number;
@@ -202,6 +268,39 @@ namespace ManagementCenter
                 }
             }
         }
+
+        public static void ReserveRequest(int startSlot, int neededSlots)
+        {
+            int[] data= { startSlot, neededSlots };
+          //  data = GetStartAndAmountOfSlots(message);
+            SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
+            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
+            SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
+            xml.CreatePathXML(SwitchingActions.pathToCount);
+
+            if (Program.isTheBottonSub == true)
+            {
+                foreach (Manager nod in Program.managerNodes)
+                {
+                    Console.WriteLine(nod.number);
+                }
+                foreach (Node node in SwitchingActions.pathToCount.nodes)
+                {
+                    string message1 = xml.StringNode(node.number);
+                    Console.WriteLine(message1);
+                    try
+                    {
+                        Console.WriteLine(node.number);
+                        Program.managerNodes.Find(x => x.number == node.number).Send(message1);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// 
