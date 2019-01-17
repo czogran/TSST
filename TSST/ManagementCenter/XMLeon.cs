@@ -59,6 +59,16 @@ namespace ManagementCenter
         public XMLeon(string name, Type type)
         {
             this.name = name;
+        /*    try
+            {
+                xmlDoc.Load(name);
+                xmlDoc.DocumentElement.ParentNode.RemoveAll();
+            }
+            catch
+            {
+
+            }*/
+
             xmlDoc = new XmlDocument();
             XmlNode config = xmlDoc.CreateElement("config");
             XmlNode nodes = xmlDoc.CreateElement(type.ToString());
@@ -78,6 +88,8 @@ namespace ManagementCenter
             this.name = name;
             //nie wiem czy to jest bezpieczne
             xmlDoc.Load(name);
+            //tu moze byc blad
+            xmlDoc.Save(name);
         }
 
         /// <summary>
@@ -131,25 +143,28 @@ namespace ManagementCenter
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
-            XmlNode node = xmlDoc.CreateElement("node");
+           
 
-            XmlNode cablePort = xmlDoc.CreateElement("cable_port");
-            cablePort.InnerText = addressForCloud;
+                XmlNode node = xmlDoc.CreateElement("node");
 
-            XmlNode Agent = xmlDoc.CreateElement("agent");
-            Agent.InnerText = agent;
+                XmlNode cablePort = xmlDoc.CreateElement("cable_port");
+                cablePort.InnerText = addressForCloud;
 
-            XmlAttribute attribute = xmlDoc.CreateAttribute("id");
-            attribute.Value = id.ToString();
-            node.Attributes.Append(attribute);
-            if (addressForCloud != null && agent != null)
-            {
-                node.AppendChild(cablePort);
-                node.AppendChild(Agent);
-            }
-            XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("nodes");
-            addTo.AppendChild(node);
-            xmlDoc.Save(name);
+                XmlNode Agent = xmlDoc.CreateElement("agent");
+                Agent.InnerText = agent;
+
+                XmlAttribute attribute = xmlDoc.CreateAttribute("id");
+                attribute.Value = id.ToString();
+                node.Attributes.Append(attribute);
+                if (addressForCloud != null && agent != null)
+                {
+                    node.AppendChild(cablePort);
+                    node.AppendChild(Agent);
+                }
+                XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("nodes");
+                addTo.AppendChild(node);
+                xmlDoc.Save(name);
+            
         }
 
 
@@ -297,21 +312,27 @@ namespace ManagementCenter
         {
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
-            XmlNode matrix = xmlDefault.CreateElement("matrix_entry");
-            XmlAttribute attribute = xmlDefault.CreateAttribute("num");
-            attribute.Value = num.ToString();
-            matrix.Attributes.Append(attribute);
 
-            try
-            {
-                XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id=" + nodeNumber + "]");
-                addTo.AppendChild(matrix);
-                xmlDefault.Save(name);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("AddMatrix, ex:" + ex.ToString());
-            }
+          
+                XmlNode matrix = xmlDefault.CreateElement("matrix_entry");
+                XmlAttribute attribute = xmlDefault.CreateAttribute("num");
+                attribute.Value = num.ToString();
+                matrix.Attributes.Append(attribute);
+
+                try
+                {
+                    XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id=" + nodeNumber + "]");
+                    addTo.AppendChild(matrix);
+                    //  lock (xmlDefault)
+                    //{
+                    xmlDefault.Save(name);
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("AddMatrix, ex:" + ex.ToString());
+                }
+            
         }
         public void AddConnection(int startNode, int endNode,int node, int matrix, int startSlot, int endSlot   , int portOut)
         {

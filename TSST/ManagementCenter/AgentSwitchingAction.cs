@@ -30,7 +30,7 @@ namespace ManagementCenter
 
         static int[] messageData;
 
-        internal static void AgentAction(string message, Manager manager,Agent agent)
+        internal static void AgentAction(string message,Agent agent)
         {
             //jezeli ma wyslac jeszcze dalej
             if (message.Contains("subsubnetwork"))
@@ -96,24 +96,29 @@ namespace ManagementCenter
                 if (!SwitchingActions.pathToCount.endToEnd)
                 {
                     //TODO napisac do managera ze nie udalo sie zestawic sciezki
+                    
+                    lock(agentCollection)
+                    {
+                        agentCollection.Add("<error>"+path.globalID+"</error>");
+                    }
                     Console.WriteLine("Nie mozna ustawic innej sciezki zapasowej w tej podsieci");
                 }
 
                 else
                 {
+                    //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
                     Link inPort = path.nodes.Last().inputLink;
                     Link outPort = path.nodes.First().outputLink;
                     SwitchingActions.pathToCount.nodes.First().outputLink = outPort;
                     SwitchingActions.pathToCount.nodes.Last().inputLink = inPort;
 
-                    Console.WriteLine("aaaaaaaaaa");
+                    SwitchingActions.pathToCount.globalID = path.globalID;
 
                     //sprawdzamy czy mamy takie okno na tej sciezce jakie potrzebowalismy na starej
                     //tu moze cos byc namieszane ze slotami
                     if (SwitchingActions.pathToCount.IsReservingWindowPossible(path.endSlot - path.startSlot, path.startSlot))
                     {
-                        //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
-                        Console.WriteLine("nbbbbbbbbbbbbbbbbbbbb");
+                       
 
                         ReserveRequest(SwitchingActions.pathToCount.startSlot, path.endSlot - path.startSlot);
                         Program.paths.Remove(Program.paths.Find(x => x == path));
@@ -121,6 +126,14 @@ namespace ManagementCenter
                     }
                     else
                     {
+                        Console.WriteLine("Brakuje slotow by zestawic polaczenie");
+
+                        //wysylanie do agenta wiadomosci ze sie nie udalo 
+                        lock (agentCollection)
+                        {
+                            agentCollection.Add("<error>" + path.globalID + "</error>");
+                        }
+
                         lock (Program.paths)
                         {
                             try
@@ -130,7 +143,7 @@ namespace ManagementCenter
                             }
                             catch
                             {
-                                //TODO napisac do managera ze nie udalo sie zrekonfigurwac w tym miejscu
+                               
                                 Console.WriteLine("Nie udalo sie wywalic sciezki");
                             }
                         }
@@ -176,6 +189,8 @@ namespace ManagementCenter
 
 
                 var path = PathAlgorithm.dijkstra(Program.nodes, Program.links, messageData[0], messageData[1], false);
+                //4 indeks to numer globalID
+                path.globalID = messageData[4].ToString();
                 if (path.endToEnd)
                 {
                     //by byla tylko jedna sciezka ta globalna na ktorej pracujemy
@@ -202,6 +217,11 @@ namespace ManagementCenter
 
 
                     agent.Send(stream);
+
+                }
+                //
+                else
+                {
 
                 }
             }
@@ -242,7 +262,11 @@ namespace ManagementCenter
             int[] data;
             data = GetStartAndAmountOfSlots(message);
             SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
-            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
+            XMLeon xml;
+            //xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
+
+            xml = new XMLeon("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID+".xml", XMLeon.Type.nodes);
+           
             SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
             xml.CreatePathXML(SwitchingActions.pathToCount);
 
@@ -274,7 +298,8 @@ namespace ManagementCenter
             int[] data= { startSlot, neededSlots };
           //  data = GetStartAndAmountOfSlots(message);
             SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
-            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
+            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] +SwitchingActions.pathToCount.globalID +".xml", XMLeon.Type.nodes);
+          //  XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml");
             SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
             xml.CreatePathXML(SwitchingActions.pathToCount);
 
@@ -337,13 +362,17 @@ namespace ManagementCenter
         /// 1 endNode
         /// 2 portIn
         /// 3 portOut
+        /// 4 globalID
         /// </returns>
         static int[] GetStartAndEndNode(string message)
         {
-            int[] result=new int[4];
+            int[] result=new int[5];
             int start, end;
             int portIn, portOut;
             int startNode, endNode;
+
+            int id;
+
             start = message.IndexOf("<port_in>") + 9;
             end = message.IndexOf("</port_in>");
             portIn = Int32.Parse(message.Substring(start, end - start));
@@ -352,6 +381,10 @@ namespace ManagementCenter
             end = message.IndexOf("</port_out>");
             portOut = Int32.Parse(message.Substring(start, end - start));
 
+            start = message.IndexOf("<global_id>") +11 ;
+            end = message.IndexOf("</global_id>");
+            id= Int32.Parse(message.Substring(start, end - start));
+
             startNode = portIn % 100 - 10;
             endNode = portOut / 100 - 10;
 
@@ -359,9 +392,12 @@ namespace ManagementCenter
             result[1] = endNode;
             result[2] = portIn;
             result[3] = portOut;
+            result[4] = id;
+
 
             Console.WriteLine("port_in:" + portIn + "  port_out:" + portOut);
             Console.WriteLine("start node:" + startNode + "  end node:" + endNode);
+            Console.WriteLine("global ID:  " + id);
 
             return result;
         }

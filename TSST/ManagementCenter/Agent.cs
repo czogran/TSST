@@ -99,7 +99,7 @@ namespace ManagementCenter
         }
 
         /// <summary>
-        /// wielki cheat wysylam najpierw znacznik, ktory mowi co bedzie w nastepnej wiadomosci
+        /// wielki cheat wysylam potem znacznik, ktory mowi co bedzie w  wiadomosci
         /// bo inaczej nie umiem
         /// </summary>
         /// <param name="stream"></param>
@@ -140,7 +140,22 @@ namespace ManagementCenter
         /// <param name="e"></param>
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
-            AgentSwitchingAction.AgentAction(AgentSwitchingAction.agentCollection.Last(),Program.managerCloud,this);
+
+            if (AgentSwitchingAction.agentCollection.Last().Contains("error"))
+            {
+                try
+                {
+                    Send(AgentSwitchingAction.agentCollection.Last());
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            else
+            {
+                AgentSwitchingAction.AgentAction(AgentSwitchingAction.agentCollection.Last(), this);
+            }
         }
 
             public void disconnect_Click()

@@ -31,9 +31,11 @@ namespace ManagementCenter
 
         /// <summary>
         /// stwierdza czy sciezka zostala zrekonfigurowana
-        /// 
+        /// wartosc domyslna na true, bo na poczatku wszystko gra
         /// </summary>
-         static bool reconfigured;
+         static bool reconfigured=true;
+
+        static int toReconfigure = 0;
 
         /// <summary>
         /// zlicza ile wiadomosci possible window przyszlo
@@ -152,7 +154,10 @@ namespace ManagementCenter
 
                     SendSubToReserveWindow(window[0], amountOfSlots);
                     //data[1] target client
-                    SendClientsToReserveWindow(window[0], data[1]);
+                    if (reconfigured == true)
+                    {
+                        SendClientsToReserveWindow(window[0], data[1]);
+                    }
 
                     XMLeon xml = new XMLeon("path" + data[0] + data[1] + ".xml", XMLeon.Type.nodes);
                     pathToCount.xmlName = "path" + data[0] + data[1] + ".xml";
@@ -168,6 +173,8 @@ namespace ManagementCenter
                     if (reconfigured==false)
                     {
                         reconfigured = true;
+                        //zmniejszanie liczby sciezek jakie pozostaly jeszcze do zrekonfigurowania
+                        toReconfigure--;
                         //rozeslanie informacji do klijenta wysylajacego o zmianie sciezki
                         var targetClient = SwitchingActions.pathToCount.nodes.First().number - 80;
                         var message1 = "replace:<start_slot>" + SwitchingActions.pathToCount.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
@@ -188,62 +195,115 @@ namespace ManagementCenter
                 }
             }
             //jezeli zepsula sie podsiec, by naprawic to na wyzszym poziomie
-            else if (message.Contains("subnetwork_dead"))
+            
+            else if (message.Contains("error"))
             {
+                Console.WriteLine("To recofigure: " + toReconfigure);
+                Thread.Sleep(3000 * toReconfigure);
+                toReconfigure++;
+
+
                 //tu jest maly cheat- taki ze numery podsieci sa takie same jak ich managerow
                 //by nie parsowac ich wiadomosci ze wzgledu na numer
-
                 //TODO zrobic ze podsiec wysyla tylko te scezki ktorych nie moze naprawic
                 int deadSub = manager.number;
                 Console.WriteLine("Zepsula sie podsciec: "+manager.number);
 
-                var toReconfigure = Program.paths.FindAll(x => x.nodes.Contains(x.nodes.Find(y => y.number == deadSub)));
-                //tu robimy porzadek
-                foreach (Path path in toReconfigure)
-                {
+                //ustawienie ze jak nie mozna w niej usunac sciezki to sie ustawia ze jest ona martwa, by algorytm dijxtry do niej
+                //nie wchodzil
+                Program.nodes.Find(x => x.number == deadSub).isAlive = false;
+
+                string errorPathId = GetIdOfErrorPath(message);
+
+
+               
+                    var path = Program.paths.Find(x => x.globalID == errorPathId);
+
                     path.ResetSlotReservation();
                     SendSubToDeleteConnection(path);
+                
+
                    
-                }
+                
                 //a tu zestawiamy od nowa
                 //musza byc dwie petle, bo robimy sycnhronicznie zestawianie
-                foreach (Path path in toReconfigure)
-                {
-                    lock (Program.nodes)
+                   lock (Program.nodes)
                     {
                         lock (Program.links)
                         {
                             SwitchingActions.pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
                         }
 
-                    }
-                    reconfigured = false;
-                    SendToSubnetworks(SwitchingActions.pathToCount);
-                    
-                    //kolejny cheat
-                    while(reconfigured!=true)
+                    try
                     {
-                        Thread.Sleep(100);
+                        lock (Program.paths)
+                        {
+                            Program.paths.Remove(Program.paths.Find(x => x.globalID == errorPathId));
+                        }
+
                     }
+                    catch
+                    {
+
+                    }
+                    if (SwitchingActions.pathToCount.endToEnd == false)
+                    {
+                        //jak nie udalo sie zrekonfigurwac zmniejszamy licznik
+                        toReconfigure--;
+                        
+                        Console.WriteLine("Naprawa sciezki niemozliwa");
+                    }
+                    else
+                    {
+                        //zerujemy licznik
+                        messageCounterPossibleWindow = 0;
+                        messageCounterPossibleReservation = 0;
+
+                        reconfigured = false;
+                        SendToSubnetworks(SwitchingActions.pathToCount);
+
+                        //TODO potem do wodotryskow, ze jak sie jedna sciezka zepsuje to nie wylacza podsieci forever
+                        /*
+                        while(reconfigured==false)
+                        {
+                            Thread.Sleep(100);
+                        }
+                        Program.nodes.Find(x => x.number == deadSub).isAlive = true;*/
+                    }
+                  
                 }
 
-                //wywalamy ta podsiec z listy wezlow ktore mamy do algorytmu
-                var item = Program.nodes.SingleOrDefault(x => x.number == deadSub);
-                Program.nodes.Remove(item);
+
 
 
             }
             //jezeli nie mozliwe jest zestawienie polaczenia w podsieci
+            //TODO jak zestawienie polaczenia nie jest mozliwe przez jakas podscie to by poszlo inaczej
             else if (message.Contains("connection_impossible"))
             {
                 //jak nie mozna w jakiejs podsieci zestawic to wtedy pomijamy to polaczenie
                 //TODO zrobic ze jak nies niemozliwe to by szukac innego rozwiazania
-                reconfigured = true;
+                if (reconfigured == false)
+                {
+                    reconfigured = true;
+
+                }
                 Console.WriteLine();
             }
         }
 
 
+        static string GetIdOfErrorPath(string message)
+        {
+            string id;
+            int start, end;
+            start = message.IndexOf("<error>") + 7;
+            end = message.IndexOf("</error>");
+            id = (message.Substring(start, end - start));
+            Console.WriteLine("Zepsuta sciezka o id:"+ id);
+
+            return id;
+        }
 
         static void SendClientsToReserveWindow(int startSlot, int targetClient)
         {
@@ -373,7 +433,7 @@ namespace ManagementCenter
                 {
                     if (Program.isTheBottonSub == false && path.nodes[i].number < 80)
                     {
-                        string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out>";
+                        string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out><global_id>"+path.globalID+"</global_id>";
                         lock (Program.subnetworkManager)
                         {
                             Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
@@ -394,7 +454,7 @@ namespace ManagementCenter
             {
                 if (Program.isTheBottonSub == false && path.nodes[i].number < 80)
                 {
-                    string message1 = "delete<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out>";
+                    string message1 = "delete<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out><global_id>" + path.globalID + "</global_id>";
                     lock (Program.subnetworkManager)
                     {
                         Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);

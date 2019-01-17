@@ -15,6 +15,11 @@ namespace ManagementCenter
             //sciezka ktorej szukamy
             Path path=new Path();
             path.id = start.ToString() + end.ToString();
+            //jezeli jest to najwyzszy level to Id globalne jest takie same jak na tym poziomie
+            if(Program.isTheTopSub)
+            {
+                path.globalID = path.id;
+            }
 
             //resetowanie statusu nodow z informacji ze sa na sciezce, z poprzedniego zestawiania
             Node.ResestConnectionStatus(nodes);
@@ -41,13 +46,23 @@ namespace ManagementCenter
 
             //ustawienie wartosci startowego noda
             //znalezienie jego indeksu
-            index=nodes.IndexOf(nodes.Find(x => x.number == start));
+            try
+            {
+                index = nodes.IndexOf(nodes.Find(x => x.number == start));
+           
+
             //chyba chodzi o to, ze sam jest poprzednikiem siebie
             nodes[index].previousNode = start;
             //dotarcie do pierwszego nic nie kosztuje
             nodes[index].costToGetHere = 0;
             //i jest juz na sciezce
             nodes[index].connected = true;
+            }
+            catch
+            {
+                //jak go nie znalzl to pewnie znaczy ze gonie ma
+                Console.WriteLine();
+            }
 
 
             for (int n = 0; n < nodes.Count; n++) //zmienione z petli nisekonczonej na przypadek gdy jakis wezel jest niepoloczony
@@ -63,6 +78,7 @@ namespace ManagementCenter
                             index = nodes.IndexOf(nodes.Find(x => x.number == links[i].nodeB));
 
                             index2 = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
+                            //jezeli oba zyja to znaczy nie sa wylaczone moze na nich wykonywac algorytm
                             if (nodes[index].isAlive && nodes[index2].isAlive)
                             {
                                 if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)
@@ -93,9 +109,16 @@ namespace ManagementCenter
                     }
                 }
                 //zaznaczamy, ze najtanszy 
-                index = nodes.IndexOf(nodes.Find(x => x.number == nodeNumber));
-                nodes[index].connected = true;
-                actualNode = nodeNumber;
+                try
+                {
+                    index = nodes.IndexOf(nodes.Find(x => x.number == nodeNumber));
+                    nodes[index].connected = true;
+                    actualNode = nodeNumber;
+                }
+                catch
+                {
+
+                }
 
                 if (actualNode == end)
                 {

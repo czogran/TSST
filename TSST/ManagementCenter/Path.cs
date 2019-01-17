@@ -64,6 +64,11 @@ namespace ManagementCenter
 
         public string id;
 
+        /// <summary>
+        /// globalne id sciezki= id na najwyzszym poziomie
+        /// </summary>
+        public string globalID;
+
         public Path()
         {
           
@@ -141,6 +146,7 @@ namespace ManagementCenter
         public int[]  FindMaxWindow()
         {
             int maxWindow = 0;
+            int countingSlot = 0;
              startSlot=0;
             int actualWindow = 0;
             for(int i=0;i<possibleWindow.Length;i++)
@@ -150,12 +156,14 @@ namespace ManagementCenter
                     if (actualWindow == 0)
                     {
                         //walone indeksowanie, sloty od 1 a wszytskie te tablice od 0
-                        startSlot = i + 1;
+                       
+                        countingSlot = i + 1;
                     }
                     actualWindow++;
                     if(actualWindow>maxWindow)
                     {
                         maxWindow = actualWindow;
+                        startSlot = countingSlot;
                     }
                 }
                 else

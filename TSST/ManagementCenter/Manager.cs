@@ -100,9 +100,10 @@ namespace ManagementCenter
                     {
                         SwitchingActions.Action(receivedMessage, this);
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         Console.WriteLine("zla akcja"+receivedMessage);
+                        Console.WriteLine(ex.ToString());
                     }
                 }
                 catch(Exception ex)
