@@ -32,7 +32,9 @@ namespace ManagementCenter
         public Link()
         { }
 
-        //jak jest w podsieci na brzegu, by dac go do brzegowego portu jako link wejsciowy lub wyjsciowy w zaleznosci od potrzeby
+        /// <summary>
+        ///  jak jest w podsieci na brzegu, by dac go do brzegowego portu jako link wejsciowy lub wyjsciowy w zaleznosci od potrzeby
+        /// </summary>
         public Link(int portCheat)
         {
             portIn = portCheat;

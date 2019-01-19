@@ -11,7 +11,7 @@ namespace ManagementCenter
     /// informacje o wezlach sa tu przechowywane
     /// bardzo wazne, jako nody beda liczeni tez klijenci w algorytmie sciezek
     /// </summary>
-    class Node
+    class Node :ICloneable
     {
         public int number;
         //Array ports;
@@ -59,6 +59,24 @@ namespace ManagementCenter
             costToGetHere = 2147483647;
         }
 
+        public Node(int number,Link outputLink, Link inputLink, List<int> ports, bool alive, int costToGet,int previousNode,bool connected)
+        {
+            this.number = number;
+            this.outputLink = outputLink;
+            this.inputLink = inputLink;
+            this.ports = new List<int>();
+
+            //tu moze byc zle liste kopiowana
+            this.ports = ports;
+
+
+            this.isAlive = alive;
+            this.costToGetHere = costToGet;
+            this.previousNode = previousNode;
+            this.connected = connected;
+
+        }
+
         public static void ResestConnectionStatus(List<Node> nodes)
         {
             foreach(Node node in nodes)
@@ -66,6 +84,15 @@ namespace ManagementCenter
                 node.connected = false;
                 node.costToGetHere = 2147483647;
             }
+        }
+
+        /// <summary>
+        /// sluzy do klonowania obiektu
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            return new Node(this.number,this.outputLink,this.inputLink,this.ports,this.isAlive,this.costToGetHere,this.previousNode,this.connected);
         }
     }
 }

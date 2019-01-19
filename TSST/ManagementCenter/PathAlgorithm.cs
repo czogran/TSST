@@ -133,7 +133,7 @@ namespace ManagementCenter
                 for (int i = 0; i < nodes.Count; i++)
                 {
                     index = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
-                    path.nodes.Add(nodes[index]);
+                    path.nodes.Add((Node)nodes[index].Clone());
                     path.connection.Add(nodes[index].inputLink);
 
                     path.ChangeWindow(nodes[index].inputLink);
@@ -151,7 +151,7 @@ namespace ManagementCenter
                     {
                         //jest tu dodawanie, bo cofanie sie po sciezce jest przed ifem
                         index = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
-                        path.nodes.Add(nodes[index]);
+                        path.nodes.Add((Node)nodes[index].Clone());
 
                         
                         //jak ostatni to nie bedzie mial poprzedniego wiec raczej z tad tego tu nie bedzie

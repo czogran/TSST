@@ -31,7 +31,7 @@ namespace ManagementCenter
             //linki
             XMLeon linksgen = new XMLeon("sub1links.xml", XMLeon.Type.cable_cloud);
             linksgen.AddLink(9111, 81, 2, 9111,1191, "on", 1, 14);
-            linksgen.AddLink(9211, 82, 2, 9212, 1292, "on", 1, 14);
+            linksgen.AddLink(9211, 82, 2, 9211, 1191, "on", 1, 14);
             linksgen.AddLink(2693, 5, 83, 2693, 9326, "on", 1, 14);
             linksgen.AddLink(2694, 5, 84, 2694, 9426, "on", 1, 14);
 

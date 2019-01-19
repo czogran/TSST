@@ -56,6 +56,12 @@ namespace ManagementCenter
             {
                 ReserveRequest(message);
                 Program.paths.Add(SwitchingActions.pathToCount);
+                foreach (Path p in Program.paths)
+                {
+                    Console.WriteLine("Second TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
+                    Console.WriteLine(p.xmlName);
+
+                }
             }
             else if (message.Contains("delete"))
             {
@@ -86,6 +92,8 @@ namespace ManagementCenter
             {
                 path.ResetSlotReservation();
                 SendNodesToDeleteConnection(path);
+                Console.WriteLine("FIRST TRYInput port " + path.nodes.Last().inputLink .portIn+ "Output port  " + path.nodes.First().outputLink.portOut);
+                Console.WriteLine(path.xmlName);
             }
             Console.WriteLine("Posprztane po awarii");
             foreach (Path path in toReconfigure)
@@ -100,7 +108,7 @@ namespace ManagementCenter
                 }
                 if (!SwitchingActions.pathToCount.endToEnd)
                 {
-                    //TODO napisac do managera ze nie udalo sie zestawic sciezki
+                   
                     
                     lock(agentCollection)
                     {
@@ -119,6 +127,7 @@ namespace ManagementCenter
 
                     SwitchingActions.pathToCount.globalID = path.globalID;
 
+                    Console.WriteLine("Input port "+inPort.portIn+"Output port  "+outPort.portOut);
 
                     Console.WriteLine("Start SLot:"+path.startSlot+"   endSlot:"+path.endSlot);
 
@@ -195,6 +204,8 @@ namespace ManagementCenter
         /// <param name="agent"></param>
         private static void ConnectionRequest(string message, Agent agent)
         {
+
+         
             //jezeli jest to juz najnizsza podsiec to na jej poziomie juz konfigurujemy
             if (Program.isTheBottonSub == true)
             {
@@ -211,14 +222,49 @@ namespace ManagementCenter
                 {
                     //by byla tylko jedna sciezka ta globalna na ktorej pracujemy
 
-                    SwitchingActions.pathToCount = path;
+                   
                     Console.WriteLine("Istnieje polaczenie EndToEnd");
+
+
+
+                 
+
 
                     //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
                     Link inPort = new Link(messageData[2]);
                     Link outPort = new Link(messageData[3]);
+
+                    foreach (Path p in Program.paths)
+                    {
+                        Console.WriteLine("CCCCCCCCCCC TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
+                        Console.WriteLine(p.xmlName);
+                        Console.WriteLine("Start Slot:" + p.startSlot);
+
+                    }
+
                     path.nodes.First().outputLink = outPort;
+
+                    foreach (Path p in Program.paths)
+                    {
+                        Console.WriteLine("BBBBBBBBBBB TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
+                        Console.WriteLine(p.xmlName);
+                        Console.WriteLine("Start Slot:" + p.startSlot);
+
+                    }
+
+
                     path.nodes.Last().inputLink = inPort;
+
+                    foreach (Path p in Program.paths)
+                    {
+                        Console.WriteLine("four TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
+                        Console.WriteLine(p.xmlName);
+                        Console.WriteLine("Start Slot:"+p.startSlot);
+
+                    }
+
+                    SwitchingActions.pathToCount = path;
+
 
 
                     string message1 = "<lenght>" + path.lenght + "</lenght>";
@@ -283,7 +329,7 @@ namespace ManagementCenter
 
             xml = new XMLeon("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID+".xml", XMLeon.Type.nodes);
            
-            SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
+            SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml");
             xml.CreatePathXML(SwitchingActions.pathToCount);
 
             if (Program.isTheBottonSub == true)
@@ -316,7 +362,7 @@ namespace ManagementCenter
             SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
             XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] +SwitchingActions.pathToCount.globalID +".xml", XMLeon.Type.nodes);
           //  XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml");
-            SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + ".xml");
+            SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml");
             xml.CreatePathXML(SwitchingActions.pathToCount);
 
             if (Program.isTheBottonSub == true)
