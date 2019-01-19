@@ -35,6 +35,10 @@ namespace ManagementCenter
         /// </summary>
          static bool reconfigured=true;
 
+        /// <summary>
+        /// ile sciezek zostalo nam jeszcze do zrekonfigurowania
+        ///wykorzystywany przy naprawie na poziomie sieci
+        /// </summary>
         static int toReconfigure = 0;
 
         /// <summary>

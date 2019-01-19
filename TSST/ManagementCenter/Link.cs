@@ -73,7 +73,8 @@ namespace ManagementCenter
         public void SetSlots(int startSlot, int endSlot, bool status)
         {
             //indeksowanie, sloty od 1, tablice od 0
-            for (int i = startSlot-1; i < endSlot-1; i++)
+            //lacznie z end slotem
+            for (int i = startSlot-1; i <= endSlot-1; i++)
             {
                 usedSlots.SetValue(status, i);
             }

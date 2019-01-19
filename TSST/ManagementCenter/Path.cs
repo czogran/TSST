@@ -61,7 +61,10 @@ namespace ManagementCenter
         /// jak sie nazywa xml, ktory przechowuje ta sciezke
         /// </summary>
         public string xmlName;
-
+    
+        /// <summary>
+        /// lokalne id sciezki np. w podsieci
+        /// </summary>
         public string id;
 
         /// <summary>
@@ -184,11 +187,16 @@ namespace ManagementCenter
         /// <returns></returns>
         public bool IsReservingWindowPossible(int neededSlots, int startWindow)
         {
-            for(int i=startWindow-1;i< startWindow - 1+neededSlots;i++)
+            for (int i =0;i<15; i++)
+            {
+                Console.WriteLine(possibleWindow[i]);
+            }
+                for (int i=startWindow-1;i< startWindow - 1+neededSlots;i++)
             {
                 //
                 if(possibleWindow[i]==false)
                 {
+                    Console.WriteLine("nie ma szczeliny:" + i);
                     return false;
                 }
             }
@@ -216,7 +224,8 @@ namespace ManagementCenter
             {*/
                 pathIsSet = true;
                 startSlot = startWindow;
-                endSlot = startWindow + neededSlots;
+            //minus jeden bo jak mamy jakis przedzial to jest w nim n+1 elementow- startowy tez sie liczy jako element
+                endSlot = startWindow + neededSlots-1;
 
 
                 //dla kazdego linku na sciezce rezerwujemy szczeliny

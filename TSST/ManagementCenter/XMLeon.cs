@@ -343,7 +343,7 @@ namespace ManagementCenter
             XmlNode connection = xmlDefault.CreateElement("connection");
             XmlAttribute attribute= xmlDefault.CreateAttribute("num");
            // zmienic id polaczenia
-            attribute.Value = startNode.ToString() + endNode.ToString();
+            attribute.Value = startNode.ToString() + endNode.ToString()+startSlot.ToString();
             connection.Attributes.Append(attribute);
          
             XmlNode startSlotNode = xmlDefault.CreateElement("start_slot");

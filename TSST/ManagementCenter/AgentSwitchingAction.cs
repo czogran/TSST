@@ -74,15 +74,20 @@ namespace ManagementCenter
 
         }
 
-
+        /// <summary>
+        /// funkcja uruchamiana wtedy gdy padnie jakis wezel
+        /// </summary>
+        /// <param name="id">numer noda ktory padl</param>
         internal static void NodeIsDead(int id)
         {
             var toReconfigure = Program.paths.FindAll(x => x.nodes.Contains(x.nodes.Find(y => y.number == id)));
+            //czyszczenie zajetych zasobow
             foreach (Path path in toReconfigure)
             {
                 path.ResetSlotReservation();
                 SendNodesToDeleteConnection(path);
             }
+            Console.WriteLine("Posprztane po awarii");
             foreach (Path path in toReconfigure)
             {                       
                 lock (Program.nodes)
@@ -114,13 +119,17 @@ namespace ManagementCenter
 
                     SwitchingActions.pathToCount.globalID = path.globalID;
 
+
+                    Console.WriteLine("Start SLot:"+path.startSlot+"   endSlot:"+path.endSlot);
+
                     //sprawdzamy czy mamy takie okno na tej sciezce jakie potrzebowalismy na starej
                     //tu moze cos byc namieszane ze slotami
-                    if (SwitchingActions.pathToCount.IsReservingWindowPossible(path.endSlot - path.startSlot, path.startSlot))
+                    //plus jeden proba bo np od 1 do 2 znajduja sie 2 liczby, a nie 2-1=1
+                    if (SwitchingActions.pathToCount.IsReservingWindowPossible(path.endSlot-path.startSlot+1, path.startSlot))
                     {
                        
-
-                        ReserveRequest(SwitchingActions.pathToCount.startSlot, path.endSlot - path.startSlot);
+                        //tu plus jeden bo ta walona indeksacja
+                        ReserveRequest(path.startSlot, path.endSlot - path.startSlot+1);
                         Program.paths.Remove(Program.paths.Find(x => x == path));
                         Program.paths.Add(SwitchingActions.pathToCount);
                     }
@@ -152,10 +161,13 @@ namespace ManagementCenter
             }
         }
 
-
+        /// <summary>
+        /// wysylanie wiadomosci wezlom aby usunely polaczenie
+        /// </summary>
+        /// <param name="pathToCount"></param>
         private static void SendNodesToDeleteConnection(Path pathToCount)
         {
-            string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number;
+            string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number+pathToCount.startSlot;
             foreach (Node node in pathToCount.nodes)
             {
                 if (node.number <= 80 )
@@ -175,10 +187,14 @@ namespace ManagementCenter
             }
         }
 
+        /// <summary>
+        /// do obslugi zlecenia polaczenia
+        /// ma na celu stwierdzenie czy jest mozliwe zestawienie sciezki EndToEnd
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="agent"></param>
         private static void ConnectionRequest(string message, Agent agent)
         {
-
-
             //jezeli jest to juz najnizsza podsiec to na jej poziomie juz konfigurujemy
             if (Program.isTheBottonSub == true)
             {
