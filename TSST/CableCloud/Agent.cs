@@ -44,7 +44,7 @@ namespace CableCloud
         {
             mySocket.Listen(10);
             mySocket = mySocket.Accept();
-           // CLI.ConnectedAgent();
+            // CLI.ConnectedAgent();
             buffer = new byte[30240];
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
@@ -69,10 +69,13 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Od Agenta "+  id+"  "+":\n " + receivedMessage+"\n");
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Odebrana została od agenta " + id + " wiadomość o treści: " + receivedMessage);
+
+                //Console.WriteLine("Od Agenta " + id + "  " + ":\n " + receivedMessage + "\n");
                 lock (agentCollection)
                 {
-                   agentCollection.Add(receivedMessage);
+                    agentCollection.Add(receivedMessage);
                 }
                 buffer = new byte[30240];
 
@@ -82,7 +85,7 @@ namespace CableCloud
 
             catch (Exception ex)
             {
-                Console.WriteLine("Message callback execption:"+ex.ToString());
+                Console.WriteLine("Message callback execption:" + ex.ToString());
             }
         }
 
@@ -91,12 +94,14 @@ namespace CableCloud
         {
             lock (agentCollection)
             {
-                string s =agentCollection.Last();
+                string s = agentCollection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
 
                 mySocket.Send(sending);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została wiadomość o treści: " + s);
 
             }
         }
@@ -113,17 +118,17 @@ namespace CableCloud
                 agentCollection.CollectionChanged += SwitchAction;
             }
         }
-       
+
         public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
 
             if (agentCollection.Last().Contains("cloud"))
             {
-                File.WriteAllText("myLinks"+id+".xml", agentCollection.Last());
+                File.WriteAllText("myLinks" + id + ".xml", agentCollection.Last());
                 lock (Switch.linkDictionary)
                 {
-                    Console.WriteLine("Proba dodania do slownika konfiuracji agenta:"+id.ToString());
+                    Console.WriteLine("Próba dodania do słownika konfiguracji agenta:" + id.ToString());
 
                     //  Switch.linkDictionary.Clear();
                     Switch.FillDictionary(id);
@@ -131,12 +136,17 @@ namespace CableCloud
             }
             else if (agentCollection.Last().Contains("clean_dictionary"))
             {
-                Console.WriteLine("Czyszcze polaczenia");
+                Console.WriteLine("Czyszczę połączenia");
                 Switch.linkDictionary.Clear();
             }
 
 
 
+        }
+
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CableCloud
     class Program
     {
         public static String nodeAmount = "0";
-        static List<ClientCloud> client=new List<ClientCloud>();
+        static List<ClientCloud> client = new List<ClientCloud>();
         static List<Thread> clientThread = new List<Thread>();
         static List<Thread> connectClientThread = new List<Thread>();
 
@@ -35,21 +35,21 @@ namespace CableCloud
         {
             Console.WriteLine("CABLE CLOUD");
 
-            int amountOfNodes=Int32.Parse(args[0]);
-            int amountOfClients = Int32.Parse(args[1]);           
-            int amountOfManagers= Int32.Parse(args[2]);
-          
+            int amountOfNodes = Int32.Parse(args[0]);
+            int amountOfClients = Int32.Parse(args[1]);
+            int amountOfManagers = Int32.Parse(args[2]);
+
             //tworzenie soketow dla managerow
             for (int i = 1; i <= amountOfManagers; i++)
             {
-               agent.Add(new Agent(i));
-                agent[i-1].CreateSocket("127.0.30."+i.ToString(), 11001);
+                agent.Add(new Agent(i));
+                agent[i - 1].CreateSocket("127.0.30." + i.ToString(), 11001);
 
-                agentConnectThread.Add( new Thread(new ThreadStart(agent[i-1].Connect)));
+                agentConnectThread.Add(new Thread(new ThreadStart(agent[i - 1].Connect)));
                 agentConnectThread[i - 1].Start();
 
-               agentComputingThread.Add( new Thread(new ThreadStart(agent[i-1].ComputingThread)));
-                agentComputingThread[i-1].Start();
+                agentComputingThread.Add(new Thread(new ThreadStart(agent[i - 1].ComputingThread)));
+                agentComputingThread[i - 1].Start();
             }
 
 
@@ -66,11 +66,11 @@ namespace CableCloud
                     Thread threadNode = new Thread(new ThreadStart(node[i - 1].SendThread));
                     threadNode.Start();
 
-                    
+
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Tworze polaczenia dla nodow, ex:" + ex.ToString());
+                    Console.WriteLine("Tworzę połączenia dla nodow, ex:" + ex.ToString());
                 }
 
             }
@@ -89,12 +89,12 @@ namespace CableCloud
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Tworze polaczenia dla klientow, ex:" + ex.ToString());
+                    Console.WriteLine("Tworzę połączenia dla klientow, ex:" + ex.ToString());
                 }
             }
 
-        
-    
+
+
             //te read line musi byc inaczej wszystko sie konczy
             Console.ReadLine();
 

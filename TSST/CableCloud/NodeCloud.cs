@@ -73,8 +73,11 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Otrzymałem wiadmość od węzła\n" + receivedMessage);
-               
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Odebrana została od węzła wiadomość o treści: " + receivedMessage);
+
+                //Console.WriteLine("Otrzymałem wiadomość od węzła\n" + receivedMessage);
+
                 //tu switchujemy to co przechodzi
                 Switch.SwitchBufer(receivedMessage);
 
@@ -94,16 +97,19 @@ namespace CableCloud
             lock (Switch.nodeCollection.ElementAt(id - 1))
             {
                 string s = Switch.nodeCollection.ElementAt(id - 1).Last();
-                Console.WriteLine("Wysyłam wiadomość do węzła");
+                //Console.WriteLine("Wysyłam wiadomość do węzła");
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
 
                 mySocket.Send(sending);
 
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została do węzła wiadomość o treści: " + s);
+
             }
         }
-            public void disconnect_Click()
+        public void disconnect_Click()
         {
             mySocket.Disconnect(true);
             mySocket.Close();
@@ -115,6 +121,11 @@ namespace CableCloud
             {
                 Switch.nodeCollection.ElementAt(id - 1).CollectionChanged += Send;
             }
+        }
+
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
         }
     }
 }
