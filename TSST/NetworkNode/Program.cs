@@ -17,7 +17,7 @@ namespace NetworkNode
         {
             int id = int.Parse(arg);
             number = id;
-           // id = 2 * id + 10;
+            // id = 2 * id + 10;
 
             return new string[] { "127.0.1." + id.ToString(), "127.0.3." + id.ToString() };
         }
@@ -27,16 +27,16 @@ namespace NetworkNode
         /// </summary>
         /// <param name="args">numer wezla</param>
 
-        
+
         static void Main(string[] args)
         {
-          
-            Console.WriteLine("node"+args[0]);
+
+            Console.WriteLine("node" + args[0]);
             //Console.WriteLine("node number "+args[0]);
 
             string[] ips = ArgToIP(args[0]);
-            Console.WriteLine("adres dla chmury: "+ips[0]);
-            Console.WriteLine("adres dla agenta: "+ips[1]);
+            Console.WriteLine("adres dla chmury: " + ips[0]);
+            Console.WriteLine("adres dla agenta: " + ips[1]);
 
             Port port = new Port();
             Agent agent = new Agent();
@@ -55,7 +55,7 @@ namespace NetworkNode
             threadPort.Start();
             computeThread.Start();
 
-            XMLParser.AddNode("myNode" + Program.number + ".xml",ips[0],ips[1]);
+            XMLParser.AddNode("myNode" + Program.number + ".xml", ips[0], ips[1]);
 
             //!!!!!!!!!!!!
             //bardzo wazne bez tego wyciaganie infromacji z labeli nie bedzie dzialac !!!!
@@ -67,6 +67,6 @@ namespace NetworkNode
             Console.ReadLine();
 
         }
-        
+
     }
 }

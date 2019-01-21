@@ -19,7 +19,7 @@ namespace NetworkNode
         {
 
             XmlDocument xmlDoc = new XmlDocument();
-          
+
             try
             {
                 xmlDoc.Load(name);
@@ -58,14 +58,14 @@ namespace NetworkNode
                 var parent = child.ParentNode;
                 parent.RemoveChild(child);
                 xmlDoc.Save(name);
-                Console.WriteLine("Wywalony wpis");
+                Console.WriteLine("Wpis usunięty");
             }
             catch
             {
             }
         }
 
-        public static void AddConnection(string name,string message)
+        public static void AddConnection(string name, string message)
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(name);
@@ -73,12 +73,12 @@ namespace NetworkNode
             XmlDocument xmlMessage = new XmlDocument();
             // var xxx = XDocument.Parse(message);
             // xmlMessage.PreserveWhitespace = false;
-             File.WriteAllText("myNodeconnection" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
-           
-                xmlMessage.Load("myNodeconnection" + Program.number + ".xml");
-            
-            
-            XmlNode node,node1;
+            File.WriteAllText("myNodeconnection" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
+
+            xmlMessage.Load("myNodeconnection" + Program.number + ".xml");
+
+
+            XmlNode node, node1;
 
             node = xmlMessage.SelectSingleNode("/node/matrix_entry");
 
@@ -86,29 +86,29 @@ namespace NetworkNode
             {
                 int matrix = Int32.Parse(node.Attributes["num"].Value);
                 XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry[@num=" + matrix + "]");
-                Console.WriteLine("addtoforst   "+addTo.InnerXml);
+                Console.WriteLine("addtoforst   " + addTo.InnerXml);
                 node = xmlMessage.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry[@num=" + matrix + "]/connection");
-                Console.WriteLine( " node1first        "+ node.InnerXml);
+                Console.WriteLine(" node1first        " + node.InnerXml);
                 node1 = xmlDoc.ImportNode(node, true);
                 addTo.AppendChild(node1);
                 xmlDoc.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 try
                 {
                     //xmlDoc.ImportNode(node,true);
                     //Console.WriteLine(node.InnerText);
                     XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]");
-                    node1=xmlDoc.ImportNode(node, true);
-                    Console.WriteLine("addTO   "+addTo.InnerXml);
-                    Console.WriteLine("node1:   "+node1.InnerXml);
+                    node1 = xmlDoc.ImportNode(node, true);
+                    Console.WriteLine("addTO   " + addTo.InnerXml);
+                    Console.WriteLine("node1:   " + node1.InnerXml);
                     addTo.AppendChild(node1);
                     xmlDoc.Save(name);
                 }
-                catch(Exception ex1)
+                catch (Exception ex1)
                 {
-                    Console.WriteLine("Second:"+ex1.ToString());
+                    Console.WriteLine("Second:" + ex1.ToString());
                 }
                 Console.WriteLine("first:" + ex.ToString());
             }
@@ -147,44 +147,44 @@ namespace NetworkNode
                 return null;
             }
         }
-            /// <summary>
-            /// zwraca dla danego wezla zawartosc dla danego portu
-            /// </summary>
-            /// <param name="number">numer portu ktorego szukamy</param>
-            /// <returns></returns>
-            public static string StringMatrix(int number)
+        /// <summary>
+        /// zwraca dla danego wezla zawartosc dla danego portu
+        /// </summary>
+        /// <param name="number">numer portu ktorego szukamy</param>
+        /// <returns></returns>
+        public static string StringMatrix(int number)
+        {
+            XmlDocument xmlDefault = new XmlDocument();
+            StringWriter sw = new StringWriter();
+            XmlTextWriter tx = new XmlTextWriter(sw);
+
+            string file;
+            string readXML;
+            int start, end;
+            xmlDefault.Load("myNode" + Program.number + ".xml");
+            xmlDefault.WriteTo(tx);
+            readXML = sw.ToString();
+            try
             {
-                XmlDocument xmlDefault = new XmlDocument();
-                StringWriter sw = new StringWriter();
-                XmlTextWriter tx = new XmlTextWriter(sw);
+                //znajduje gdzie jest poczatek w xml informacji o danym numerze
+                start = readXML.IndexOf("<matrix_entry num=\"" + number + "\">");
 
-                string file;
-                string readXML;
-                int start, end;
-                xmlDefault.Load("myNode" + Program.number + ".xml");
-                xmlDefault.WriteTo(tx);
-                readXML = sw.ToString();
-                try
-                {
-                    //znajduje gdzie jest poczatek w xml informacji o danym numerze
-                    start = readXML.IndexOf("<matrix_entry num=\"" + number + "\">");
-                    
-                   //szuka konca tej informacji, szuka poczynajac od miejsca gdzie sie zaczela (start)
-                    end = readXML.IndexOf("</matrix_entry>", start);
+                //szuka konca tej informacji, szuka poczynajac od miejsca gdzie sie zaczela (start)
+                end = readXML.IndexOf("</matrix_entry>", start);
 
-                    file = readXML.Substring(start, end - start);
-                    //niestety wycinajac tracimy znacznik konca informacji, wiec go teraz dodajemy
-                    file = file + "</matrix_entry>";
-                    return file;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("nie ma matrixa, ex:" + ex.ToString());
-                      //jezeli cos sie pochrzanilo  to zwracamy info ze nie ma takiego portu
-                    return "nie ma takiego portu";
-                }
-
+                file = readXML.Substring(start, end - start);
+                //niestety wycinajac tracimy znacznik konca informacji, wiec go teraz dodajemy
+                file = file + "</matrix_entry>";
+                return file;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("nie ma matrixa, ex:" + ex.ToString());
+                //jezeli cos sie pochrzanilo  to zwracamy info ze nie ma takiego portu
+                return "nie ma takiego portu";
+            }
+
+        }
 
         /// <summary>
         /// Słownik portów wejścia/wyjścia

@@ -12,72 +12,70 @@ namespace NetworkNode
     class Port
     {
 
-    
 
-    Socket mySocket;
-    Socket listeningSocket;
 
-    EndPoint endRemote, endLocal;
-    byte[] buffer;
+        Socket mySocket;
+        Socket listeningSocket;
 
-    public Port()
-    {
-    }
+        EndPoint endRemote, endLocal;
+        byte[] buffer;
 
-    public void CreateSocket(string IP, int port)
-    {
-        string myIp;
-        int myport;
-        myIp = IP;
-        myport = port;
+        public Port()
+        {
+        }
 
-        IPAddress ipAddress = IPAddress.Parse(myIp);
-        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, myport);
+        public void CreateSocket(string IP, int port)
+        {
+            string myIp;
+            int myport;
+            myIp = IP;
+            myport = port;
 
-        mySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        mySocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-        mySocket.Bind(localEndPoint);
-    }
-    public void Connect()
-    {
-       
+            IPAddress ipAddress = IPAddress.Parse(myIp);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, myport);
 
-       
+            mySocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            mySocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            mySocket.Bind(localEndPoint);
+        }
+        public void Connect()
+        {
+            mySocket.Listen(10);
+            mySocket = mySocket.Accept();
+            Console.WriteLine("Połączono z chmurą");
+            //mySocket.Accept();
+            //mySocket.BeginAccept(AcceptCallback, mySocket);
+            buffer = new byte[1024];
 
-        mySocket.Listen(10);
-        mySocket = mySocket.Accept();
-        Console.WriteLine("Połączono z chmurą");
-        //mySocket.Accept();
-        //mySocket.BeginAccept(AcceptCallback, mySocket);
-        buffer = new byte[1024];
 
-            
-                mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
-            new AsyncCallback(MessageCallback), buffer);
-            
-    }
-    private void MessageCallback(IAsyncResult result)
-    {
+            mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
+        new AsyncCallback(MessageCallback), buffer);
 
-        try
+        }
+        private void MessageCallback(IAsyncResult result)
         {
 
-            byte[] receivedData = new byte[1024];
-            receivedData = (byte[])result.AsyncState;
+            try
+            {
 
-            ASCIIEncoding encoding = new ASCIIEncoding();
+                byte[] receivedData = new byte[1024];
+                receivedData = (byte[])result.AsyncState;
 
-            int i = receivedData.Length - 1;
-            while (receivedData[i] == 0)
-                --i;
+                ASCIIEncoding encoding = new ASCIIEncoding();
 
-            byte[] auxtrim = new byte[i + 1];
-            Array.Copy(receivedData, auxtrim, i + 1);
+                int i = receivedData.Length - 1;
+                while (receivedData[i] == 0)
+                    --i;
 
-            string receivedMessage = encoding.GetString(auxtrim);
-                
+                byte[] auxtrim = new byte[i + 1];
+                Array.Copy(receivedData, auxtrim, i + 1);
 
-               Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
+                string receivedMessage = encoding.GetString(auxtrim);
+
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Odebrana została od agenta wiadomość na porcie " + Label.GetPort(receivedMessage) + " o treści: " + receivedMessage);
+
+                //Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
 
                 //polecenia przesyslane do managera
                 if (receivedMessage.Contains("connection:"))
@@ -104,25 +102,25 @@ namespace NetworkNode
                 }
 
 
-            buffer = new byte[1024];
+                buffer = new byte[1024];
 
-            mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
-                new AsyncCallback(MessageCallback), buffer);
+                mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
+                    new AsyncCallback(MessageCallback), buffer);
 
-        }
-        catch (Exception ex)
-        {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.ToString());
+            }
         }
-    }
 
-    public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
+        public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
-           // if (counter == 0)
+            // if (counter == 0)
             //{
-                lock (SwitchingMatrix.sendCollection)
-                {
+            lock (SwitchingMatrix.sendCollection)
+            {
                 string s = SwitchingMatrix.sendCollection.Last();
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
@@ -130,23 +128,29 @@ namespace NetworkNode
                 Console.WriteLine(s);
 
                 mySocket.Send(sending);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została wiadomość o treści: " + s);
 
-                }
-    }
-    public void disconnect_Click()
-    {
-        mySocket.Disconnect(true);
-        mySocket.Close();
-    }
-    public void SendThread()
-    {
+            }
+        }
+        public void disconnect_Click()
+        {
+            mySocket.Disconnect(true);
+            mySocket.Close();
+        }
+        public void SendThread()
+        {
             lock (SwitchingMatrix.sendCollection)
             {
                 SwitchingMatrix.sendCollection.CollectionChanged += Send;
             }
+        }
+
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
+        }
     }
-
-}
 }
 
 
@@ -154,4 +158,3 @@ namespace NetworkNode
 
 
 
-  

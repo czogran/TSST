@@ -67,7 +67,12 @@ namespace NetworkNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
                 if(receivedMessage!="ping")
-                     Console.WriteLine("Od Agenta:\n " + receivedMessage);
+                {
+                    Console.Write(this.GetTimestamp() + " : ");
+                    Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
+
+                    //Console.WriteLine("Od Agenta:\n " + receivedMessage);
+                }
                 lock (SwitchingMatrix.agentCollection)
                 {
                     SwitchingMatrix.agentCollection.Add(receivedMessage );
@@ -99,6 +104,9 @@ namespace NetworkNode
                 sending = enc.GetBytes(message);
 
                 mySocket.Send(sending);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została wiadomość o treści: " + message);
+
             }
         }
 
@@ -169,6 +177,11 @@ namespace NetworkNode
                     Send(SwitchingMatrix.agentCollection.Last());
                 }
             }
+        }
+
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
         }
     }
 }

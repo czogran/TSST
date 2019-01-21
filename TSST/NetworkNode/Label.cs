@@ -49,7 +49,7 @@ namespace NetworkNode
         public string address;
 
 
-        public Label(uint IDswap,uint IDpush,string action,int portOut )
+        public Label(uint IDswap, uint IDpush, string action, int portOut)
         {
             this.IDpush = IDpush;
             this.IDswap = IDswap;
@@ -105,9 +105,9 @@ namespace NetworkNode
             antiMaskTTL = maskID + maskTC + maskS;
             antiMaskTC = maskID + maskTTL + maskS;
 
-            long a= maskTTL + maskTC + maskS + maskID;
+            long a = maskTTL + maskTC + maskS + maskID;
             //if (maskTTL + maskTC + maskS + maskID == 4294967295)
-                //Console.WriteLine("good");
+            //Console.WriteLine("good");
         }
 
         /// <summary>
@@ -121,11 +121,14 @@ namespace NetworkNode
                 int start_port = message.IndexOf("<port>") + 6;
                 int end_port = message.IndexOf("</port>");
                 int port = Int32.Parse(message.Substring(start_port, end_port - start_port));
+
+                Console.WriteLine("Znaleziony port: " + port);
+
                 return port;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("nie znalazlem prtu");
+                Console.WriteLine("Nie znalazłem portu");
                 Console.WriteLine(ex.ToString());
                 return -1;
             }
@@ -144,13 +147,13 @@ namespace NetworkNode
                 int start_slot = message.IndexOf("<start_slot>") + 12;
                 int end = message.IndexOf("</start_slot>");
                 int slot = Int32.Parse(message.Substring(start_slot, end - start_slot));
-                Console.WriteLine(slot);
+                Console.WriteLine("Slot startowy: " + slot);
                 return slot;
-               
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine("nie znalazlem start_slot");
+                Console.WriteLine("Nie znalazłem start_slot");
                 Console.WriteLine(ex.ToString());
                 return -1;
             }
@@ -163,15 +166,16 @@ namespace NetworkNode
         /// <param name="message"></param>
         /// <param name="newPort"></param>
         /// <returns></returns>
-        public static string SwapPort(string message, int  newPort)
+        public static string SwapPort(string message, int newPort)
         {
             int startPort = message.IndexOf("<port>") + 6;
             int endPort = message.IndexOf("</port>");
 
-            message = message.Remove(startPort, endPort- startPort );
+            message = message.Remove(startPort, endPort - startPort);
             string stringLabel = newPort.ToString();
             message = message.Insert(startPort, stringLabel);
-           // Console.WriteLine("SwapPort: " + message);
+            // Console.WriteLine("SwapPort: " + message);
+            Console.WriteLine("Został zamieniony port: " + message);
 
             return message;
         }
@@ -184,32 +188,33 @@ namespace NetworkNode
             {
                 int start_address = message.IndexOf("<address>") + 9;
                 int end_address = message.IndexOf("</address>");
-                address=(message.Substring(start_address, end_address - start_address));
+                address = (message.Substring(start_address, end_address - start_address));
 
-              
+                Console.WriteLine("Znaleziony adres: " + address);
+
                 //Console.WriteLine("znaleziony address: "+address);
                 return address;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Nie moge znalezc adresu"+ex.ToString());
+                Console.WriteLine("Nie mogę znaleźć adresu " + ex.ToString());
                 return null;
 
             }
-                
+
         }
 
-            /// <summary>
-            /// pozyskuje dane z wiadomosci, ktore zapisuje w zmiennych statycznych
-            /// 
-            /// ID-etykieta
-            /// TC-dla QoS
-            /// S-jak 1 to oznacza, ze jest ostatnia na stosie
-            /// TTL-time to live
+        /// <summary>
+        /// pozyskuje dane z wiadomosci, ktore zapisuje w zmiennych statycznych
+        /// 
+        /// ID-etykieta
+        /// TC-dla QoS
+        /// S-jak 1 to oznacza, ze jest ostatnia na stosie
+        /// TTL-time to live
 
-            /// </summary>
-            /// <param name="message"></param>
-            public static uint GetLabel(string message)
+        /// </summary>
+        /// <param name="message"></param>
+        public static uint GetLabel(string message)
         {
             try
             {
@@ -225,7 +230,7 @@ namespace NetworkNode
                 Console.WriteLine($"ID: {ID} TC: {TC} S: {S} TTL: {TTL}");
                 return label;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //Console.WriteLine(ex.ToString());
                 return 0;
@@ -239,7 +244,7 @@ namespace NetworkNode
         /// <param name="newID"></param>
         public static void SetLabelID(uint newID)
         {
-            if (newID>1048575 || newID<0)
+            if (newID > 1048575 || newID < 0)
             {
                 throw new InvalidOptionException("Bad new Label ID");
             }
@@ -283,7 +288,7 @@ namespace NetworkNode
             {
                 throw new InvalidOptionException("Bad new Label TTL");
             }
-            label = ID +TC*(uint)Math.Pow(2.0, 20) + S * (uint)Math.Pow(2.0,23) + (TTL * (uint)Math.Pow(2.0, 24));
+            label = ID + TC * (uint)Math.Pow(2.0, 20) + S * (uint)Math.Pow(2.0, 23) + (TTL * (uint)Math.Pow(2.0, 24));
         }
 
         /// <summary>
@@ -299,8 +304,8 @@ namespace NetworkNode
             }
             //uint i = 4294967295-8388608;// 42866578687;
             S = stan;
-            if (stan==1)
-                label=label | (1 << 23);
+            if (stan == 1)
+                label = label | (1 << 23);
             if (stan == 0)
                 label &= antiMaskS;//(1048576+1);
         }
@@ -332,7 +337,7 @@ namespace NetworkNode
             {
                 throw new InvalidOptionException("Bad new Label TTL");
             }
-            
+
             label -= (uint)Math.Pow(2, 24);
         }
 
@@ -369,12 +374,12 @@ namespace NetworkNode
         /// <summary>
         /// dodaje etykiete na gore stosu
         /// </summary>
-        public static string Push(string message,uint newLabel)
+        public static string Push(string message, uint newLabel)
         {
-            int indeks =  message.IndexOf("</port>")+7;
+            int indeks = message.IndexOf("</port>") + 7;
 
-            string stringLabel ="<label>" +newLabel +"</label>";
-            message=message.Insert(indeks, stringLabel);
+            string stringLabel = "<label>" + newLabel + "</label>";
+            message = message.Insert(indeks, stringLabel);
             Console.WriteLine("Dodaje etykiete: " + newLabel);
             return message;
         }
@@ -388,9 +393,9 @@ namespace NetworkNode
         {
             int start_label = message.IndexOf("<label>");
             int end_label = message.IndexOf("</label>");
-            Console.WriteLine("Usuwam etykiete: " + 
-                message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7));
-            message=message.Remove(start_label, end_label-start_label + 8);
+            Console.WriteLine("Usuwam etykiete: " +
+                message.Substring(message.IndexOf("<label>") + 7, message.IndexOf("</label>") - message.IndexOf("<label>") - 7));
+            message = message.Remove(start_label, end_label - start_label + 8);
             return message;
         }
 
@@ -401,19 +406,19 @@ namespace NetworkNode
         /// nie jest uzywany replace, poniewaz jak bysmy mieli dwa labele
         /// o tej samej wartosci to zamienilby oba
         /// </summary>
-        public static string Swap(string message,uint newLabel)
+        public static string Swap(string message, uint newLabel)
         {
             //message = Label.pop(message);
             //message = Label.push(message,newLabel);
-            int start_label = message.IndexOf("<label>")+7;
+            int start_label = message.IndexOf("<label>") + 7;
             int end_label = message.IndexOf("</label>");
-            var removedLabel = message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7);
+            var removedLabel = message.Substring(message.IndexOf("<label>") + 7, message.IndexOf("</label>") - message.IndexOf("<label>") - 7);
             message = message.Remove(start_label, end_label - start_label);
 
-            string stringLabel =  newLabel.ToString();
+            string stringLabel = newLabel.ToString();
             message = message.Insert(start_label, stringLabel);
             Console.WriteLine("Zmieniam etykiete: " + removedLabel + " na: " +
-                message.Substring(message.IndexOf("<label>")+7, message.IndexOf("</label>") - message.IndexOf("<label>" )-7));
+                message.Substring(message.IndexOf("<label>") + 7, message.IndexOf("</label>") - message.IndexOf("<label>") - 7));
 
             return message;
         }
@@ -426,7 +431,7 @@ namespace NetworkNode
         /// <returns></returns>
         public static string SetPath(string message, int number)
         {
-            return message += ("<path>"+ number + "</path>");
+            return message += ("<path>" + number + "</path>");
         }
 
         /// <summary>
@@ -436,7 +441,7 @@ namespace NetworkNode
         /// <returns></returns>
         public static string GetPath(string message)
         {
-            var start_path = message.IndexOf("<path>")+6;
+            var start_path = message.IndexOf("<path>") + 6;
             var end_path = message.IndexOf("</path>");
 
             return message.Substring(message.IndexOf("<path>") + 6,
@@ -447,8 +452,8 @@ namespace NetworkNode
         {
             var path = GetPath(message);
             path += number;
-            
-            var start_path = message.IndexOf("<path>")+6;
+
+            var start_path = message.IndexOf("<path>") + 6;
             var end_path = message.IndexOf("</path>");
 
             message = message.Remove(start_path, end_path - start_path);

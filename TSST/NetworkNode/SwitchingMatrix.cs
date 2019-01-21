@@ -41,18 +41,19 @@ namespace NetworkNode
             try
             {
                 //to w sumie mozna wywalic do parsera, bo tam jest tego miejsce zgodnie z konwencja
-                XmlNode node =doc.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry/connection[@num=" + num + "]");
-           
-            node1 = node.SelectSingleNode("start_slot");
-            startSlot = Int32.Parse(node1.InnerText);
-           
+                XmlNode node = doc.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry/connection[@num=" + num + "]");
+
+                node1 = node.SelectSingleNode("start_slot");
+                startSlot = Int32.Parse(node1.InnerText);
+
                 switchingDictionary.Remove(startSlot);
-                Console.WriteLine("Usunnalem wpisy ze slownika sciezki:" + num);
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Usunąłem wpisy ze słownika ścieżki: " + num);
 
             }
             catch
             {
-                Console.WriteLine("Nie bylo co usuwac dla:" + num);
+                Console.WriteLine("Nie było co usuwać dla: " + num);
 
             }
         }
@@ -81,21 +82,23 @@ namespace NetworkNode
                     startSlot = Int32.Parse(node1.InnerText);
 
                     node1 = nodeConnection.SelectSingleNode("port_out");
-                    outPort = Int32.Parse(node1.InnerText); 
+                    outPort = Int32.Parse(node1.InnerText);
 
                     switchingDictionary.Add(startSlot, outPort);
+                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
                     Console.WriteLine(inPort + "   " + startSlot + "   " + outPort);
                 }
-                if(!eonDictionary.ContainsKey(inPort))
+                if (!eonDictionary.ContainsKey(inPort))
                 {
                     eonDictionary.Add(inPort, switchingDictionary);
-                }              
+                }
             }
-            Console.WriteLine("Dodalem wpisy sciezki");
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("Dodałem wpisy ścieżki");
         }
 
 
-        
+
 
         /// <summary>
         /// watek co tam trzyma to by to sie piknie switchowalo
@@ -121,7 +124,7 @@ namespace NetworkNode
             int startSlot;
             int outPort;
 
-            lock(computingCollection)
+            lock (computingCollection)
             {
                 content = computingCollection.Last();
 
@@ -131,11 +134,12 @@ namespace NetworkNode
 
                 content = Label.SwapPort(content, outPort);
 
-                lock(sendCollection)
+                lock (sendCollection)
                 {
                     sendCollection.Add(content);
                 }
             }
-        }      
-    }  
+        }
+        
+    }
 }
