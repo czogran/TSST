@@ -13,8 +13,8 @@ namespace ManagementCenter
     /// </summary>
     class Link
     {
-       public int nodeA;
-       public int nodeB;
+        public int nodeA;
+        public int nodeB;
 
         public int id;
         public int cost;
@@ -23,7 +23,7 @@ namespace ManagementCenter
         string status;
 
         public int numberOfSlots;
-        
+
         public bool[] usedSlots;
 
         public int portIn;
@@ -48,10 +48,10 @@ namespace ManagementCenter
             this.nodeA = nodeA;
             this.nodeB = nodeB;
 
-            portIn=(nodeA+10)*100+(nodeB+10);
-            portOut=(nodeB + 10) * 100 + (nodeA + 10);
+            portIn = (nodeA + 10) * 100 + (nodeB + 10);
+            portOut = (nodeB + 10) * 100 + (nodeA + 10);
 
-       
+
 
             this.status = status;
 
@@ -59,8 +59,8 @@ namespace ManagementCenter
             this.lenght = lenght;
 
             usedSlots = new bool[numberOfSlots];
-           // usedSlots = Array.CreateInstance(typeof(bool), this.numberOfSlots);
-            for(int i=0;i<numberOfSlots;i++)
+            // usedSlots = Array.CreateInstance(typeof(bool), this.numberOfSlots);
+            for (int i = 0; i < numberOfSlots; i++)
             {
                 usedSlots.SetValue(false, i);
             }
@@ -76,11 +76,11 @@ namespace ManagementCenter
         {
             //indeksowanie, sloty od 1, tablice od 0
             //lacznie z end slotem
-            for (int i = startSlot-1; i <= endSlot-1; i++)
+            for (int i = startSlot - 1; i <= endSlot - 1; i++)
             {
                 usedSlots.SetValue(status, i);
             }
-           
+
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ManagementCenter
         }
         public XMLeonSubnetwork(XmlDocument xmlDoc)
         {
-            this.xmlDoc =xmlDoc;
+            this.xmlDoc = xmlDoc;
         }
 
 
@@ -27,7 +27,7 @@ namespace ManagementCenter
         {
             this.name = name;
             xmlDoc = new XmlDocument();
-           
+
         }
 
         public void CreateXml()
@@ -44,7 +44,7 @@ namespace ManagementCenter
         }
 
 
-        public XMLeonSubnetwork(string name, string clientFile=null,string linksFile=null)
+        public XMLeonSubnetwork(string name, string clientFile = null, string linksFile = null)
         {
             this.name = name;
             xmlDoc = new XmlDocument();
@@ -84,7 +84,7 @@ namespace ManagementCenter
             return file;
         }
 
-        public void AddSubnetwork(int id, string address,string linksFile)
+        public void AddSubnetwork(int id, string address, string linksFile)
         {
             XmlNode sub = xmlDoc.CreateElement("subnetwork");
             XmlAttribute att = xmlDoc.CreateAttribute("id");
@@ -109,7 +109,7 @@ namespace ManagementCenter
             xmlDoc.Save(name);
         }
 
-            public void AddSubnetwork(int id, string address,List<int>links,List<int> nodes)
+        public void AddSubnetwork(int id, string address, List<int> links, List<int> nodes)
         {
             xmlDoc.Load(name);
 
@@ -137,13 +137,13 @@ namespace ManagementCenter
             }
             catch { }
             try
-            { 
-            foreach (int i in nodes)
             {
-                node = xmlDoc.CreateElement("node");
-                node.InnerText = i.ToString();
-                sub.AppendChild(node);
-            }
+                foreach (int i in nodes)
+                {
+                    node = xmlDoc.CreateElement("node");
+                    node.InnerText = i.ToString();
+                    sub.AppendChild(node);
+                }
             }
             catch
             {
@@ -151,14 +151,14 @@ namespace ManagementCenter
             }
 
             XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//config");
-        
+
             addTo.AppendChild(sub);
-         //   xmlDoc.AppendChild(addTo);
+            //   xmlDoc.AppendChild(addTo);
 
             xmlDoc.Save(name);
         }
 
-        public void AddSubSubNetwork(int idParent, int id, string address,List<int>links,List<int>nodes)
+        public void AddSubSubNetwork(int idParent, int id, string address, List<int> links, List<int> nodes)
         {
             xmlDoc.Load(name);
 
@@ -196,7 +196,7 @@ namespace ManagementCenter
 
                 xmlDoc.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
@@ -206,12 +206,12 @@ namespace ManagementCenter
         {
 
             xmlDoc.Load(name);
-                StringWriter sw = new StringWriter();
+            StringWriter sw = new StringWriter();
             XmlTextWriter tx = new XmlTextWriter(sw);
 
             string file;
             string readXML;
-          
+
             XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//subnetwork[@id=" + id + "]");
 
 
@@ -224,19 +224,19 @@ namespace ManagementCenter
         {
             xmlDoc.Load(name);
             string file;
-            
+
             XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//subnetwork[@id=" + id + "]/address");
 
             file = addTo.InnerText;
             return file;
         }
 
-        public List<Subnetwork>GetSubnetworks()
+        public List<Subnetwork> GetSubnetworks()
         {
             List<Subnetwork> list = new List<Subnetwork>();
 
             xmlDoc.Load(name);
-            XmlNodeList subnetworkList= xmlDoc.SelectNodes("//subnetwork");
+            XmlNodeList subnetworkList = xmlDoc.SelectNodes("//subnetwork");
 
 
             XmlNode node;
@@ -268,10 +268,10 @@ namespace ManagementCenter
                 {
                     nodes.Add(Int32.Parse(node1.InnerText));
                 }
-                list.Add(new Subnetwork(id, address,links,nodes,content));
+                list.Add(new Subnetwork(id, address, links, nodes, content));
             }
-                return list;
+            return list;
         }
-          
+
     }
 }

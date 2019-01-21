@@ -38,7 +38,7 @@ namespace ManagementCenter
 
         public void CreateSocket(string IP, int port)
         {
-            
+
             myIp = IP;
             myport = port;
 
@@ -60,7 +60,7 @@ namespace ManagementCenter
             endRemote = new IPEndPoint(ipAddress, toPort);
             mySocket.Connect(endRemote);
             buffer = new byte[1024];
-            Console.WriteLine("polaczono z adresem: " + IP);
+            Console.WriteLine("Połączono z adresem: " + IP);
 
             mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
                 new AsyncCallback(MessageCallback), buffer);
@@ -85,34 +85,35 @@ namespace ManagementCenter
                 try
                 {
                     SwitchingActions.possibleWindow = (bool[])DeserializeFromStream(auxtrim);
-                    
-                    Console.WriteLine("deserializacja");
+
+                    Console.WriteLine("Deserializacja");
                 }
                 catch
                 {
-                   // Console.WriteLine("Nie udalo sie deserializacja");
+                    // Console.WriteLine("Nie udalo sie deserializacja");
                 }
                 try
                 {
                     string receivedMessage = encoding.GetString(auxtrim);
-                    Console.WriteLine(receivedMessage);
+                    Console.Write(this.GetTimestamp() + " : ");
+                    Console.WriteLine("Odebrana akcja - " + receivedMessage);
                     try
                     {
                         SwitchingActions.Action(receivedMessage, this);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("zla akcja"+receivedMessage);
+                        Console.WriteLine("Zła akcja: " + receivedMessage);
                         Console.WriteLine(ex.ToString());
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Blad odkodowywania:");
-                   
+                    Console.WriteLine("Błąd odkodowywania");
+
 
                 }
-               
+
 
 
                 buffer = new byte[1024];
@@ -144,6 +145,9 @@ namespace ManagementCenter
             sending = enc.GetBytes(message);
 
             mySocket.Send(sending);
+
+            Console.Write(this.GetTimestamp() + " : ");
+            Console.WriteLine("Wysłano wiadomość o treści " + message);
         }
 
         public void disconnect_Click()
@@ -162,31 +166,36 @@ namespace ManagementCenter
         /// </summary>
         public void PingThread()
         {
-            while(true)
+            while (true)
             {
                 try
                 {
                     System.Threading.Thread.Sleep(5000);
-                    Send("ping");                   
+                    Send("ping");
                 }
                 catch
                 {
-                    Console.WriteLine("\nWezel:" + number + "  is dead");
+                    Console.Write(this.GetTimestamp() + " : ");
+                    Console.WriteLine("\nWęzeł: " + number + "  jest nieaktywny");
 
                     ////zamiast wywalac ustawiamy ze jest wylaczony
                     //Program.nodes.Find(x => x.number == number).isAlive=false;
 
                     //wersja z wywalniem noda
-                    var item =Program.nodes.SingleOrDefault(x => x.number== number);
+                    var item = Program.nodes.SingleOrDefault(x => x.number == number);
                     Program.nodes.Remove(item);
 
                     AgentSwitchingAction.NodeIsDead(number);
                     break;
                 }
             }
-           
+
         }
 
-        
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
+        }
+
     }
 }

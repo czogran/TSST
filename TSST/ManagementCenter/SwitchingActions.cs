@@ -11,7 +11,7 @@ namespace ManagementCenter
 {
     class SwitchingActions
     {
-      
+
 
         /// <summary>
         /// z zwiazku z tym ze zakladam ze komp jest szybszy od nas
@@ -33,7 +33,7 @@ namespace ManagementCenter
         /// stwierdza czy sciezka zostala zrekonfigurowana
         /// wartosc domyslna na true, bo na poczatku wszystko gra
         /// </summary>
-         static bool reconfigured=true;
+        static bool reconfigured = true;
 
         /// <summary>
         /// ile sciezek zostalo nam jeszcze do zrekonfigurowania
@@ -72,7 +72,8 @@ namespace ManagementCenter
             //jezeli ma zostac polaczenie w podsieci czyl
             if (message.Contains("subconection"))
             {
-                Console.WriteLine("Prosba o zestawienie polaczenia w podsieci");
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Prośba o zestawienie połączenia w podsieci");
             }
             //ta wiadomosc moze przyjsc tylko do glownego managera
             //poniewaz do tych mniejszych zakladamy ze nie moga byc podlaczeni klijenci
@@ -140,7 +141,8 @@ namespace ManagementCenter
                     {
                         //znaczy to ze w tym miejscu sie nie udalo zrobic rekonfiguracji
                         reconfigured = true;
-                        Console.WriteLine("Nie mozna zestawic sciezki");
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Nie można zestawić ścieżki");
                     }
 
                 }
@@ -174,7 +176,7 @@ namespace ManagementCenter
                     }
 
                     //jak jest przypadek z rekonfiguracja, gdy sie uda
-                    if (reconfigured==false)
+                    if (reconfigured == false)
                     {
                         reconfigured = true;
                         //zmniejszanie liczby sciezek jakie pozostaly jeszcze do zrekonfigurowania
@@ -190,19 +192,20 @@ namespace ManagementCenter
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta, ex: " + ex.ToString());
+                            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                            Console.WriteLine("Nie udało się wysłać ścieżki do klienta, ex: " + ex.ToString());
                         }
                     }
-                    
 
-                    Console.WriteLine("Zestawianie Sciezki sie powiodlo");
+                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("Zestawianie ścieżki się powiodło");
                 }
             }
             //jezeli zepsula sie podsiec, by naprawic to na wyzszym poziomie
-            
+
             else if (message.Contains("error"))
             {
-                Console.WriteLine("To recofigure: " + toReconfigure);
+                Console.WriteLine("Do naprawy: " + toReconfigure);
                 Thread.Sleep(3000 * toReconfigure);
                 toReconfigure++;
 
@@ -211,7 +214,8 @@ namespace ManagementCenter
                 //by nie parsowac ich wiadomosci ze wzgledu na numer
                 //TODO zrobic ze podsiec wysyla tylko te scezki ktorych nie moze naprawic
                 int deadSub = manager.number;
-                Console.WriteLine("Zepsula sie podsciec: "+manager.number);
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Zepsuła się podsieć: " + manager.number);
 
                 //ustawienie ze jak nie mozna w niej usunac sciezki to sie ustawia ze jest ona martwa, by algorytm dijxtry do niej
                 //nie wchodzil
@@ -220,23 +224,23 @@ namespace ManagementCenter
                 string errorPathId = GetIdOfErrorPath(message);
 
 
-               
-                    var path = Program.paths.Find(x => x.globalID == errorPathId);
 
-                    path.ResetSlotReservation();
-                    SendSubToDeleteConnection(path);
-                
+                var path = Program.paths.Find(x => x.globalID == errorPathId);
 
-                   
-                
+                path.ResetSlotReservation();
+                SendSubToDeleteConnection(path);
+
+
+
+
                 //a tu zestawiamy od nowa
                 //musza byc dwie petle, bo robimy sycnhronicznie zestawianie
-                   lock (Program.nodes)
+                lock (Program.nodes)
+                {
+                    lock (Program.links)
                     {
-                        lock (Program.links)
-                        {
-                            SwitchingActions.pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
-                        }
+                        SwitchingActions.pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
+                    }
 
                     try
                     {
@@ -254,8 +258,9 @@ namespace ManagementCenter
                     {
                         //jak nie udalo sie zrekonfigurwac zmniejszamy licznik
                         toReconfigure--;
-                        
-                        Console.WriteLine("Naprawa sciezki niemozliwa");
+
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Naprawa ścieżki jest niemożliwa");
                     }
                     else
                     {
@@ -274,7 +279,7 @@ namespace ManagementCenter
                         }
                         Program.nodes.Find(x => x.number == deadSub).isAlive = true;*/
                     }
-                  
+
                 }
 
 
@@ -304,7 +309,9 @@ namespace ManagementCenter
             start = message.IndexOf("<error>") + 7;
             end = message.IndexOf("</error>");
             id = (message.Substring(start, end - start));
-            Console.WriteLine("Zepsuta sciezka o id:"+ id);
+
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("Zepsuta ścieżka o id: " + id);
 
             return id;
         }
@@ -312,7 +319,7 @@ namespace ManagementCenter
         static void SendClientsToReserveWindow(int startSlot, int targetClient)
         {
             //sprawdzic czy indeksowanie OK jest
-            for (int i =  SwitchingActions.pathToCount.nodes.Count - 1; i >= 1; i--)
+            for (int i = SwitchingActions.pathToCount.nodes.Count - 1; i >= 1; i--)
             {
                 if (SwitchingActions.pathToCount.nodes[i].number > 80)
                 {
@@ -331,11 +338,12 @@ namespace ManagementCenter
                     }
                     catch
                     {
-                        Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta");
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Nie udało się wysłać ścieżki do klienta");
                     }
                 }
             }
-            }
+        }
 
         static void SendSubToReserveWindow(int startSlot, int amountOfSlots)
         {
@@ -348,7 +356,8 @@ namespace ManagementCenter
                     lock (Program.subnetworkManager)
                     {
                         Program.subnetworkManager.Find(x => x.number == pathToCount.nodes[i].number).Send(message1);
-                        Console.WriteLine("Wysylam do podsieci prosbe by zarezerwowala okna:" + pathToCount.nodes[i].number);
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Wysyłam do podsieci prośbę o zarezerwowanie okna: " + pathToCount.nodes[i].number);
                     }
                 }
             }
@@ -362,11 +371,12 @@ namespace ManagementCenter
             {
                 if (Program.isTheBottonSub == false && pathToCount.nodes[i].number < 80)
                 {
-                    string message1 = "check:<start_slot>"+startSlot+"</start_slot><amount>"+amountOfSlots+"</amount>";
+                    string message1 = "check:<start_slot>" + startSlot + "</start_slot><amount>" + amountOfSlots + "</amount>";
                     lock (Program.subnetworkManager)
                     {
                         Program.subnetworkManager.Find(x => x.number == pathToCount.nodes[i].number).Send(message1);
-                        Console.WriteLine("Wysylam pytanie do podsieci czy sa w stanie zarezerwowac okna:" + pathToCount.nodes[i].number);
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Wysyłam pytanie do podsieci, czy są w stanie zarezerwować okna:" + pathToCount.nodes[i].number);
                     }
                 }
             }
@@ -385,7 +395,7 @@ namespace ManagementCenter
             int lenght;
             int start, end;
 
-            start = message.IndexOf("<lenght>")+8;
+            start = message.IndexOf("<lenght>") + 8;
             end = message.IndexOf("</lenght>");
 
             lenght = Int32.Parse(message.Substring(start, end - start));
@@ -408,10 +418,10 @@ namespace ManagementCenter
 
             start = message.IndexOf("<target_client>") + 15;
             end = message.IndexOf("</target_client>");
-           // end = message.IndexOf("<port>");
-           //13 stad ze //connection: konczy sie na 13 znaku
-           //targetClient = Int32.Parse(message.Substring(13, end - 13));
-           targetClient = Int32.Parse(message.Substring(start, end - start));
+            // end = message.IndexOf("<port>");
+            //13 stad ze //connection: konczy sie na 13 znaku
+            //targetClient = Int32.Parse(message.Substring(13, end - 13));
+            targetClient = Int32.Parse(message.Substring(start, end - start));
 
             Console.WriteLine("target client" + targetClient);
             start = message.IndexOf("<my_id>") + 7;
@@ -437,11 +447,12 @@ namespace ManagementCenter
                 {
                     if (Program.isTheBottonSub == false && path.nodes[i].number < 80)
                     {
-                        string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out><global_id>"+path.globalID+"</global_id>";
+                        string message1 = "connection<port_in>" + path.nodes[i].inputLink.id + "</port_in><port_out>" + path.nodes[i].outputLink.id + "</port_out><global_id>" + path.globalID + "</global_id>";
                         lock (Program.subnetworkManager)
                         {
                             Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
-                            Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
+                            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                            Console.WriteLine("Wysyłam zadanie do podsieci: " + path.nodes[i].number);
                         }
                     }
                 }
@@ -462,7 +473,8 @@ namespace ManagementCenter
                     lock (Program.subnetworkManager)
                     {
                         Program.subnetworkManager.Find(x => x.number == path.nodes[i].number).Send(message1);
-                        Console.WriteLine("Wysylam zadanie do podsieci:" + path.nodes[i].number);
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Wysyłam zadanie do podsieci: " + path.nodes[i].number);
                     }
                 }
             }
@@ -485,7 +497,7 @@ namespace ManagementCenter
             {
                 path.ResetSlotReservation();
             }
-                foreach (Path path in toReconfigure)
+            foreach (Path path in toReconfigure)
             {
                 System.Threading.Thread.Sleep(100);
                 path.ResetSlotReservation();
@@ -502,7 +514,8 @@ namespace ManagementCenter
                             }
                             catch
                             {
-                                Console.WriteLine("Nie udalo sie automatycznie usunac wpisow");
+                                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                                Console.WriteLine("Nie udało się automatycznie usunąć wpisów");
                             }
                         }
                     }
@@ -513,7 +526,7 @@ namespace ManagementCenter
                 {
                     lock (Program.links)
                     {
-                        pathForFunction = PathAlgorithm.dijkstra(Program.nodes, Program.links,path.nodes.Last().number, path.nodes.First().number,false);
+                        pathForFunction = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
                     }
 
                 }
@@ -526,38 +539,41 @@ namespace ManagementCenter
                         {
                             //jezeli udalo sie zestawic nowe polaczenie to jest podmieniane
                             Program.paths[Program.paths.FindIndex(x => x == path)] = pathForFunction;
-                            Console.WriteLine("Zamienilem sciezke");
+                            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                            Console.WriteLine("Zamieniłem ścieżkę");
                         }
                         catch
                         {
-                            Console.WriteLine("Nie udalo sie zamienic sciezki");
+                            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                            Console.WriteLine("Nie udało się zamienić ścieżki");
                         }
                     }
 
-               
+
 
                     var xml = new XMLeon(path.xmlName);
 
                     //rozeslanie informacji do klijenta wysylajacego o zmianie sciezki
-                      var targetClient = pathForFunction.nodes.First().number - 80;
-                      message1 = "replace:<start_slot>" + pathForFunction.startSlot + "</start_slot><target_client>" +targetClient + "</target_client>";
-                          
-                      try
-                      {
-                                
-                       Program.managerClient[path.nodes.Last().number - 80 - 1].Send(message1);
-                      }
-                      catch(Exception ex)
-                      {
-                       Console.WriteLine("Nie udalo sie wyslac sciezki do klijenta, ex: "+ex.ToString());
-                      }
+                    var targetClient = pathForFunction.nodes.First().number - 80;
+                    message1 = "replace:<start_slot>" + pathForFunction.startSlot + "</start_slot><target_client>" + targetClient + "</target_client>";
+
+                    try
+                    {
+
+                        Program.managerClient[path.nodes.Last().number - 80 - 1].Send(message1);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Nie udało się wysłać ścieżki do klienta, ex: " + ex.ToString());
+                    }
                     //koniec rozsylo do klijenta
 
                     //taka indkesacja, bo bierzemy od konca i nie potrzebujemy do odbiorcy niczego wysylac
                     for (int i = pathForFunction.nodes.Count - 1; i >= 1; i--)
                     {
                         if (pathForFunction.nodes[i].number < 80)
-           
+
                         {
 
                             message1 = xml.StringNode(pathForFunction.nodes[i].number);
@@ -568,7 +584,8 @@ namespace ManagementCenter
                             }
                             catch
                             {
-                                Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                                Console.WriteLine("Nie udało się wysłać ścieżki do węzła");
                             }
                         }
                     }
@@ -584,14 +601,15 @@ namespace ManagementCenter
                         }
                         catch
                         {
-                            Console.WriteLine("Nie udalo sie wywalic sciezki");
+                            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                            Console.WriteLine("Nie udało się wywalić ścieżki");
                         }
                     }
                 }
             }
         }
-    
-       
+
+
 
 
         /// <summary>
@@ -601,7 +619,8 @@ namespace ManagementCenter
         /// <param name="message"></param>
         static void DeleteConnection(string message)
         {
-            Console.WriteLine("Prosba o usuniecie polaczenia");
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("Prośba o usunięcie połączenia");
             int askingClient, targetClient;
             int start, end;
 
@@ -621,15 +640,15 @@ namespace ManagementCenter
             try
 
             {
-             p = Program.paths.Find(x => x.id == id);
+                p = Program.paths.Find(x => x.id == id);
                 Console.WriteLine(p.id);
                 try
                 {
                     //zwalnianie linkow
                     p.ResetSlotReservation();
-                    foreach(Node node in p.nodes)
+                    foreach (Node node in p.nodes)
                     {
-                        lock(Program.managerNodes)
+                        lock (Program.managerNodes)
                         {
                             if (node.number < 80)
                             {
@@ -641,7 +660,8 @@ namespace ManagementCenter
                 }
                 catch
                 {
-                    Console.WriteLine("nie udalo sie wyslac prosb o usuniecie wpisow");
+                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("Nie udało się wysłać próśb o usunięcie wpisów");
                 }
 
                 try
@@ -651,23 +671,26 @@ namespace ManagementCenter
                     {
 
                         Program.paths.Remove(p);
-                       // Console.WriteLine("cc");
+                        // Console.WriteLine("cc");
 
                     }
                 }
                 catch
                 {
-                    Console.WriteLine("Nie udało sie usunac ");
+                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("Nie udało się usunąć");
                 }
             }
             catch
             {
-                Console.WriteLine("nie znaleziono takiej sciezki do usuniecia");
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Nie znaleziono takiej ścieżki do usunięcia");
             }
-            Console.WriteLine("Polecenie usuniecia sciezki obsluzone");
+
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("Polecenie usunięcia ścieżki obsłużone");
         }
 
 
-        
     }
 }

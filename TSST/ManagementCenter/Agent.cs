@@ -63,7 +63,13 @@ namespace ManagementCenter
 
                 string receivedMessage = encoding.GetString(auxtrim);
                 if (receivedMessage != "ping")
-                    Console.WriteLine("Od Agenta:\n " + receivedMessage);
+                {
+                    Console.Write(this.GetTimestamp() + " : ");
+                    Console.WriteLine("Odebrano od agenta wiadomość o treści " + receivedMessage);
+
+                    //Console.WriteLine("Od Agenta:\n " + receivedMessage);
+                }
+
                 lock (AgentSwitchingAction.agentCollection)
                 {
                     AgentSwitchingAction.agentCollection.Add(receivedMessage);
@@ -88,13 +94,16 @@ namespace ManagementCenter
        // public void Send(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         public void Send(string message)
         {
-          lock(mySocket)
+            lock (mySocket)
             {
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(message);
 
                 mySocket.Send(sending);
+
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłano wiadomość o treści " + message);
             }
         }
 
@@ -110,12 +119,14 @@ namespace ManagementCenter
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes("possible_window");
-               // byte[] c = sending.Concat();
-                
-               
+                // byte[] c = sending.Concat();
+
 
                 mySocket.Send(stream.ToArray());
                 mySocket.Send(sending);
+
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłano wiadomość o treści " + "possible_window");
             }
         }
 
@@ -147,7 +158,7 @@ namespace ManagementCenter
                 {
                     Send(AgentSwitchingAction.agentCollection.Last());
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
                 }
@@ -158,17 +169,17 @@ namespace ManagementCenter
             }
         }
 
-            public void disconnect_Click()
+        public void disconnect_Click()
         {
             mySocket.Disconnect(true);
             mySocket.Close();
         }
 
-        /// <summary>
-        ///  
-        /// </summary>
-       
-        
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
+        }
+
     }
-    
+
 }

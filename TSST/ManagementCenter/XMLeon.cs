@@ -59,15 +59,15 @@ namespace ManagementCenter
         public XMLeon(string name, Type type)
         {
             this.name = name;
-        /*    try
-            {
-                xmlDoc.Load(name);
-                xmlDoc.DocumentElement.ParentNode.RemoveAll();
-            }
-            catch
-            {
+            /*    try
+                {
+                    xmlDoc.Load(name);
+                    xmlDoc.DocumentElement.ParentNode.RemoveAll();
+                }
+                catch
+                {
 
-            }*/
+                }*/
 
             xmlDoc = new XmlDocument();
             XmlNode config = xmlDoc.CreateElement("config");
@@ -98,7 +98,7 @@ namespace ManagementCenter
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="path"></param>
-        public static void SavePathToFile(int start, int end, Path path)           
+        public static void SavePathToFile(int start, int end, Path path)
         {
             XMLeon xml = new XMLeon("path" + start.ToString() + end.ToString() + ".xml", XMLeon.Type.nodes);
             path.xmlName = ("path" + start + end + ".xml");
@@ -120,51 +120,51 @@ namespace ManagementCenter
             //testnac tego fora
             for (int i = 0; i < path.nodes.Count; i++)
             {
-                if(path.nodes[i].number<80)
-                     AddNode(path.nodes[i].number);
+                if (path.nodes[i].number < 80)
+                    AddNode(path.nodes[i].number);
             }
             for (int i = 0; i < path.nodes.Count; i++)
             {
                 if (path.nodes[i].number < 80)
                     AddMatrix(path.nodes[i].inputLink.portIn, path.nodes[i].number);
             }
-            for (int i = 0; i < path.nodes.Count ; i++)
+            for (int i = 0; i < path.nodes.Count; i++)
             {
                 if (path.nodes[i].number < 80)
-                    AddConnection(path.nodes.Last().number,path.nodes[0].number,  path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
+                    AddConnection(path.nodes.Last().number, path.nodes[0].number, path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
             }
-          
+
         }
 
 
-        public void AddNode(int id, string addressForCloud=null, string agent=null)
+        public void AddNode(int id, string addressForCloud = null, string agent = null)
         {
             //zdaje sie ze te dwie linijki do wywalki
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
-           
 
-                XmlNode node = xmlDoc.CreateElement("node");
 
-                XmlNode cablePort = xmlDoc.CreateElement("cable_port");
-                cablePort.InnerText = addressForCloud;
+            XmlNode node = xmlDoc.CreateElement("node");
 
-                XmlNode Agent = xmlDoc.CreateElement("agent");
-                Agent.InnerText = agent;
+            XmlNode cablePort = xmlDoc.CreateElement("cable_port");
+            cablePort.InnerText = addressForCloud;
 
-                XmlAttribute attribute = xmlDoc.CreateAttribute("id");
-                attribute.Value = id.ToString();
-                node.Attributes.Append(attribute);
-                if (addressForCloud != null && agent != null)
-                {
-                    node.AppendChild(cablePort);
-                    node.AppendChild(Agent);
-                }
-                XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("nodes");
-                addTo.AppendChild(node);
-                xmlDoc.Save(name);
-            
+            XmlNode Agent = xmlDoc.CreateElement("agent");
+            Agent.InnerText = agent;
+
+            XmlAttribute attribute = xmlDoc.CreateAttribute("id");
+            attribute.Value = id.ToString();
+            node.Attributes.Append(attribute);
+            if (addressForCloud != null && agent != null)
+            {
+                node.AppendChild(cablePort);
+                node.AppendChild(Agent);
+            }
+            XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("nodes");
+            addTo.AppendChild(node);
+            xmlDoc.Save(name);
+
         }
 
 
@@ -190,9 +190,9 @@ namespace ManagementCenter
                 file = file + "</node>";
                 return file;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("nie ma wezlow, ex:"+ex.ToString());
+                Console.WriteLine("nie ma wezlow, ex:" + ex.ToString());
                 return null;
             }
         }
@@ -218,9 +218,9 @@ namespace ManagementCenter
                 file = file + "</cable_cloud>";
                 return file;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("StringCableLinks:nie ma cable clouda, ex:" + ex.ToString());
+                Console.WriteLine("StringCableLinks: nie ma cable clouda, ex:" + ex.ToString());
                 return null;
             }
         }
@@ -232,24 +232,24 @@ namespace ManagementCenter
         /// <returns></returns>
         public static List<int> GetClientPortOut(string name1)
         {
-            List<int> portOut=new List<int>() ;
+            List<int> portOut = new List<int>();
 
             XmlDocument doc = new XmlDocument();
             doc.Load(name1);
 
-          //  Console.WriteLine(name1);
+            //  Console.WriteLine(name1);
             XmlNode node1;
-          // node1 = doc.SelectSingleNode("port_out");
+            // node1 = doc.SelectSingleNode("port_out");
             //Console.WriteLine(node1.InnerText);
 
             foreach (XmlNode client in doc.SelectNodes("//config/clients/client"))
-                {
+            {
 
 
                 node1 = client.SelectSingleNode("port_out");
                 portOut.Add(Int32.Parse(node1.InnerText));
             }
-             return portOut;
+            return portOut;
         }
 
         public string StringClients()
@@ -273,9 +273,9 @@ namespace ManagementCenter
                 file = file + "</clients>";
                 return file;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("StringClients: nie ma klijenta, ex:" + ex.ToString());
+                Console.WriteLine("StringClients: nie ma klienta, ex:" + ex.ToString());
                 return null;
             }
         }
@@ -300,9 +300,9 @@ namespace ManagementCenter
                 addTo.AppendChild(client);
                 xmlDefault.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("AddClient, zly klijent, ex:" + ex.ToString());
+                Console.WriteLine("AddClient: zły klient, ex:" + ex.ToString());
             }
 
         }
@@ -313,39 +313,39 @@ namespace ManagementCenter
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
-          
-                XmlNode matrix = xmlDefault.CreateElement("matrix_entry");
-                XmlAttribute attribute = xmlDefault.CreateAttribute("num");
-                attribute.Value = num.ToString();
-                matrix.Attributes.Append(attribute);
 
-                try
-                {
-                    XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id=" + nodeNumber + "]");
-                    addTo.AppendChild(matrix);
-                    //  lock (xmlDefault)
-                    //{
-                    xmlDefault.Save(name);
-                    //}
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("AddMatrix, ex:" + ex.ToString());
-                }
-            
+            XmlNode matrix = xmlDefault.CreateElement("matrix_entry");
+            XmlAttribute attribute = xmlDefault.CreateAttribute("num");
+            attribute.Value = num.ToString();
+            matrix.Attributes.Append(attribute);
+
+            try
+            {
+                XmlNode addTo = xmlDefault.DocumentElement.SelectSingleNode("//node[@id=" + nodeNumber + "]");
+                addTo.AppendChild(matrix);
+                //  lock (xmlDefault)
+                //{
+                xmlDefault.Save(name);
+                //}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("AddMatrix, ex:" + ex.ToString());
+            }
+
         }
-        public void AddConnection(int startNode, int endNode,int node, int matrix, int startSlot, int endSlot   , int portOut)
+        public void AddConnection(int startNode, int endNode, int node, int matrix, int startSlot, int endSlot, int portOut)
         {
-          
+
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
-           
+
             XmlNode connection = xmlDefault.CreateElement("connection");
-            XmlAttribute attribute= xmlDefault.CreateAttribute("num");
-           // zmienic id polaczenia
-            attribute.Value = startNode.ToString() + endNode.ToString()+startSlot.ToString();
+            XmlAttribute attribute = xmlDefault.CreateAttribute("num");
+            // zmienic id polaczenia
+            attribute.Value = startNode.ToString() + endNode.ToString() + startSlot.ToString();
             connection.Attributes.Append(attribute);
-         
+
             XmlNode startSlotNode = xmlDefault.CreateElement("start_slot");
             startSlotNode.InnerText = startSlot.ToString();
 
@@ -365,9 +365,9 @@ namespace ManagementCenter
                 addTo.AppendChild(connection);
                 xmlDefault.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("AddConnection, node:"+node+" matrix:"+matrix+" ex:" + ex.ToString());
+                Console.WriteLine("AddConnection, node:" + node + " matrix:" + matrix + " ex:" + ex.ToString());
             }
         }
 
@@ -385,15 +385,15 @@ namespace ManagementCenter
             try
             {
                 XmlNode rootConnection = xmlDefault.DocumentElement.SelectSingleNode("//node[@id=" + nodeNumber + "]/matrix_entry[@num=" + matrixNumber + "]");
-                 XmlNodeList nodeList = rootConnection.SelectNodes("connection");
+                XmlNodeList nodeList = rootConnection.SelectNodes("connection");
 
-                foreach (XmlNode child in nodeList )
+                foreach (XmlNode child in nodeList)
                 {
-                   
+
                     if (Int32.Parse(child.SelectSingleNode("start_slot").InnerText) == startSlot)
                     {
                         XmlNode parent = child.ParentNode;
-                      //  XmlNode grandParent = parent.ParentNode;
+                        //  XmlNode grandParent = parent.ParentNode;
                         parent.RemoveChild(child);
                         xmlDefault.Save(name);
                         break;
@@ -406,19 +406,19 @@ namespace ManagementCenter
                 Console.WriteLine("RemoveConnection ex:" + e.ToString());
             }
 
-           
-           
-         
+
+
+
         }
 
 
-        public void AddLink(int id, int nodeA, int nodeB, string status, int cost, int numberOfSlots, int lenght=10)
+        public void AddLink(int id, int nodeA, int nodeB, string status, int cost, int numberOfSlots, int lenght = 10)
         {
-            
+
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
 
-            XmlNode aNode= xmlDefault.CreateElement("node_a");
+            XmlNode aNode = xmlDefault.CreateElement("node_a");
             aNode.InnerText = nodeA.ToString();
             XmlNode bNode = xmlDefault.CreateElement("node_b");
             bNode.InnerText = nodeB.ToString();
@@ -439,7 +439,7 @@ namespace ManagementCenter
             linkOut.InnerText = nodeB.ToString() + nodeA.ToString();
 
             XmlNode costLink = xmlDefault.CreateElement("cost");
-            costLink.InnerText =cost.ToString();
+            costLink.InnerText = cost.ToString();
             XmlNode slots = xmlDefault.CreateElement("slots_amount");
             slots.InnerText = numberOfSlots.ToString();
 
@@ -462,14 +462,14 @@ namespace ManagementCenter
                 addTo.AppendChild(port);
                 xmlDefault.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("AddLink, ex:" + ex.ToString());
             }
         }
 
 
-        public void AddLink(int id, int nodeA, int nodeB, int portIn, int portOut,string status, int cost, int numberOfSlots, int lenght = 10)
+        public void AddLink(int id, int nodeA, int nodeB, int portIn, int portOut, string status, int cost, int numberOfSlots, int lenght = 10)
         {
 
             XmlDocument xmlDefault = new XmlDocument();
@@ -480,7 +480,7 @@ namespace ManagementCenter
             XmlNode bNode = xmlDefault.CreateElement("node_b");
             bNode.InnerText = nodeB.ToString();
 
-         
+
             XmlNode port = xmlDefault.CreateElement("port");
             XmlAttribute attribute = xmlDefault.CreateAttribute("id");
             attribute.InnerText = id.ToString();
@@ -561,7 +561,7 @@ namespace ManagementCenter
             }
 
         }
-        public  void RemoveClient(int id)
+        public void RemoveClient(int id)
         {
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
@@ -572,13 +572,13 @@ namespace ManagementCenter
                 parent.RemoveChild(child);
                 xmlDefault.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("RemoveClient, ex:" + ex.ToString());
             }
         }
 
-        public  void RemoveLink(int id)
+        public void RemoveLink(int id)
         {
             XmlDocument xmlDefault = new XmlDocument();
             xmlDefault.Load(name);
@@ -589,7 +589,7 @@ namespace ManagementCenter
                 parent.RemoveChild(child);
                 xmlDefault.Save(name);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("RemoveLink, ex:" + ex.ToString());
             }

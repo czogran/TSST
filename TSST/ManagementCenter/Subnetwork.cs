@@ -11,12 +11,12 @@ namespace ManagementCenter
         string address;
         List<int> linksId;
         List<int> nodeId;
-         public int id;
-         public string myContent;
+        public int id;
+        public string myContent;
 
-     
 
-       public Subnetwork(int id,string address, List<int> linksId, List<int> nodeId,string myContent)
+
+        public Subnetwork(int id, string address, List<int> linksId, List<int> nodeId, string myContent)
         {
             this.id = id;
             this.address = address;
@@ -25,7 +25,7 @@ namespace ManagementCenter
             this.myContent = myContent;
 
 
-            Console.WriteLine(id + "  " + address);
+            Console.WriteLine("Stworzono podsieć o id " + address);
         }
     }
 }

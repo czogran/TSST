@@ -30,7 +30,7 @@ namespace ManagementCenter
 
         static int[] messageData;
 
-        internal static void AgentAction(string message,Agent agent)
+        internal static void AgentAction(string message, Agent agent)
         {
             //jezeli ma wyslac jeszcze dalej
             if (message.Contains("subsubnetwork"))
@@ -58,7 +58,7 @@ namespace ManagementCenter
                 Program.paths.Add(SwitchingActions.pathToCount);
                 foreach (Path p in Program.paths)
                 {
-                    Console.WriteLine("Second TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
+                    Console.WriteLine("Second TRYInput port " + p.nodes.Last().inputLink.portIn + " Output port " + p.nodes.First().outputLink.portOut);
                     Console.WriteLine(p.xmlName);
 
                 }
@@ -67,7 +67,7 @@ namespace ManagementCenter
             {
                 messageData = GetStartAndEndNode(message);
 
-                string pathId = (messageData[0] ).ToString() + (messageData[1] ).ToString();
+                string pathId = (messageData[0]).ToString() + (messageData[1]).ToString();
                 SwitchingActions.pathToCount = Program.paths.Find(x => x.id == pathId);
                 SendNodesToDeleteConnection(SwitchingActions.pathToCount);
                 SwitchingActions.pathToCount.ResetSlotReservation();
@@ -75,7 +75,9 @@ namespace ManagementCenter
                 {
                     Program.paths.Remove(SwitchingActions.pathToCount);
                 }
-                Console.WriteLine("Wyslalem do wezlow prosbe o usuniecie polaczenia");
+
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Wysłałem do węzłów prośbę o usunięcie połączenia");
             }
 
         }
@@ -92,12 +94,15 @@ namespace ManagementCenter
             {
                 path.ResetSlotReservation();
                 SendNodesToDeleteConnection(path);
-                Console.WriteLine("FIRST TRYInput port " + path.nodes.Last().inputLink .portIn+ "Output port  " + path.nodes.First().outputLink.portOut);
+                Console.WriteLine("FIRST TRYInput port " + path.nodes.Last().inputLink.portIn + " Output port " + path.nodes.First().outputLink.portOut);
                 Console.WriteLine(path.xmlName);
             }
-            Console.WriteLine("Posprztane po awarii");
+
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("Posprzątane po awarii");
+
             foreach (Path path in toReconfigure)
-            {                       
+            {
                 lock (Program.nodes)
                 {
                     lock (Program.links)
@@ -108,13 +113,12 @@ namespace ManagementCenter
                 }
                 if (!SwitchingActions.pathToCount.endToEnd)
                 {
-                   
-                    
-                    lock(agentCollection)
+
+                    lock (agentCollection)
                     {
-                        agentCollection.Add("<error>"+path.globalID+"</error>");
+                        agentCollection.Add("<error>" + path.globalID + "</error>");
                     }
-                    Console.WriteLine("Nie mozna ustawic innej sciezki zapasowej w tej podsieci");
+                    Console.WriteLine("Nie mozna ustawić innej ścieżki zapasowej w tej podsieci");
                 }
 
                 else
@@ -127,24 +131,25 @@ namespace ManagementCenter
 
                     SwitchingActions.pathToCount.globalID = path.globalID;
 
-                    Console.WriteLine("Input port "+inPort.portIn+"Output port  "+outPort.portOut);
+                    Console.WriteLine("Input port " + inPort.portIn + " Output port  " + outPort.portOut);
 
-                    Console.WriteLine("Start SLot:"+path.startSlot+"   endSlot:"+path.endSlot);
+                    Console.WriteLine("Start SLot: " + path.startSlot + " endSlot:" + path.endSlot);
 
                     //sprawdzamy czy mamy takie okno na tej sciezce jakie potrzebowalismy na starej
                     //tu moze cos byc namieszane ze slotami
                     //plus jeden proba bo np od 1 do 2 znajduja sie 2 liczby, a nie 2-1=1
-                    if (SwitchingActions.pathToCount.IsReservingWindowPossible(path.endSlot-path.startSlot+1, path.startSlot))
+                    if (SwitchingActions.pathToCount.IsReservingWindowPossible(path.endSlot - path.startSlot + 1, path.startSlot))
                     {
-                       
+
                         //tu plus jeden bo ta walona indeksacja
-                        ReserveRequest(path.startSlot, path.endSlot - path.startSlot+1);
+                        ReserveRequest(path.startSlot, path.endSlot - path.startSlot + 1);
                         Program.paths.Remove(Program.paths.Find(x => x == path));
                         Program.paths.Add(SwitchingActions.pathToCount);
                     }
                     else
                     {
-                        Console.WriteLine("Brakuje slotow by zestawic polaczenie");
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Brakuje szczelin, by zestawić połączenie");
 
                         //wysylanie do agenta wiadomosci ze sie nie udalo 
                         lock (agentCollection)
@@ -161,8 +166,8 @@ namespace ManagementCenter
                             }
                             catch
                             {
-                               
-                                Console.WriteLine("Nie udalo sie wywalic sciezki");
+                                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                                Console.WriteLine("Nie udało się usunąć ścieżki");
                             }
                         }
                     }
@@ -176,20 +181,21 @@ namespace ManagementCenter
         /// <param name="pathToCount"></param>
         private static void SendNodesToDeleteConnection(Path pathToCount)
         {
-            string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number+pathToCount.startSlot;
+            string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number + pathToCount.startSlot;
             foreach (Node node in pathToCount.nodes)
             {
-                if (node.number <= 80 )
+                if (node.number <= 80)
                 {
                     lock (Program.managerNodes)
                     {
                         try
                         {
-                            Program.managerNodes.Find(x=>x.number==node.number).Send(message1);
+                            Program.managerNodes.Find(x => x.number == node.number).Send(message1);
                         }
                         catch
                         {
-                            Console.WriteLine("Nie udalo sie automatycznie usunac wpisow");
+                            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                            Console.WriteLine("Nie udało się automatycznie usunąć wpisów");
                         }
                     }
                 }
@@ -205,7 +211,7 @@ namespace ManagementCenter
         private static void ConnectionRequest(string message, Agent agent)
         {
 
-         
+
             //jezeli jest to juz najnizsza podsiec to na jej poziomie juz konfigurujemy
             if (Program.isTheBottonSub == true)
             {
@@ -222,21 +228,16 @@ namespace ManagementCenter
                 {
                     //by byla tylko jedna sciezka ta globalna na ktorej pracujemy
 
-                   
-                    Console.WriteLine("Istnieje polaczenie EndToEnd");
 
-
-
-                 
-
-
+                    Console.WriteLine("Istnieje połączenie EndToEnd");
+                    
                     //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
                     Link inPort = new Link(messageData[2]);
                     Link outPort = new Link(messageData[3]);
 
                     foreach (Path p in Program.paths)
                     {
-                        Console.WriteLine("CCCCCCCCCCC TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
+                        Console.WriteLine("CCCCCCCCCCC TRYInput port " + p.nodes.Last().inputLink.portIn + " Output port  " + p.nodes.First().outputLink.portOut);
                         Console.WriteLine(p.xmlName);
                         Console.WriteLine("Start Slot:" + p.startSlot);
 
@@ -259,7 +260,7 @@ namespace ManagementCenter
                     {
                         Console.WriteLine("four TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
                         Console.WriteLine(p.xmlName);
-                        Console.WriteLine("Start Slot:"+p.startSlot);
+                        Console.WriteLine("Start Slot:" + p.startSlot);
 
                     }
 
@@ -308,7 +309,8 @@ namespace ManagementCenter
             //jezeli nie bedzie mozliwa reserwacja trzeba bedzie to wyslac wyzej
             else
             {
-                Console.WriteLine("Nie uda sie zarezerwowac slotow");
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Nie uda sie zarezerwować szczelin");
             }
         }
 
@@ -327,8 +329,8 @@ namespace ManagementCenter
             XMLeon xml;
             //xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
 
-            xml = new XMLeon("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID+".xml", XMLeon.Type.nodes);
-           
+            xml = new XMLeon("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml", XMLeon.Type.nodes);
+
             SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml");
             xml.CreatePathXML(SwitchingActions.pathToCount);
 
@@ -349,7 +351,8 @@ namespace ManagementCenter
                     }
                     catch
                     {
-                        Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Nie udało się wysłać ścieżki do węzła");
                     }
                 }
             }
@@ -357,11 +360,11 @@ namespace ManagementCenter
 
         public static void ReserveRequest(int startSlot, int neededSlots)
         {
-            int[] data= { startSlot, neededSlots };
-          //  data = GetStartAndAmountOfSlots(message);
+            int[] data = { startSlot, neededSlots };
+            //  data = GetStartAndAmountOfSlots(message);
             SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
-            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] +SwitchingActions.pathToCount.globalID +".xml", XMLeon.Type.nodes);
-          //  XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml");
+            XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml", XMLeon.Type.nodes);
+            //  XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml");
             SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml");
             xml.CreatePathXML(SwitchingActions.pathToCount);
 
@@ -382,7 +385,8 @@ namespace ManagementCenter
                     }
                     catch
                     {
-                        Console.WriteLine("Nie udalo sie wyslac sciezki do wezla");
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Nie udało się wysłać ścieżki do węzła");
                     }
                 }
             }
@@ -396,11 +400,11 @@ namespace ManagementCenter
         /// <returns>start slot, amountOfSlots</returns>
         static int[] GetStartAndAmountOfSlots(string message)
         {
-            int[] result= new int[2];
+            int[] result = new int[2];
 
 
             int start, end;
-            
+
             int startSlot, amountOfSlots;
             start = message.IndexOf("<start_slot>") + 12;
             end = message.IndexOf("</start_slot>");
@@ -428,7 +432,7 @@ namespace ManagementCenter
         /// </returns>
         static int[] GetStartAndEndNode(string message)
         {
-            int[] result=new int[5];
+            int[] result = new int[5];
             int start, end;
             int portIn, portOut;
             int startNode, endNode;
@@ -443,9 +447,9 @@ namespace ManagementCenter
             end = message.IndexOf("</port_out>");
             portOut = Int32.Parse(message.Substring(start, end - start));
 
-            start = message.IndexOf("<global_id>") +11 ;
+            start = message.IndexOf("<global_id>") + 11;
             end = message.IndexOf("</global_id>");
-            id= Int32.Parse(message.Substring(start, end - start));
+            id = Int32.Parse(message.Substring(start, end - start));
 
             startNode = portIn % 100 - 10;
             endNode = portOut / 100 - 10;
@@ -456,10 +460,10 @@ namespace ManagementCenter
             result[3] = portOut;
             result[4] = id;
 
-
-            Console.WriteLine("port_in:" + portIn + "  port_out:" + portOut);
-            Console.WriteLine("start node:" + startNode + "  end node:" + endNode);
-            Console.WriteLine("global ID:  " + id);
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("port_in: " + portIn + " port_out: " + portOut);
+            Console.WriteLine("start node: " + startNode + " end node: " + endNode);
+            Console.WriteLine("global ID: " + id);
 
             return result;
         }
@@ -472,6 +476,7 @@ namespace ManagementCenter
         /// <param name="message"></param>
         static void ConnectSubnetwork(string message)
         {
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
             Console.WriteLine("Konfiguracja podsieci");
             XmlDocument xmlDoc = new XmlDocument();
             try
@@ -480,7 +485,7 @@ namespace ManagementCenter
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Niepoprawny format wiadomosci, ex:" + ex.ToString());
+                Console.WriteLine("Niepoprawny format wiadomości, ex:" + ex.ToString());
             }
             XMLeonSubnetwork eonXml = new XMLeonSubnetwork(xmlDoc);
             string linkFile = eonXml.GetLinkFile();
@@ -513,7 +518,7 @@ namespace ManagementCenter
                         {
 
                         }
-                        
+
                     }
 
                     try
@@ -523,7 +528,7 @@ namespace ManagementCenter
                     }
                     catch
                     {
-                        Console.WriteLine("nie udalo sie wlaczyc pinga");
+                        Console.WriteLine("Nie udało się włączyć pinga");
                     }
 
                     i++;
@@ -531,8 +536,12 @@ namespace ManagementCenter
 
 
             }
+
         }
 
-
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
+        }
     }
 }

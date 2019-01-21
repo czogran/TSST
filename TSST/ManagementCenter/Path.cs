@@ -56,12 +56,12 @@ namespace ManagementCenter
         /// okresla jak dluga jest sciezka
         /// </summary>
         public int lenght;
-        
+
         /// <summary>
         /// jak sie nazywa xml, ktory przechowuje ta sciezke
         /// </summary>
         public string xmlName;
-    
+
         /// <summary>
         /// lokalne id sciezki np. w podsieci
         /// </summary>
@@ -74,28 +74,28 @@ namespace ManagementCenter
 
         public Path()
         {
-          
+
 
             //domyslnie sciezka nie jest znaleziona;
             endToEnd = false;
             connection = new List<Link>();
-            nodes=new List<Node>();
+            nodes = new List<Node>();
             //wiecej szczelin nie bedziemy mieli, nie chce mi sie bawic i na bruta daje ich z zapasem
             possibleWindow = new bool[100];
-            for(int i=0;i< possibleWindow.Length;i++)
+            for (int i = 0; i < possibleWindow.Length; i++)
             {
                 possibleWindow[i] = true;
             }
             hops = 0;
             lenght = 0;
         }
-    
+
 
         public Path(List<Link> connection, List<Node> nodes)
         {
             this.connection = connection;
             this.nodes = nodes;
-         
+
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace ManagementCenter
             }
             //gdy skonczy sie ilosc szczelin w swiatlowodzie na reszcie sie juz nie da zestawic polaczenia
             //nie podoba mi sie tu indeksownie
-            for (int i = link.usedSlots.Length ; i < possibleWindow.Length; i++)
+            for (int i = link.usedSlots.Length; i < possibleWindow.Length; i++)
             {
                 possibleWindow[i] = false;
             }
@@ -146,24 +146,24 @@ namespace ManagementCenter
         /// na tym szlaku jest mozliwe
         /// </summary>
         /// <returns></returns>  
-        public int[]  FindMaxWindow()
+        public int[] FindMaxWindow()
         {
             int maxWindow = 0;
             int countingSlot = 0;
-             startSlot=0;
+            startSlot = 0;
             int actualWindow = 0;
-            for(int i=0;i<possibleWindow.Length;i++)
+            for (int i = 0; i < possibleWindow.Length; i++)
             {
-                if(possibleWindow[i]==true)
+                if (possibleWindow[i] == true)
                 {
                     if (actualWindow == 0)
                     {
                         //walone indeksowanie, sloty od 1 a wszytskie te tablice od 0
-                       
+
                         countingSlot = i + 1;
                     }
                     actualWindow++;
-                    if(actualWindow>maxWindow)
+                    if (actualWindow > maxWindow)
                     {
                         maxWindow = actualWindow;
                         startSlot = countingSlot;
@@ -175,7 +175,7 @@ namespace ManagementCenter
                 }
             }
             Console.WriteLine("Max Window: " + maxWindow + "  Start Slot: " + startSlot);
-            int[] returnWindow= new int[2] {startSlot,maxWindow };
+            int[] returnWindow = new int[2] { startSlot, maxWindow };
             return returnWindow;
         }
         /// <summary>
@@ -187,16 +187,17 @@ namespace ManagementCenter
         /// <returns></returns>
         public bool IsReservingWindowPossible(int neededSlots, int startWindow)
         {
-            for (int i =0;i<15; i++)
+            for (int i = 0; i < 15; i++)
             {
+                Console.Write("Dostępna szczelina ");
                 Console.WriteLine(possibleWindow[i]);
             }
-                for (int i=startWindow-1;i< startWindow - 1+neededSlots;i++)
+            for (int i = startWindow - 1; i < startWindow - 1 + neededSlots; i++)
             {
                 //
-                if(possibleWindow[i]==false)
+                if (possibleWindow[i] == false)
                 {
-                    Console.WriteLine("nie ma szczeliny:" + i);
+                    Console.WriteLine("Szczelina " + i + " jest zajęta");
                     return false;
                 }
             }
@@ -212,29 +213,29 @@ namespace ManagementCenter
         /// <param name="startWindow"></param>
         /// <param name="maxWindow"></param>
         /// <returns></returns>
-        public bool ReserveWindow(int neededSlots, int startWindow, int maxWindow=0)
+        public bool ReserveWindow(int neededSlots, int startWindow, int maxWindow = 0)
         {
-          /*  if (neededSlots > maxWindow)
-            {
-                pathIsSet = false;
-                Console.WriteLine("Zbyt male okno");
-                return false;
-            }
-            else
-            {*/
-                pathIsSet = true;
-                startSlot = startWindow;
+            /*  if (neededSlots > maxWindow)
+              {
+                  pathIsSet = false;
+                  Console.WriteLine("Zbyt male okno");
+                  return false;
+              }
+              else
+              {*/
+            pathIsSet = true;
+            startSlot = startWindow;
             //minus jeden bo jak mamy jakis przedzial to jest w nim n+1 elementow- startowy tez sie liczy jako element
-                endSlot = startWindow + neededSlots-1;
+            endSlot = startWindow + neededSlots - 1;
 
 
-                //dla kazdego linku na sciezce rezerwujemy szczeliny
-                foreach (Link link in connection)
-                {
-                    link.SetSlots(startWindow, endSlot, true);
-                }               
-                return true;
-          //  }
+            //dla kazdego linku na sciezce rezerwujemy szczeliny
+            foreach (Link link in connection)
+            {
+                link.SetSlots(startWindow, endSlot, true);
+            }
+            return true;
+            //  }
         }
 
         /// <summary>

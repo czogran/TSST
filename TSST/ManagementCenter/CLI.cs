@@ -110,11 +110,11 @@ namespace ManagementCenter
         internal static void Prompt()
         {
             Console.WriteLine("Dostępne komendy:");
-            Console.WriteLine("[\"esc\"] Wyjdz z komendy");
-            Console.WriteLine("[1] Konfiguracja polaczen");
-            Console.WriteLine("[2] Konfiguracja klijentow");
-            Console.WriteLine("[3] Zczytaj wezel");
-            Console.WriteLine("[4] Zczytaj port wezla");
+            Console.WriteLine("[\"esc\"] Wyjdź z komendy");
+            Console.WriteLine("[1] Konfiguracja połączeń");
+            Console.WriteLine("[2] Konfiguracja klientow");
+            Console.WriteLine("[3] Sczytaj węzeł");
+            Console.WriteLine("[4] Sczytaj port węzła");
         }
 
         public static void ConfigureSubnetworks()
@@ -135,14 +135,14 @@ namespace ManagementCenter
             {
                 Program.managerCloud.Send("clean_dictionary");
                 XMLeonSubnetwork file = new XMLeonSubnetwork(name);
-                
+
 
                 CLI.PrintConfigFilesSent();
 
                 lock (Program.subnetworksList)
                 {
                     Program.subnetworksList = file.GetSubnetworks();
-                    foreach(Subnetwork sub in Program.subnetworksList)
+                    foreach (Subnetwork sub in Program.subnetworksList)
                     {
                         lock (Program.subnetworkManager)
                         {
@@ -152,7 +152,7 @@ namespace ManagementCenter
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine("nie udala sie konfiguracja podsieci, ex:" + ex.ToString());
+                                Console.WriteLine("Nie udała się konfiguracja podsieci, ex:" + ex.ToString());
                             }
                         }
                     }
@@ -166,12 +166,12 @@ namespace ManagementCenter
                     try
                     {
                         Program.managerClient[i].Send("port_out:" + portOut[i]);
-                        Console.WriteLine("Wysylam info o porcie:" + portOut[i]);
+                        Console.WriteLine("Wysyłam info o porcie: " + portOut[i]);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Blad wysylania informacji o porcie");
+                        Console.WriteLine("Błąd wysyłania informacji o porcie");
                     }
                 }
                 string linksFile = file.GetLinkFile();
@@ -180,7 +180,7 @@ namespace ManagementCenter
                 lock (Program.managerCloud)
                 {
                     Program.managerCloud.Send(XML.StringCableLinks(linksFile));
-                    Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                    //Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
                 }
             }
         }
@@ -191,7 +191,7 @@ namespace ManagementCenter
         /// </summary>
         /// <param name="clientAmount"></param>
         /// <param name="managerClient"></param>
-        public static void ConfigureClients(int clientAmount,List<Manager> managerClient)
+        public static void ConfigureClients(int clientAmount, List<Manager> managerClient)
         {
             CLI.RequestXML();
             string name;
@@ -212,17 +212,17 @@ namespace ManagementCenter
                 {
                     try
                     {
-                        managerClient[i].Send("port_out:"+portOut[i]);
-                        Console.WriteLine("Wysylam info o porcie:" + portOut[i]);
+                        managerClient[i].Send("port_out:" + portOut[i]);
+                        Console.WriteLine("Wysyłam info o porcie: " + portOut[i]);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Blad wysylania informacji o porcie");
+                        Console.WriteLine("Błąd wysyłania informacji o porcie");
                     }
                 }
             }
-        } 
+        }
 
         /// <summary>
         /// wysyla chmurze xml z linkami
@@ -256,14 +256,14 @@ namespace ManagementCenter
         /// <summary>
         /// konfiguracja sieci w mpls
         /// </summary>
-        public static void Configure(int nodeAmount, List<Manager> manager,int clientAmount, List<Manager> managerClient,Manager managerCloud)
+        public static void Configure(int nodeAmount, List<Manager> manager, int clientAmount, List<Manager> managerClient, Manager managerCloud)
         {
             CLI.RequestXML();
             string name;
             do
             {
                 name = Console.ReadLine();
-               
+
                 if (name == "esc")
                 {
                     break;
@@ -302,14 +302,14 @@ namespace ManagementCenter
         /// <summary>
         /// naprawa sieci
         /// </summary>
-        public static void Fix(int nodeAmount,List<Manager> manager)
+        public static void Fix(int nodeAmount, List<Manager> manager)
         {
             CLI.RequestXML();
             string name;
             do
             {
 
-               name = Console.ReadLine();
+                name = Console.ReadLine();
 
                 if (name == "esc")
                 {
@@ -337,9 +337,9 @@ namespace ManagementCenter
         /// <summary>
         /// prosi wezel o wpis z niego
         /// </summary>
-        public static void GetNodeFromNode (List<Manager> manager)
+        public static void GetNodeFromNode(List<Manager> manager)
         {
-            Console.WriteLine("Podaj wezla od ktorego chcesz pobrac plik konfiguracyjny");
+            Console.WriteLine("Podaj id węzła, od którego chcesz pobrać plik konfiguracyjny");
             int number;
             string input;
             while (true)
@@ -352,11 +352,11 @@ namespace ManagementCenter
                         break;
                     }
                     number = Int32.Parse(input);
-                    manager[number - 1].Send("DAWAJ CONFIGA FRAJERZE,get_config");
+                    manager[number - 1].Send("get_config");
                     break;
                 }
-                catch(Exception ex)
-                {                 
+                catch (Exception ex)
+                {
                     Console.WriteLine("Podaj poprawny numer");
                 }
             }
@@ -370,7 +370,7 @@ namespace ManagementCenter
         /// <param name="manager"></param>
         public static void GetMatrixFromNode(List<Manager> manager)
         {
-            Console.WriteLine("Podaj wezla od ktorego chcesz pobrac dane portu");
+            Console.WriteLine("Podaj id węzła, od którego chcesz pobrać dane portu");
             int nodeNumber, matrixNumber;
             string input;
             while (true)
@@ -387,15 +387,15 @@ namespace ManagementCenter
                             break;
                         }
                         matrixNumber = Int32.Parse(input);
-                        manager[nodeNumber - 1].Send("<get_matrix>"+matrixNumber+"</get_matrix>");
+                        manager[nodeNumber - 1].Send("<get_matrix>" + matrixNumber + "</get_matrix>");
                         break;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
 
                     }
 
-                   
+
                 }
                 catch (Exception ex)
                 {
@@ -441,13 +441,13 @@ namespace ManagementCenter
 
         public static void CreateClientAgent(int c)
         {
-            Console.WriteLine($"Tworze agenta dla klienta {c}");
+            Console.WriteLine($"Tworzę agenta dla klienta {c}");
         }
 
 
         public static void CreateNodeAgent(string v)
         {
-            Console.WriteLine($"Tworze agenta dla węzła {v}");
+            Console.WriteLine($"Tworzę agenta dla węzła {v}");
         }
     }
 }

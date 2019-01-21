@@ -29,12 +29,12 @@ namespace ManagementCenter
         public static List<Link> links;
         // tu w ich dodawaniu bedzie jeden wielki cheat bo bedzie szlo ono po wezlach jakie sa w linkach
         public static List<Node> nodes;
-        public static List<Path> paths=new List<Path>();
+        public static List<Path> paths = new List<Path>();
         public static List<Subnetwork> subnetworksList = new List<Subnetwork>();
 
 
-        public static List<Manager> managerNodes=new List<Manager>();
-        public static List<Manager> managerClient= new List<Manager>();      
+        public static List<Manager> managerNodes = new List<Manager>();
+        public static List<Manager> managerClient = new List<Manager>();
         public static List<Manager> subnetworkManager;
 
         public static Manager managerCloud;
@@ -51,22 +51,22 @@ namespace ManagementCenter
 
             //Tests.TestXML();
 
-        /*    bool[] a = new[] { true, false };
+            /*    bool[] a = new[] { true, false };
 
-            MemoryStream stream = new MemoryStream();
-            IFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, a);
+                MemoryStream stream = new MemoryStream();
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, a);
 
-            IFormatter formatter1= new BinaryFormatter();
-            stream.Seek(0, SeekOrigin.Begin);
-            var b = formatter1.Deserialize(stream);
+                IFormatter formatter1= new BinaryFormatter();
+                stream.Seek(0, SeekOrigin.Begin);
+                var b = formatter1.Deserialize(stream);
 
-            Console.WriteLine(b);*/
+                Console.WriteLine(b);*/
 
 
-            Console.WriteLine("MANAGER:"+args[0]);
+            Console.WriteLine("MANAGER:" + args[0]);
             subnetworkManager = new List<Manager>();
-            
+
             //ustalenie wartosci ile mamy czego
             amountOfnodes = Int32.Parse(args[1]);
             amountOfclients = Int32.Parse(args[2]);
@@ -76,9 +76,9 @@ namespace ManagementCenter
 
             //laczenie sie z chmura
             managerCloud = new Manager();
-            managerCloud.CreateSocket("127.0.31."+args[0], 11001);
+            managerCloud.CreateSocket("127.0.31." + args[0], 11001);
 
-            
+
             //sie tu czasem wywalalo, to pomaga
             //laczenie sie z chmura
             while (true)
@@ -94,23 +94,23 @@ namespace ManagementCenter
 
             Agent agent;
 
-            if (args[0]=="1")
+            if (args[0] == "1")
             {
                 Console.WriteLine("Centralny Manager");
                 isTheTopSub = true;
 
-                  for(int i=2; i<=amountOfSubnetworks;i++)
-                  {
-                      subnetworkManager.Add(new Manager(i));
-                      subnetworkManager[i - 2].CreateSocket("127.0.21." + i, 11001);
-                      subnetworkManager[i-2].Connect("127.0.20." + i, 11001);
+                for (int i = 2; i <= amountOfSubnetworks; i++)
+                {
+                    subnetworkManager.Add(new Manager(i));
+                    subnetworkManager[i - 2].CreateSocket("127.0.21." + i, 11001);
+                    subnetworkManager[i - 2].Connect("127.0.20." + i, 11001);
 
-                  }
-                  //laczenie sie z klientami
+                }
+                //laczenie sie z klientami
                 for (int i = 1; i <= amountOfclients; i++)
                 {
                     managerClient.Add(new Manager());
-                    Console.WriteLine("robie managera dla clienta" + "127.0.12." + i.ToString());
+                    Console.WriteLine("Robię managera dla clienta " + "127.0.12." + i.ToString());
 
                     managerClient[i - 1].CreateSocket("127.0.13." + i.ToString(), 11001);
                     managerClient[i - 1].Connect("127.0.12." + i.ToString(), 11001);
@@ -122,8 +122,8 @@ namespace ManagementCenter
             {
                 agent = new Agent();
 
-                agent.CreateSocket("127.0.20."+args[0].ToString(),11001);
-                Thread thread=new Thread( new ThreadStart(agent.Connect));
+                agent.CreateSocket("127.0.20." + args[0].ToString(), 11001);
+                Thread thread = new Thread(new ThreadStart(agent.Connect));
                 thread.Start();
                 Thread threadComputing = new Thread(new ThreadStart(agent.ComputingThread));
                 threadComputing.Start();
@@ -139,30 +139,30 @@ namespace ManagementCenter
                 CLI.Prompt();
 
                 choose = Console.ReadLine();
-                if ( choose== "1")
+                if (choose == "1")
                 {
                     CLI.ConfigureSubnetworks();
-                   // CLI.ConfigureLinkConnections(managerCloud);
-                   // CLI.Configure(nodeAmount, manager, clientAmount, managerClient, managerCloud);
+                    // CLI.ConfigureLinkConnections(managerCloud);
+                    // CLI.Configure(nodeAmount, manager, clientAmount, managerClient, managerCloud);
                 }
-                else if (choose=="2")
+                else if (choose == "2")
                 {
                     //wysylanie konfiguracji do klijenta
-                    
-                   // CLI.ConfigureClients(clientAmount, managerClient);
-                   // CLI.Fix(nodeAmount, manager);
+
+                    // CLI.ConfigureClients(clientAmount, managerClient);
+                    // CLI.Fix(nodeAmount, manager);
                 }
                 //prosba o konfiguracje wezla
-                else if (choose =="3")
+                else if (choose == "3")
                 {
-                   
+
                     {
                         CLI.GetNodeFromNode(managerNodes);
                     }
 
                 }
                 //prosba o konfiguracje konkretnego portu konkretnego wezla
-                else if (choose=="4")
+                else if (choose == "4")
                 {
                     CLI.GetMatrixFromNode(managerNodes);
                 }

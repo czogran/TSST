@@ -11,19 +11,19 @@ namespace ManagementCenter
     /// informacje o wezlach sa tu przechowywane
     /// bardzo wazne, jako nody beda liczeni tez klijenci w algorytmie sciezek
     /// </summary>
-    class Node :ICloneable
+    class Node : ICloneable
     {
         public int number;
         //Array ports;
         List<int> ports;
 
-         public bool isAlive;
+        public bool isAlive;
 
         //koszt dotaracia do tego wezla, potrzebna do dijxtry
         public int costToGetHere;
 
         //wezel ktory jest poprzedni na sciezce
-       public int previousNode;
+        public int previousNode;
 
         //z ktorego linku wychodzi z wezla
         public Link outputLink;
@@ -38,7 +38,7 @@ namespace ManagementCenter
 
 
 
-        public Node(int number,List<int> ports)
+        public Node(int number, List<int> ports)
         {
             this.number = number;
             this.ports = ports;
@@ -59,7 +59,7 @@ namespace ManagementCenter
             costToGetHere = 2147483647;
         }
 
-        public Node(int number,Link outputLink, Link inputLink, List<int> ports, bool alive, int costToGet,int previousNode,bool connected)
+        public Node(int number, Link outputLink, Link inputLink, List<int> ports, bool alive, int costToGet, int previousNode, bool connected)
         {
             this.number = number;
             this.outputLink = outputLink;
@@ -79,7 +79,7 @@ namespace ManagementCenter
 
         public static void ResestConnectionStatus(List<Node> nodes)
         {
-            foreach(Node node in nodes)
+            foreach (Node node in nodes)
             {
                 node.connected = false;
                 node.costToGetHere = 2147483647;
@@ -92,7 +92,7 @@ namespace ManagementCenter
         /// <returns></returns>
         public object Clone()
         {
-            return new Node(this.number,this.outputLink,this.inputLink,this.ports,this.isAlive,this.costToGetHere,this.previousNode,this.connected);
+            return new Node(this.number, this.outputLink, this.inputLink, this.ports, this.isAlive, this.costToGetHere, this.previousNode, this.connected);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace ManagementCenter
 
             //linki
             XMLeon linksgen = new XMLeon("sub1links.xml", XMLeon.Type.cable_cloud);
-            linksgen.AddLink(9111, 81, 2, 9111,1191, "on", 1, 14);
+            linksgen.AddLink(9111, 81, 2, 9111, 1191, "on", 1, 14);
             linksgen.AddLink(9211, 82, 2, 9211, 1191, "on", 1, 14);
             linksgen.AddLink(2693, 5, 83, 2693, 9326, "on", 1, 14);
             linksgen.AddLink(2694, 5, 84, 2694, 9426, "on", 1, 14);
@@ -65,7 +65,7 @@ namespace ManagementCenter
             linksgen.AddLink(2526, 15, 16, "on", 1, 14);
 
             XMLeonSubnetwork sub = new XMLeonSubnetwork("subnetwork1.xml", "subclient.xml", "sub1links.xml");
-            sub.AddSubnetwork(2,"", "sub2links.xml");
+            sub.AddSubnetwork(2, "", "sub2links.xml");
             sub.AddSubnetwork(3, "", "sub3links.xml");
             sub.AddSubnetwork(4, "", "sub4links.xml");
             sub.AddSubnetwork(5, "", "sub5links.xml");
@@ -79,7 +79,7 @@ namespace ManagementCenter
             client.AddClient(4, "127.0.0.4", 9421);
             client.AddClient(5, "127.0.0.1", 11);
             client.AddClient(6, "111", 33);
-           // client.RemoveClient(3);
+            // client.RemoveClient(3);
 
 
 
@@ -106,7 +106,7 @@ namespace ManagementCenter
             nodes.AddMatrix(31, 1);
             nodes.AddMatrix(3, 1);
 
-        
+
             nodes.RemoveConnection(2, 13, 2);
             nodes.RemoveConnection(1, 11, 2);
 
@@ -182,7 +182,7 @@ namespace ManagementCenter
             nodesList.Add(new Node(10));
             nodesList.Add(new Node(11));
 
-           // PathAlgorithm.dijkstra(nodesList, linksList, 81, 83, false);
+            // PathAlgorithm.dijkstra(nodesList, linksList, 81, 83, false);
             Console.WriteLine("qqqqqqqqqqqqqqq");
             PathAlgorithm.dijkstra(nodesList, linksList, 81, 84, false);
             Console.WriteLine("qqqqqqqqqqqqqqq");
@@ -190,9 +190,9 @@ namespace ManagementCenter
             PathAlgorithm.dijkstra(nodesList, linksList, 82, 83, false);
 
 
-            for (int i=0;i<14; i++)
+            for (int i = 0; i < 14; i++)
             {
-               Console.WriteLine( linksList[2].usedSlots[i]);
+                Console.WriteLine(linksList[2].usedSlots[i]);
             }
 
             Console.Read();

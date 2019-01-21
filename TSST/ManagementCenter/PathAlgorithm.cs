@@ -9,30 +9,31 @@ namespace ManagementCenter
 
     class PathAlgorithm
     {
-        public static Path dijkstra(List<Node>nodes, List<Link>links, int start, int end, bool direction)
+        public static Path dijkstra(List<Node> nodes, List<Link> links, int start, int end, bool direction)
         {
-            Console.WriteLine("czas zaczac dijstre");
+            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine("Wykonuję algorytm dijkstry");
             //sciezka ktorej szukamy
-            Path path=new Path();
+            Path path = new Path();
             path.id = start.ToString() + end.ToString();
             //jezeli jest to najwyzszy level to Id globalne jest takie same jak na tym poziomie
-            if(Program.isTheTopSub)
+            if (Program.isTheTopSub)
             {
                 path.globalID = path.id;
             }
 
             //resetowanie statusu nodow z informacji ze sa na sciezce, z poprzedniego zestawiania
             Node.ResestConnectionStatus(nodes);
-           
+
             //ustawiana na start na bardzo duzo liczbe
             double cheapestPath; ;
 
             //zmienna do obliczen, mowi ktory node jest w tej chwili rozwazany
-            int nodeNumber=0;
+            int nodeNumber = 0;
 
             //w ktorym aktualnie wezle jestesmy
-            int actualNode=start;
-            
+            int actualNode = start;
+
             //ilosc slotow jaka bedzie potrzebna dla danej sciezki
             int amountOfSlots;
 
@@ -49,14 +50,14 @@ namespace ManagementCenter
             try
             {
                 index = nodes.IndexOf(nodes.Find(x => x.number == start));
-           
 
-            //chyba chodzi o to, ze sam jest poprzednikiem siebie
-            nodes[index].previousNode = start;
-            //dotarcie do pierwszego nic nie kosztuje
-            nodes[index].costToGetHere = 0;
-            //i jest juz na sciezce
-            nodes[index].connected = true;
+
+                //chyba chodzi o to, ze sam jest poprzednikiem siebie
+                nodes[index].previousNode = start;
+                //dotarcie do pierwszego nic nie kosztuje
+                nodes[index].costToGetHere = 0;
+                //i jest juz na sciezce
+                nodes[index].connected = true;
             }
             catch
             {
@@ -69,7 +70,7 @@ namespace ManagementCenter
             {
                 for (int i = 0; i < links.Count; i++)
                 {
-                    if (links[i].nodeA == actualNode )
+                    if (links[i].nodeA == actualNode)
                     {
                         //try jest tutaj gdyz pozniej sa zabijane juz jakies wezly, a linki wziaz zyja
                         //wiec tak jest prosciej sprawdzic czy jeszcze jest taki wpis w liscie nodow
@@ -98,10 +99,10 @@ namespace ManagementCenter
                 }
                 //ustawiana na start na maksymalna wartosc int
                 cheapestPath = 2147483647;
-                for (int i=0;i<nodes.Count;i++)
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    if(nodes[i].connected==false && nodes[i].costToGetHere < cheapestPath)
-                    {                       
+                    if (nodes[i].connected == false && nodes[i].costToGetHere < cheapestPath)
+                    {
                         cheapestPath = nodes[i].costToGetHere;
 
                         //indeksuje od zera, by sie nie powalilo
@@ -122,7 +123,8 @@ namespace ManagementCenter
 
                 if (actualNode == end)
                 {
-                    Console.WriteLine("Znalazlem sciezke");
+                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("Znalazłem ścieżkę");
                     //ustawiamy tutaj ze sciezka zostala znaleziona
                     path.endToEnd = true;
                     break;
@@ -139,7 +141,7 @@ namespace ManagementCenter
                     path.ChangeWindow(nodes[index].inputLink);
                     path.hops++;
                     path.lenght += nodes[index].inputLink.lenght;
-  
+
                     //cofamy sie po sciezce
                     actualNode = nodes[index].previousNode;
 
@@ -153,13 +155,13 @@ namespace ManagementCenter
                         index = nodes.IndexOf(nodes.Find(x => x.number == actualNode));
                         path.nodes.Add((Node)nodes[index].Clone());
 
-                        
+
                         //jak ostatni to nie bedzie mial poprzedniego wiec raczej z tad tego tu nie bedzie
                         path.hops++;
 
-                        int[] pathWindow =  path.FindMaxWindow();
-                        Console.WriteLine("Window start: "+pathWindow[0]+"Window Size:"+pathWindow[1]);
-                        Console.WriteLine("Hops:"+path.hops);
+                        int[] pathWindow = path.FindMaxWindow();
+                        Console.WriteLine("Window start: " + pathWindow[0] + " Window Size:" + pathWindow[1]);
+                        Console.WriteLine("Hops:" + path.hops);
                         break;
 
                     }
@@ -170,23 +172,23 @@ namespace ManagementCenter
 
                     try
                     {
-                        Console.WriteLine("  InputLink: " + path.nodes[i].inputLink.id);
+                        Console.WriteLine("InputLink: " + path.nodes[i].inputLink.id);
                     }
-                    catch(Exception ex)
-                    {  }
+                    catch (Exception ex)
+                    { }
                     try
                     {
-                        Console.WriteLine("  OutputLink: " + path.nodes[i].outputLink.id);
+                        Console.WriteLine("OutputLink: " + path.nodes[i].outputLink.id);
                     }
                     catch (Exception ex)
                     { }
 
 
                 }
-                Console.WriteLine("Path Lenght:" + path.lenght);
-               // amountOfSlots=AmountNeededSlots(path.lenght);
-               // window= path.FindMaxWindow();
-               // path.ReserveWindow(amountOfSlots,window[0],window[1]);
+                Console.WriteLine("Path Length:" + path.lenght);
+                // amountOfSlots=AmountNeededSlots(path.lenght);
+                // window= path.FindMaxWindow();
+                // path.ReserveWindow(amountOfSlots,window[0],window[1]);
                 /*
                 XMLeon xml = new XMLeon("path" + start + end + ".xml", XMLeon.Type.nodes);
                 path.xmlName = ("path" + start + end + ".xml");
@@ -194,9 +196,10 @@ namespace ManagementCenter
             }
             else
             {
-                Console.WriteLine("Nie udalo sie zestawic sciezki");
-            }           
-                    return path;
+                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                Console.WriteLine("Nie udało się zestawić ścieżki");
+            }
+            return path;
         }
 
         /// <summary>
@@ -204,39 +207,38 @@ namespace ManagementCenter
         /// </summary>
         /// <param name="lengthOfPath"></param>
         /// <returns></returns>
-       internal static int AmountNeededSlots(int lengthOfPath)
+        internal static int AmountNeededSlots(int lengthOfPath)
         {
-            int amountNeeded=0;
+            int amountNeeded = 0;
 
             //granice sa przyjete przezemnie arbitralnie
-           if(lengthOfPath<10)
+            if (lengthOfPath < 10)
             {
                 amountNeeded = 1;
                 Console.WriteLine("Wykorzystana modulacja: 16QAM");
-                Console.WriteLine("Ilosc potrzebnych szczelin:" + 1);
+                Console.WriteLine("Ilość potrzebnych szczelin: " + 1);
             }
-           else if(lengthOfPath<20)
+            else if (lengthOfPath < 20)
             {
                 amountNeeded = 2;
                 Console.WriteLine("Wykorzystana modulacja: 8QAM");
-                Console.WriteLine("Ilosc potrzebnych szczelin :" + 2);
+                Console.WriteLine("Ilość potrzebnych szczelin: " + 2);
             }
-           else if(lengthOfPath<30)
+            else if (lengthOfPath < 30)
             {
                 amountNeeded = 3;
                 Console.WriteLine("Wykorzystana modulacja: QPSK");
-                Console.WriteLine("Ilosc potrzebnych szczelin :" + 3);
+                Console.WriteLine("Ilość potrzebnych szczelin: " + 3);
             }
-           else
+            else
             {
                 amountNeeded = 4;
                 Console.WriteLine("Wykorzystana modulacja: BSK");
-                Console.WriteLine("Ilosc potrzebnych szczelin :" + 4);
+                Console.WriteLine("Ilość potrzebnych szczelin: " + 4);
             }
 
             return amountNeeded;
         }
-
 
     }
 }
