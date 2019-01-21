@@ -20,16 +20,16 @@ namespace ClientNode
         //rzeczy do mpls
         public static ObservableCollection<string> agentCollection = new ObservableCollection<string>();
         //kluczem jest klijent z jakim sie laczymy, a wartoscia jego adres, port wyjsciowey
-        public static Dictionary<int, Tuple<string,int> >clientDictioinary = new Dictionary<int, Tuple<string,int>>();
+        public static Dictionary<int, Tuple<string, int>> clientDictioinary = new Dictionary<int, Tuple<string, int>>();
 
         //rzeczy do EON
-       public static int portOut;
+        public static int portOut;
         //pierwsza wartosc to numer klijenta docelowego, druga to slot startowy
         public static Dictionary<int, int> clientEonDictioinary;// = new Dictionary<int, int>();
 
         public Agent()
         {
-           // agentCollection = new ObservableCollection<string>();
+            // agentCollection = new ObservableCollection<string>();
             clientEonDictioinary = new Dictionary<int, int>();
         }
 
@@ -54,7 +54,7 @@ namespace ClientNode
             CLI.ConnectedAgent();
             buffer = new byte[1024];
 
-          
+
 
             mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
         new AsyncCallback(MessageCallback), buffer);
@@ -79,13 +79,15 @@ namespace ClientNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
-                Console.WriteLine("Od Agenta: \n" + receivedMessage);
-                lock(agentCollection)
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
+                //Console.WriteLine("Od Agenta: \n" + receivedMessage);
+                lock (agentCollection)
                 {
                     agentCollection.Add(receivedMessage);
                     Console.WriteLine(agentCollection.Last());
                 }
-              
+
                 buffer = new byte[1024];
 
                 mySocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None,
@@ -94,7 +96,7 @@ namespace ClientNode
 
             catch (Exception ex)
             {
-                Console.WriteLine("Message callback execption, ex:"+ex+ToString());
+                Console.WriteLine("Message callback execption, ex:" + ex + ToString());
             }
         }
 
@@ -109,6 +111,8 @@ namespace ClientNode
                 sending = enc.GetBytes(s);
 
                 mySocket.Send(sending);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została wiadomość o treści: " + s);
 
             }
         }
@@ -142,11 +146,11 @@ namespace ClientNode
             lock (agentCollection)
             {
                 Console.WriteLine("agent");
-               agentCollection.CollectionChanged += SwitchAction;
+                agentCollection.CollectionChanged += SwitchAction;
             }
         }
-       
-        public  void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
+
+        public void SwitchAction(object sender, NotifyCollectionChangedEventArgs e)//(string message)
         {
 
             //zdaje sie ze z mpls i do wywalki
@@ -156,7 +160,7 @@ namespace ClientNode
                 clientDictioinary.Clear();
                 FillDictionary();
             }*/
-             if(agentCollection.Last().Contains("port_out:"))
+            if (agentCollection.Last().Contains("port_out:"))
             {
                 GetPortOut(agentCollection.Last());
             }
@@ -168,14 +172,14 @@ namespace ClientNode
                 ReplaceEonDictionary(agentCollection.Last());
             }
 
-            else if(agentCollection.Last().Contains("<start_slot>"))
+            else if (agentCollection.Last().Contains("<start_slot>"))
             {
-               // Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaa");
+                // Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaa");
                 AddToEonDictionary(agentCollection.Last());
             }
-           else if(agentCollection.Last().Contains("//connection:"))
+            else if (agentCollection.Last().Contains("//connection:"))
             {
-                
+
                 SendCommand(agentCollection.Last());
             }
             else if (agentCollection.Last().Contains("//delete:"))
@@ -192,7 +196,7 @@ namespace ClientNode
         private void GetPortOut(string message)
         {
             portOut = Int32.Parse(message.Substring(9));
-            Console.WriteLine("Numer Portu Wychodzacego: "+portOut);
+            Console.WriteLine("Numer portu wychodzącego: " + portOut);
         }
 
         public void AddToEonDictionary(string message)
@@ -211,7 +215,7 @@ namespace ClientNode
 
             targetClient = Int32.Parse(message.Substring(start, end - start));
             clientEonDictioinary.Add(targetClient, startSlot);
-            Console.WriteLine("Dodaje do slownika wpis dla klijenta o id:" + targetClient + " i szczelinie start " + startSlot);
+            Console.WriteLine("Dodaję do słownika wpis dla klienta o id: " + targetClient + " i o szczelinie start " + startSlot);
         }
         public void ReplaceEonDictionary(string message)
         {
@@ -230,7 +234,7 @@ namespace ClientNode
             targetClient = Int32.Parse(message.Substring(start, end - start));
             clientEonDictioinary.Remove(targetClient);
             clientEonDictioinary.Add(targetClient, startSlot);
-            Console.WriteLine("Wymienilem wpis dla klijenta o id:" + targetClient + " i szczelinie start " + startSlot);
+            Console.WriteLine("Wymieniłem wpis dla klienta o id: " + targetClient + " i o szczelinie start " + startSlot);
         }
 
 
@@ -247,21 +251,23 @@ namespace ClientNode
             XmlNode node1;
             foreach (XmlNode client in doc.SelectNodes("clients/client"))
             {
-                    id = Int32.Parse(client.Attributes["id"].Value);
-                   
+                id = Int32.Parse(client.Attributes["id"].Value);
 
-                    node1 = client.SelectSingleNode("address");
-                    address = node1.InnerText;
-                    node1 = client.SelectSingleNode("port_out");
-                    portOut =Int32.Parse( node1.InnerText);
+
+                node1 = client.SelectSingleNode("address");
+                address = node1.InnerText;
+                node1 = client.SelectSingleNode("port_out");
+                portOut = Int32.Parse(node1.InnerText);
                 //var t = new Tuple<address, portOut>;
-                clientDictioinary.Add(id, new Tuple<string,int>(address, portOut) );
-                Console.WriteLine("uzupelniam slownik klientow o klienta: "+id);
+                clientDictioinary.Add(id, new Tuple<string, int>(address, portOut));
+                Console.WriteLine("Uzupełniam słownik klientow o klienta: " + id);
             }
-             
-            
-
+        }
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
         }
     }
 }
+
 

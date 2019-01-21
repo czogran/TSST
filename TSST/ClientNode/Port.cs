@@ -47,7 +47,7 @@ namespace ClientNode
             endRemote = new IPEndPoint(ipAddress, toPort);
             mySocket.Connect(endRemote);
 
-            Console.WriteLine("Polaczono z chmura");
+            Console.WriteLine("Połączono z chmurą");
 
             buffer = new byte[1024];
 
@@ -78,7 +78,9 @@ namespace ClientNode
                 //usuniecie informacji charakterystycznej
                 // receivedMessage=receivedMessage.Substring(receivedMessage.IndexOf("<address>"));
 
-                Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
+                //Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Otrzymana zostala wiadomosc o tresci: " + receivedMessage);
 
                 buffer = new byte[1024];
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
@@ -90,12 +92,12 @@ namespace ClientNode
 
             }
         }
-        public void Send(string message,int idOfNodeWeAreSendingTo)
+        public void Send(string message, int idOfNodeWeAreSendingTo)
         {
             try
             {
                 int startSlot;
-                lock(Agent.clientEonDictioinary)
+                lock (Agent.clientEonDictioinary)
                 {
                     startSlot = Agent.clientEonDictioinary[idOfNodeWeAreSendingTo];
                 }
@@ -103,13 +105,16 @@ namespace ClientNode
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
 
-                sending = enc.GetBytes(message + "<port>" + Agent.portOut+"</port>"+"<start_slot>"+startSlot+"</start_slot>");
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut + "</port>" + "<start_slot>" + startSlot + "</start_slot>");
 
                 mySocket.Send(sending);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została wiadomość o treści: " + message);
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("Nie udalo sie wyslac:" + ex.ToString());
+                Console.WriteLine("Nie udało się wysłać: " + ex.ToString());
             }
         }
 
@@ -119,17 +124,21 @@ namespace ClientNode
         /// <param name="message"></param>
         public void SendCommand(string message)
         {
-            try { 
-           
+            try
+            {
+
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
-                sending = enc.GetBytes(message + "<port>" + Agent.portOut + "</port>"+"<my_id>"+Program.number+"</my_id>" );
+                sending = enc.GetBytes(message + "<port>" + Agent.portOut + "</port>" + "<my_id>" + Program.number + "</my_id>");
 
                 mySocket.Send(sending);
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Wysłana została wiadomość o treści: " + message);
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Nie udalo sie wyslac:" + ex.ToString());
+                Console.WriteLine("Nie udało się wysłac: " + ex.ToString());
             }
         }
 
@@ -144,10 +153,12 @@ namespace ClientNode
 
         public void SendThread()
         {
-                 CLI.SwitchCommands(this);            
+            CLI.SwitchCommands(this);
         }
 
-            
+        public string GetTimestamp()
+        {
+            return DateTime.Now.ToString("HH:mm:ss");
+        }
     }
 }
-   

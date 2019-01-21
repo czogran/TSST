@@ -21,11 +21,14 @@ namespace ClientNode
         {
             Console.WriteLine();
             Console.WriteLine("KOMENDY:");
-            Console.WriteLine("zestaw polaczenie,po dwukropku id odbiorcy://connection:");
-            Console.WriteLine("wybierz odbiorce, po dwukropku numer odbiorcy://client:");
-            Console.WriteLine("po wybraniu odbiorcy zwykle pisanie jest wysylaniem");
-            Console.WriteLine("usun polaczenie, po dwukropku numer polaczenia://delete:");
-            Console.WriteLine("spamuj odbiorce wpisz://send  teraz kliknij enter i wiadomosc ktora chcesz spamowac");
+            //Console.WriteLine("zestaw polaczenie,po dwukropku id odbiorcy://connection:");
+            Console.WriteLine("Podaj id klienta, z którym ma być zestawione połączenie: //connection:");
+            //Console.WriteLine("wybierz odbiorce, po dwukropku numer odbiorcy://client:");
+            Console.WriteLine("Podaj id klienta, do którego ma przyjść wiadomość, po dwukropku numer odbiorcy: //client:");
+            Console.WriteLine("po wybraniu odbiorcy pisany tekst jest wiadomością do przesłania.");
+            Console.WriteLine("Usuń połączenie, po dwukropku numer połączenia: //delete:");
+            //Console.WriteLine("spamuj odbiorce wpisz://send  teraz kliknij enter i wiadomosc ktora chcesz spamowac");
+            Console.WriteLine("Wyślij ciąg 10 wiadomości do wybranego klienta: //send");
             Console.WriteLine();
 
         }
@@ -65,26 +68,26 @@ namespace ClientNode
                 {
                     try
                     {
-                        
+
                         int connection = Int32.Parse(message.Substring(13));
-                        Console.WriteLine("Prosze o zestawienie polaczenia z klijentem:" + connection);
+                        Console.WriteLine("Proszę o zestawienie połączenia z klientem: " + connection);
 
                         lock (Agent.agentCollection)
                         {
-                           // Console.WriteLine("aa");
-                            Agent.agentCollection.Add("//connection:<target_client>"+connection+"</target_client>");
+                            // Console.WriteLine("aa");
+                            Agent.agentCollection.Add("//connection:<target_client>" + connection + "</target_client>");
                             //Console.WriteLine("baa");
 
                         }//clientNode.SendCommand(message);
 
-                      
+
                     }
                     catch
                     {
                         Console.WriteLine("Zła komenda, spróbuj ponownie.");
                     }
                 }
-                else if(message.Contains("//delete:"))
+                else if (message.Contains("//delete:"))
                 {
                     try
                     {
@@ -92,13 +95,13 @@ namespace ClientNode
 
                         Agent.clientEonDictioinary.Remove(connection);
 
-                        Console.WriteLine("Prosze o usuniecie polaczenia z klijentem:" + connection);
+                        Console.WriteLine("Prosze o usunięcie połączenia z klientem: " + connection);
 
                         lock (Agent.agentCollection)
                         {
                             Agent.agentCollection.Add("//delete:<target_client>" + connection + "</target_client>");
                         }
-                            //clientNode.SendCommand(message);
+                        //clientNode.SendCommand(message);
                     }
                     catch
                     {

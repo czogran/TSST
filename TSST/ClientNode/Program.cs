@@ -21,14 +21,14 @@ namespace ClientNode
         static void Main(string[] args)
         {
             number = Int32.Parse(args[0]);
-            Console.WriteLine("client"+args[0]);
+            Console.WriteLine("client" + args[0]);
 
             //tworze port z ktorego laczy i slucha a potem wysyla
             Port p = new Port();
-            p.CreateSocket("127.0.10."+args[0], 11001);
-            p.Connect("127.0.11."+args[0], 11001);
-           
-           //watek wysylajacy
+            p.CreateSocket("127.0.10." + args[0], 11001);
+            p.Connect("127.0.11." + args[0], 11001);
+
+            //watek wysylajacy
             Thread t1 = new Thread(new ThreadStart(p.SendThread));
             t1.Start();
 
