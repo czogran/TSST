@@ -51,9 +51,10 @@ namespace NetworkNode
                 Console.WriteLine("Usunąłem wpisy ze słownika ścieżki: " + num);
 
             }
-            catch
+            catch(Exception ex)
             {
                 Console.WriteLine("Nie było co usuwać dla: " + num);
+                Console.WriteLine(ex.ToString());
 
             }
         }
