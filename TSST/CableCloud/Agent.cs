@@ -70,7 +70,12 @@ namespace CableCloud
                 string receivedMessage = encoding.GetString(auxtrim);
 
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Odebrana została od agenta " + id + " wiadomość o treści: " + receivedMessage);
+                if (receivedMessage.Contains("<cable_cloud"))
+                {
+                    Console.WriteLine("Odebrana została od agenta " + id + " informacja o konfiguracji łączy");
+                }
+                else
+                    Console.WriteLine("Odebrana została od agenta " + id + " wiadomość o treści: " + receivedMessage);
 
                 //Console.WriteLine("Od Agenta " + id + "  " + ":\n " + receivedMessage + "\n");
                 lock (agentCollection)

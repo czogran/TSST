@@ -71,7 +71,9 @@ namespace CableCloud
 
                 Console.WriteLine();
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Odebrana została od klienta wiadomość o treści: " + receivedMessage);
+                int index = receivedMessage.IndexOf("<port>");
+                string msg = receivedMessage.Substring(0, index);
+                Console.WriteLine("Odebrana została od klienta wiadomość o treści: " + msg);
 
                 //Console.WriteLine("Wiadomość od klienta: " + receivedMessage);
 
@@ -115,7 +117,9 @@ namespace CableCloud
 
                 mySocket.Send(sending);
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Wysłana została do klienta wiadomość o treści: " + s);
+                int index = s.IndexOf("<port>");
+                string msg = s.Substring(0, index);
+                Console.WriteLine("Wysłana została do klienta wiadomość o treści: " + msg);
 
             }
         }
