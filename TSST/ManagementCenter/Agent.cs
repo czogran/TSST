@@ -23,7 +23,7 @@ namespace ManagementCenter
         string myIp;
         public void CreateSocket(string IP, int port)
         {
-           
+
             int myport;
             myIp = IP;
             myport = port;
@@ -66,7 +66,58 @@ namespace ManagementCenter
                 {
                     Console.WriteLine();
                     Console.Write(this.GetTimestamp() + " : ");
-                    Console.WriteLine("Agent odebral wiadomosc: "+receivedMessage);
+                    if (receivedMessage.Contains("<subnetwork"))
+                    {
+                        int index = receivedMessage.IndexOf("id=");
+                        index += 4;
+                        string substr_id = receivedMessage.Substring(index, 1);
+                        index = receivedMessage.IndexOf("links");
+                        index += 6;
+                        string substr_links = receivedMessage.Substring(index, 9);
+                        Console.WriteLine("Agent otrzymał wiadomość o treści: id podsieci - " + substr_id + ", xml_links - " + substr_links);
+                    }
+                    else if (receivedMessage.Contains("<cable_cloud"))
+                    {
+                        Console.WriteLine("Agent otrzymał konfigurację łączy");
+                    }
+                    else if (receivedMessage.Contains("connection"))
+                    {
+                        int index = receivedMessage.IndexOf("port_in");
+                        index += 8;
+                        string substr_in = receivedMessage.Substring(index, 4);
+                        index = receivedMessage.IndexOf("port_out");
+                        index += 9;
+                        string substr_out = receivedMessage.Substring(index, 4);
+                        Console.WriteLine("Agent otrzymał wiadomość dotyczącą ścieżki: port_in - " + substr_in + ", port_out - " + substr_out);
+
+                    }
+                    else if (receivedMessage.Contains("check:"))
+                    {
+                        int index = receivedMessage.IndexOf("slot");
+                        index += 5;
+                        string substr_start = receivedMessage.Substring(index, 1);
+                        index = receivedMessage.IndexOf("amount");
+                        index += 7;
+                        string substr_amount = receivedMessage.Substring(index, 1);
+
+                        Console.WriteLine("RC otrzymało wiadomość od " + myIp + " dotyczącą możliwości rezerwacji szczeliny startowej " + substr_start + " oraz ich ilości " + substr_amount);
+                    }
+                    else if (receivedMessage.Contains("reserve:"))
+                    {
+                        Console.WriteLine("LRM otrzymało zadanie rezerwacji szczelin");
+                    }
+                    else if (receivedMessage.Contains("delete"))
+                    {
+                        int index = receivedMessage.IndexOf("port_in");
+                        index += 8;
+                        string substr_in = receivedMessage.Substring(index, 4);
+                        index = receivedMessage.IndexOf("port_out");
+                        index += 9;
+                        string substr_out = receivedMessage.Substring(index, 4);
+                        Console.WriteLine("Agent otrzymał żądanie usunięcia połączenia port_in " + substr_in + ", port_out - " + substr_out);
+                    }
+                    else
+                        Console.WriteLine("Agent otrzymal wiadomosc: " + receivedMessage);
 
                     //   Console.WriteLine("Odebrano od agenta wiadomość o treści " + receivedMessage);
 
@@ -107,7 +158,19 @@ namespace ManagementCenter
                 mySocket.Send(sending);
 
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Agent wyslal wiadomość do "+myIp+" o treści: " + message);
+                if (message.Contains("<lenght"))
+                {
+                    int index = message.IndexOf("lenght");
+                    index += 7;
+                    string substr = message.Substring(index, 2);
+                    Console.WriteLine("RC wysyła informację do " + myIp + " o długości ścieżki: " + substr);
+                }
+                else if (message.Contains("possible"))
+                {
+                    Console.WriteLine("Wysłano wiadomość o treści " + "dostępne okno");
+                }
+                else
+                    Console.WriteLine("Agent wyslal wiadomość do " + myIp + " o treści: " + message);
             }
         }
 
@@ -130,7 +193,7 @@ namespace ManagementCenter
                 mySocket.Send(sending);
 
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Wysłano wiadomość o treści " + "possible_window");
+                Console.WriteLine("Wysłano wiadomość o treści " + "dostępne okno");
             }
         }
 

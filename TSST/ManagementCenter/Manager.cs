@@ -98,7 +98,32 @@ namespace ManagementCenter
 
                     Console.WriteLine();
                     Console.Write(this.GetTimestamp() + " : ");
-                    Console.WriteLine("Manager otrzymal wiadomosc: " + receivedMessage);
+
+                    if (receivedMessage.Contains("<target_client"))
+                    {
+                        int index = receivedMessage.IndexOf("my_id");
+                        index += 6;
+                        string substr_id = receivedMessage.Substring(index, 1);
+                        index = receivedMessage.IndexOf("_client");
+                        index += 8;
+                        string substr_client = receivedMessage.Substring(index, 1);
+                        Console.WriteLine("CC otrzymal connection request o zestawieniu połączenia od klienta " + substr_id + " do klienta " + substr_client);
+                    }
+                    else if (receivedMessage.Contains("<lenght"))
+                    {
+                        int index = receivedMessage.IndexOf("lenght");
+                        index += 7;
+                        string substr = receivedMessage.Substring(index, 2);
+                        Console.WriteLine("RC otrzymał informację o długości ścieżki: " + substr);
+                    }
+                    else if (receivedMessage.Contains("possible"))
+                    {
+                        
+                        Console.WriteLine("RC otrzymał informację, że jest możliwa rezerwacja");
+                    }
+                    else
+                        Console.WriteLine("Manager otrzymal wiadomosc: " + receivedMessage);
+
                     try
                     {
                         SwitchingActions.Action(receivedMessage, this);
@@ -151,7 +176,88 @@ namespace ManagementCenter
             if (!message.Contains("ping"))
             {
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Manager wyslal wiadomość na adres "+myIp+" o treści: " + message);
+                if (message.Contains("<subnetwork"))
+                {
+                    int index = message.IndexOf("id=");
+                    index += 4;
+                    string substr_id = message.Substring(index, 1);
+                    index = message.IndexOf("links");
+                    index += 6;
+                    string substr_links = message.Substring(index, 9);
+                    Console.WriteLine("Manager wysłał wiadomość na adres " + myIp + " o treści: id podsieci - " + substr_id + ", xml_links - " + substr_links);
+                }
+                else if (message.Contains("<cable_cloud"))
+                {
+                    Console.WriteLine("Manager wysłał konfigurację łączy na adres " + myIp);
+                }
+                else if (message.Contains("port_out:"))
+                {
+                    Console.WriteLine("Manager wysłał wiadomość na adres " + myIp + " dotyczącą portu wyjściowego " + message);
+                }
+                else if (message.Contains("node id"))
+                {
+                    int index = message.IndexOf("node id");
+                    index += 9;
+                    string substr_in = message.Substring(index, 2);
+                    if (substr_in.ElementAt(1) == '\"')
+                    {
+                        substr_in = substr_in.ElementAt(0).ToString();
+                    }
+                    Console.WriteLine("LRM uzupełnia informację o parametrach połączenia dla węzła " + substr_in);
+                }
+                else if (message.Contains("connection"))
+                {
+                    int index = message.IndexOf("port_in");
+                    index += 8;
+                    string substr_in = message.Substring(index, 4);
+                    index = message.IndexOf("port_out");
+                    index += 9;
+                    string substr_out = message.Substring(index, 4);
+                    Console.WriteLine("Manager wysłał wiadomość na adres " + myIp + " dotyczącą ścieżki: port_in - " + substr_in + ", port_out - " + substr_out);
+
+                }
+                else if (message.Contains("check:"))
+                {
+                    int index = message.IndexOf("slot");
+                    index += 5;
+                    string substr_start = message.Substring(index, 1);
+                    index = message.IndexOf("amount");
+                    index += 7;
+                    string substr_amount = message.Substring(index, 1);
+
+                    Console.WriteLine("RC wysłał zapytanie na adres " + myIp + " dotyczącą możliwości rezerwacji szczeliny startowej " + substr_start + " oraz ich ilości " + substr_amount);
+                }
+                else if (message.Contains("reserve:"))
+                {
+                    Console.WriteLine("LRM rezerwuje szczeliny...");
+                }
+                else if (message.Contains("start_slot:"))
+                {
+                    int index = message.IndexOf("slot");
+                    index += 5;
+                    string substr_start = message.Substring(index, 1);
+                    index = message.IndexOf("client");
+                    index += 7;
+                    string substr_client = message.Substring(index, 1);
+
+                    Console.WriteLine("CC poinformowało " + myIp + " o szczelinie startowej " + substr_start + " oraz o docelowym kliencie " + substr_client);
+                }
+                else if (message.Contains("delete"))
+                {
+                    int index = message.IndexOf("port_in");
+                    index += 8;
+                    string substr_in = message.Substring(index, 4);
+                    index = message.IndexOf("port_out");
+                    index += 9;
+                    string substr_out = message.Substring(index, 4);
+                    Console.WriteLine("Manager wysłał na adres " + myIp + " żądanie usunięcia połączenia port_in " + substr_in + ", port_out - " + substr_out);
+                }
+                else if (message.Contains("remove"))
+                {
+                    Console.WriteLine("LRM czyści parametry połączenia dla " + myIp);
+                }
+                else
+                    Console.WriteLine("Manager wysłał wiadomość na adres " + myIp + " o treści: " + message);
             }
         }
 

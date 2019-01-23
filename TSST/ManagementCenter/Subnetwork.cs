@@ -25,7 +25,7 @@ namespace ManagementCenter
             this.myContent = myContent;
 
 
-            Console.WriteLine("Stworzono podsieć o id " + address);
+            Console.WriteLine("Stworzono podsieć o id " + id);
         }
     }
 }
