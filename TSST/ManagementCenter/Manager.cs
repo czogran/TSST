@@ -256,6 +256,17 @@ namespace ManagementCenter
                 {
                     Console.WriteLine("LRM czyści parametry połączenia dla " + myIp);
                 }
+                else if (message.Contains("replace"))
+                {
+                    int index = message.IndexOf("slot");
+                    index += 5;
+                    string substr_start = message.Substring(index, 1);
+                    index = message.IndexOf("client");
+                    index += 7;
+                    string substr_client = message.Substring(index, 1);
+
+                    Console.WriteLine("CC poinformowało " + myIp + " o zmienionej szczelinie startowej " + substr_start + " oraz o docelowym kliencie " + substr_client);
+                }
                 else
                     Console.WriteLine("Manager wysłał wiadomość na adres " + myIp + " o treści: " + message);
             }
