@@ -33,6 +33,7 @@ namespace ManagementCenter
         internal static void AgentAction(string message, Agent agent)
         {
             //jezeli ma wyslac jeszcze dalej
+            //wazna jest kolejnosc sprawdzania ifow, co zawiera wiadomosc, bo te wyzej wiadomosci moga sawierac te nizej, ale sa wazniejsze
             if (message.Contains("subsubnetwork"))
             {
 
@@ -46,6 +47,7 @@ namespace ManagementCenter
             }
             else if (message.Contains("connection"))
             {
+
                 ConnectionRequest(message, agent);
             }
             else if (message.Contains("check"))
@@ -56,12 +58,6 @@ namespace ManagementCenter
             {
                 ReserveRequest(message);
                 Program.paths.Add(SwitchingActions.pathToCount);
-                foreach (Path p in Program.paths)
-                {
-                    Console.WriteLine("Second TRYInput port " + p.nodes.Last().inputLink.portIn + " Output port " + p.nodes.First().outputLink.portOut);
-                    Console.WriteLine(p.xmlName);
-
-                }
             }
             else if (message.Contains("delete"))
             {
@@ -94,8 +90,8 @@ namespace ManagementCenter
             {
                 path.ResetSlotReservation();
                 SendNodesToDeleteConnection(path);
-                Console.WriteLine("FIRST TRYInput port " + path.nodes.Last().inputLink.portIn + " Output port " + path.nodes.First().outputLink.portOut);
-                Console.WriteLine(path.xmlName);
+             //   Console.WriteLine("FIRST TRYInput port " + path.nodes.Last().inputLink.portIn + " Output port " + path.nodes.First().outputLink.portOut);
+               // Console.WriteLine(path.xmlName);
             }
 
             Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
@@ -229,41 +225,23 @@ namespace ManagementCenter
                     //by byla tylko jedna sciezka ta globalna na ktorej pracujemy
 
 
-                    Console.WriteLine("Istnieje połączenie EndToEnd");
-                    
+                  //  Console.WriteLine("Istnieje połączenie EndToEnd");
+
                     //tu dodajemy do sciezki port na ktorej mamy z niej wyjechac i na ktory mamy wjechac
                     Link inPort = new Link(messageData[2]);
                     Link outPort = new Link(messageData[3]);
 
-                    foreach (Path p in Program.paths)
-                    {
-                        Console.WriteLine("CCCCCCCCCCC TRYInput port " + p.nodes.Last().inputLink.portIn + " Output port  " + p.nodes.First().outputLink.portOut);
-                        Console.WriteLine(p.xmlName);
-                        Console.WriteLine("Start Slot:" + p.startSlot);
-
-                    }
-
                     path.nodes.First().outputLink = outPort;
-
-                    foreach (Path p in Program.paths)
-                    {
-                        Console.WriteLine("BBBBBBBBBBB TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
-                        Console.WriteLine(p.xmlName);
-                        Console.WriteLine("Start Slot:" + p.startSlot);
-
-                    }
-
-
                     path.nodes.Last().inputLink = inPort;
 
-                    foreach (Path p in Program.paths)
+                 /*   foreach (Path p in Program.paths)
                     {
                         Console.WriteLine("four TRYInput port " + p.nodes.Last().inputLink.portIn + "Output port  " + p.nodes.First().outputLink.portOut);
                         Console.WriteLine(p.xmlName);
                         Console.WriteLine("Start Slot:" + p.startSlot);
 
                     }
-
+                    */
                     SwitchingActions.pathToCount = path;
 
 
@@ -336,17 +314,17 @@ namespace ManagementCenter
 
             if (Program.isTheBottonSub == true)
             {
-                foreach (Manager nod in Program.managerNodes)
+               /* foreach (Manager nod in Program.managerNodes)
                 {
                     Console.WriteLine(nod.number);
-                }
+                }*/
                 foreach (Node node in SwitchingActions.pathToCount.nodes)
                 {
                     string message1 = xml.StringNode(node.number);
                     Console.WriteLine(message1);
                     try
                     {
-                        Console.WriteLine(node.number);
+                        Console.WriteLine("Wezel: "+node.number);
                         Program.managerNodes.Find(x => x.number == node.number).Send(message1);
                     }
                     catch
@@ -370,17 +348,17 @@ namespace ManagementCenter
 
             if (Program.isTheBottonSub == true)
             {
-                foreach (Manager nod in Program.managerNodes)
+               /* foreach (Manager nod in Program.managerNodes)
                 {
                     Console.WriteLine(nod.number);
-                }
+                }*/
                 foreach (Node node in SwitchingActions.pathToCount.nodes)
                 {
                     string message1 = xml.StringNode(node.number);
                     Console.WriteLine(message1);
                     try
                     {
-                        Console.WriteLine(node.number);
+                        Console.WriteLine(" Wezel: "+node.number);
                         Program.managerNodes.Find(x => x.number == node.number).Send(message1);
                     }
                     catch
@@ -460,10 +438,11 @@ namespace ManagementCenter
             result[3] = portOut;
             result[4] = id;
 
-            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-            Console.WriteLine("port_in: " + portIn + " port_out: " + portOut);
-            Console.WriteLine("start node: " + startNode + " end node: " + endNode);
-            Console.WriteLine("global ID: " + id);
+            Console.WriteLine();
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " : Parametry wiadomosci ");
+            Console.WriteLine("  port_in: " + portIn + " port_out: " + portOut);
+            Console.WriteLine("  start node: " + startNode + " end node: " + endNode);
+            Console.WriteLine("  global ID: " + id);
 
             return result;
         }
@@ -476,8 +455,8 @@ namespace ManagementCenter
         /// <param name="message"></param>
         static void ConnectSubnetwork(string message)
         {
-            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-            Console.WriteLine("Konfiguracja podsieci");
+           // Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.WriteLine(" Zadanie konfiguracji podsieci");
             XmlDocument xmlDoc = new XmlDocument();
             try
             {
@@ -521,6 +500,7 @@ namespace ManagementCenter
 
                     }
 
+                    //uruchuchomienie thread pingow do wezlow
                     try
                     {
                         Thread threadPing = new Thread(new ThreadStart(Program.managerNodes[i].PingThread));

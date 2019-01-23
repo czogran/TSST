@@ -69,6 +69,7 @@ namespace CableCloud
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
+                Console.WriteLine();
                 Console.Write(this.GetTimestamp() + " : ");
                 Console.WriteLine("Odebrana została od klienta wiadomość o treści: " + receivedMessage);
 

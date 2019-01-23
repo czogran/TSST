@@ -122,13 +122,13 @@ namespace NetworkNode
                 int end_port = message.IndexOf("</port>");
                 int port = Int32.Parse(message.Substring(start_port, end_port - start_port));
 
-                Console.WriteLine("Znaleziony port: " + port);
+               // Console.WriteLine("  Znaleziony port: " + port);
 
                 return port;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Nie znalazłem portu");
+                Console.WriteLine("  Nie znalazłem portu");
                 Console.WriteLine(ex.ToString());
                 return -1;
             }
@@ -147,7 +147,7 @@ namespace NetworkNode
                 int start_slot = message.IndexOf("<start_slot>") + 12;
                 int end = message.IndexOf("</start_slot>");
                 int slot = Int32.Parse(message.Substring(start_slot, end - start_slot));
-                Console.WriteLine("Slot startowy: " + slot);
+                Console.WriteLine("  Slot startowy: " + slot);
                 return slot;
 
             }
@@ -175,7 +175,8 @@ namespace NetworkNode
             string stringLabel = newPort.ToString();
             message = message.Insert(startPort, stringLabel);
             // Console.WriteLine("SwapPort: " + message);
-            Console.WriteLine("Został zamieniony port: " + message);
+            // Console.WriteLine("  Został zamieniony port: " + message);
+            Console.WriteLine("  Port wejsciowy zostal zamieniony na port: " +stringLabel);
 
             return message;
         }

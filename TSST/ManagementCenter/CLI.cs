@@ -109,12 +109,21 @@ namespace ManagementCenter
         /// </summary>
         internal static void Prompt()
         {
-            Console.WriteLine("Dostępne komendy:");
-            Console.WriteLine("[\"esc\"] Wyjdź z komendy");
-            Console.WriteLine("[1] Konfiguracja połączeń");
-            Console.WriteLine("[2] Konfiguracja klientow");
-            Console.WriteLine("[3] Sczytaj węzeł");
-            Console.WriteLine("[4] Sczytaj port węzła");
+            if (Program.isTheTopSub)
+            {
+                Console.WriteLine("Dostępne komendy:");
+                Console.WriteLine("[\"esc\"] Wyjdź z komendy");
+                Console.WriteLine("[1] Konfiguracja topologi");
+                
+            }
+            if(Program.isTheBottonSub)
+            {
+                Console.WriteLine("Dostępne komendy:");
+                Console.WriteLine("[\"esc\"] Wyjdź z komendy");
+                Console.WriteLine("[1] Sczytaj węzeł");
+                Console.WriteLine("[2] Sczytaj port węzła");
+            }
+            Console.WriteLine("[3] Wyczyść konsole");
         }
 
         public static void ConfigureSubnetworks()

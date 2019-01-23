@@ -141,31 +141,36 @@ namespace ManagementCenter
                 choose = Console.ReadLine();
                 if (choose == "1")
                 {
-                    CLI.ConfigureSubnetworks();
-                    // CLI.ConfigureLinkConnections(managerCloud);
-                    // CLI.Configure(nodeAmount, manager, clientAmount, managerClient, managerCloud);
-                }
-                else if (choose == "2")
-                {
-                    //wysylanie konfiguracji do klijenta
-
-                    // CLI.ConfigureClients(clientAmount, managerClient);
-                    // CLI.Fix(nodeAmount, manager);
-                }
-                //prosba o konfiguracje wezla
-                else if (choose == "3")
-                {
-
+                    if (Program.isTheTopSub)
+                    {
+                        CLI.ConfigureSubnetworks();
+                    }
+                    else if(Program.isTheBottonSub)
                     {
                         CLI.GetNodeFromNode(managerNodes);
                     }
+                    else
+                    {
+
+                    }
 
                 }
-                //prosba o konfiguracje konkretnego portu konkretnego wezla
-                else if (choose == "4")
+                else if (choose == "2")
                 {
-                    CLI.GetMatrixFromNode(managerNodes);
+                   if(isTheBottonSub)
+                    {
+                        CLI.GetMatrixFromNode(managerNodes);
+                    }
                 }
+                else if(choose=="3")
+                {
+                    Console.Clear();
+                }
+                else
+                {
+                    Console.WriteLine("Nie ma takiej komendy");
+                }
+              
             }
 
         }

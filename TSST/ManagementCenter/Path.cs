@@ -174,7 +174,7 @@ namespace ManagementCenter
                     actualWindow = 0;
                 }
             }
-            Console.WriteLine("Max Window: " + maxWindow + "  Start Slot: " + startSlot);
+            Console.WriteLine(" Max Window: " + maxWindow + "  Start Slot: " + startSlot);
             int[] returnWindow = new int[2] { startSlot, maxWindow };
             return returnWindow;
         }
@@ -187,11 +187,11 @@ namespace ManagementCenter
         /// <returns></returns>
         public bool IsReservingWindowPossible(int neededSlots, int startWindow)
         {
-            for (int i = 0; i < 15; i++)
+          /*  for (int i = 0; i < 15; i++)
             {
                 Console.Write("Dostępna szczelina ");
                 Console.WriteLine(possibleWindow[i]);
-            }
+            }*/
             for (int i = startWindow - 1; i < startWindow - 1 + neededSlots; i++)
             {
                 //

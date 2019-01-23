@@ -75,12 +75,15 @@ namespace ClientNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
+                //wydrukowanie wiadomosci
+                PrintMessage(receivedMessage);
+
                 //usuniecie informacji charakterystycznej
                 // receivedMessage=receivedMessage.Substring(receivedMessage.IndexOf("<address>"));
 
                 //Console.WriteLine("Otrzymana wiadomosc:" + receivedMessage);
-                Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Otrzymana zostala wiadomosc o tresci: " + receivedMessage);
+              
+               // Console.WriteLine("Otrzymana zostala wiadomosc o tresci: " + receivedMessage);
 
                 buffer = new byte[1024];
                 mySocket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref endRemote,
@@ -109,7 +112,7 @@ namespace ClientNode
 
                 mySocket.Send(sending);
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Wysłana została wiadomość o treści: " + message);
+                Console.WriteLine("Wysłana została wiadomość o treści: " + message+"\n");
 
             }
             catch (Exception ex)
@@ -133,7 +136,7 @@ namespace ClientNode
 
                 mySocket.Send(sending);
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Wysłana została wiadomość o treści: " + message);
+                Console.WriteLine("Wysłana została wiadomość o treści: " + message+"\n");
 
             }
             catch (Exception ex)
@@ -159,6 +162,18 @@ namespace ClientNode
         public string GetTimestamp()
         {
             return DateTime.Now.ToString("HH:mm:ss");
+        }
+
+        private void PrintMessage(string message)
+        {
+            Console.WriteLine();
+            Console.Write(this.GetTimestamp() + " : ");
+            Console.Write("Doszla wiadomosc:  ");
+            if(message.Contains("port"))
+            {
+                int start=message.IndexOf("<port>");
+                Console.WriteLine(message.Substring(0,start));
+            }
         }
     }
 }

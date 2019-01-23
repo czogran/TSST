@@ -11,6 +11,7 @@ namespace ManagementCenter
     {
         public static Path dijkstra(List<Node> nodes, List<Link> links, int start, int end, bool direction)
         {
+            Console.WriteLine();
             Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
             Console.WriteLine("Wykonuję algorytm dijkstry");
             //sciezka ktorej szukamy
@@ -123,8 +124,8 @@ namespace ManagementCenter
 
                 if (actualNode == end)
                 {
-                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-                    Console.WriteLine("Znalazłem ścieżkę");
+                   // Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("Znalazłem polaczenie EndToEnd");
                     //ustawiamy tutaj ze sciezka zostala znaleziona
                     path.endToEnd = true;
                     break;
@@ -159,33 +160,39 @@ namespace ManagementCenter
                         //jak ostatni to nie bedzie mial poprzedniego wiec raczej z tad tego tu nie bedzie
                         path.hops++;
 
+
+                      //  Console.WriteLine();
+                        Console.WriteLine("Parametry sciezki:");
                         int[] pathWindow = path.FindMaxWindow();
-                        Console.WriteLine("Window start: " + pathWindow[0] + " Window Size:" + pathWindow[1]);
-                        Console.WriteLine("Hops:" + path.hops);
+                      //  Console.WriteLine("Window start: " + pathWindow[0] + " Window Size:" + pathWindow[1]);
+                        Console.WriteLine(" Hops:" + path.hops);
                         break;
 
                     }
                 }
+               
+                Console.WriteLine(" Przebieg sciezki:");
                 for (int i = 0; i < path.nodes.Count; i++)
                 {
-                    Console.WriteLine(path.nodes[i].number);
+                    Console.WriteLine("  Wezel: "+path.nodes[i].number);
 
                     try
                     {
-                        Console.WriteLine("InputLink: " + path.nodes[i].inputLink.id);
+                        Console.WriteLine("   InputLink: " + path.nodes[i].inputLink.id);
                     }
                     catch (Exception ex)
                     { }
                     try
                     {
-                        Console.WriteLine("OutputLink: " + path.nodes[i].outputLink.id);
+                        Console.WriteLine("   OutputLink: " + path.nodes[i].outputLink.id);
                     }
                     catch (Exception ex)
                     { }
 
 
                 }
-                Console.WriteLine("Path Length:" + path.lenght);
+                Console.WriteLine(" Dlugosc sciezki:" + path.lenght);
+
                 // amountOfSlots=AmountNeededSlots(path.lenght);
                 // window= path.FindMaxWindow();
                 // path.ReserveWindow(amountOfSlots,window[0],window[1]);
@@ -197,7 +204,7 @@ namespace ManagementCenter
             else
             {
                 Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-                Console.WriteLine("Nie udało się zestawić ścieżki");
+                Console.WriteLine("Nie udało się zestawić ścieżki\n");
             }
             return path;
         }

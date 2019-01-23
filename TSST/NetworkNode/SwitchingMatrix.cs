@@ -85,15 +85,15 @@ namespace NetworkNode
                     outPort = Int32.Parse(node1.InnerText);
 
                     switchingDictionary.Add(startSlot, outPort);
-                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-                    Console.WriteLine(inPort + "   " + startSlot + "   " + outPort);
+                   // Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("  Port wejsciowy:  "+inPort + "  Start slot: " + startSlot + "  Port wyjsciowy: " + outPort);
                 }
                 if (!eonDictionary.ContainsKey(inPort))
                 {
                     eonDictionary.Add(inPort, switchingDictionary);
                 }
             }
-            Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+            Console.Write(DateTime.Now.ToString("  HH:mm:ss") + " : ");
             Console.WriteLine("Dodałem wpisy ścieżki");
         }
 

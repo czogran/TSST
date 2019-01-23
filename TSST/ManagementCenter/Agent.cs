@@ -20,10 +20,10 @@ namespace ManagementCenter
         public Agent()
         {
         }
-
+        string myIp;
         public void CreateSocket(string IP, int port)
         {
-            string myIp;
+           
             int myport;
             myIp = IP;
             myport = port;
@@ -64,8 +64,12 @@ namespace ManagementCenter
                 string receivedMessage = encoding.GetString(auxtrim);
                 if (receivedMessage != "ping")
                 {
+                    Console.WriteLine();
                     Console.Write(this.GetTimestamp() + " : ");
-                    Console.WriteLine("Odebrano od agenta wiadomość o treści " + receivedMessage);
+                    Console.WriteLine("Agent odebral wiadomosc: "+receivedMessage);
+
+                    //   Console.WriteLine("Odebrano od agenta wiadomość o treści " + receivedMessage);
+
 
                     //Console.WriteLine("Od Agenta:\n " + receivedMessage);
                 }
@@ -103,7 +107,7 @@ namespace ManagementCenter
                 mySocket.Send(sending);
 
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Wysłano wiadomość o treści " + message);
+                Console.WriteLine("Agent wyslal wiadomość do "+myIp+" o treści: " + message);
             }
         }
 

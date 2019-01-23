@@ -95,8 +95,10 @@ namespace ManagementCenter
                 try
                 {
                     string receivedMessage = encoding.GetString(auxtrim);
+
+                    Console.WriteLine();
                     Console.Write(this.GetTimestamp() + " : ");
-                    Console.WriteLine("Odebrana akcja - " + receivedMessage);
+                    Console.WriteLine("Manager otrzymal wiadomosc: " + receivedMessage);
                     try
                     {
                         SwitchingActions.Action(receivedMessage, this);
@@ -146,8 +148,11 @@ namespace ManagementCenter
 
             mySocket.Send(sending);
 
-            Console.Write(this.GetTimestamp() + " : ");
-            Console.WriteLine("Wysłano wiadomość o treści " + message);
+            if (!message.Contains("ping"))
+            {
+                Console.Write(this.GetTimestamp() + " : ");
+                Console.WriteLine("Manager wyslal wiadomość na adres "+myIp+" o treści: " + message);
+            }
         }
 
         public void disconnect_Click()

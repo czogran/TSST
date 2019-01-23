@@ -79,13 +79,15 @@ namespace ClientNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
+                Console.WriteLine();
                 Console.Write(this.GetTimestamp() + " : ");
                 Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
                 //Console.WriteLine("Od Agenta: \n" + receivedMessage);
                 lock (agentCollection)
                 {
                     agentCollection.Add(receivedMessage);
-                    Console.WriteLine(agentCollection.Last());
+                   // Console.WriteLine(agentCollection.Last());
+                   
                 }
 
                 buffer = new byte[1024];
@@ -145,7 +147,7 @@ namespace ClientNode
 
             lock (agentCollection)
             {
-                Console.WriteLine("agent");
+              //  Console.WriteLine("agent");
                 agentCollection.CollectionChanged += SwitchAction;
             }
         }
@@ -196,7 +198,7 @@ namespace ClientNode
         private void GetPortOut(string message)
         {
             portOut = Int32.Parse(message.Substring(9));
-            Console.WriteLine("Numer portu wychodzącego: " + portOut);
+            Console.WriteLine("  Numer portu wychodzącego: " + portOut+"\n");
         }
 
         public void AddToEonDictionary(string message)
@@ -215,7 +217,7 @@ namespace ClientNode
 
             targetClient = Int32.Parse(message.Substring(start, end - start));
             clientEonDictioinary.Add(targetClient, startSlot);
-            Console.WriteLine("Dodaję do słownika wpis dla klienta o id: " + targetClient + " i o szczelinie start " + startSlot);
+            Console.WriteLine("  Dodaję do słownika wpis dla klienta o id: " + targetClient + " i o szczelinie start " + startSlot);
         }
         public void ReplaceEonDictionary(string message)
         {

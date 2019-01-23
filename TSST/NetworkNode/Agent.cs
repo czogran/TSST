@@ -68,8 +68,10 @@ namespace NetworkNode
                 string receivedMessage = encoding.GetString(auxtrim);
                 if(receivedMessage!="ping")
                 {
+                    Console.WriteLine();
                     Console.Write(this.GetTimestamp() + " : ");
-                    Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
+                    //   Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
+                    Console.WriteLine("Doszlo zadanie");
 
                     //Console.WriteLine("Od Agenta:\n " + receivedMessage);
                 }
@@ -143,21 +145,27 @@ namespace NetworkNode
             {
                 if (SwitchingMatrix.agentCollection.Last().Contains("node"))
                 {
+                    Console.WriteLine("  Zadanie dodania nowego polaczenia ");
+
                     XMLParser.AddConnection("myNode" + Program.number + ".xml", SwitchingMatrix.agentCollection.Last());
   
                     SwitchingMatrix.FillEonDictionary();
                 }
                 else if (SwitchingMatrix.agentCollection.Last().Contains("get_config"))
                 {
+                    Console.WriteLine("  Zadanie pobrania konfiguracji wezla ");
                     //jezeli w wiadomosci jest polecenie by dac konfiguracje wezla, wysyla do wiadomosci zawartosc swojego xml-a
                     Send(XMLParser.StringNode());
                 }
                 //gdy agent chce informacje co siedzi w danym porcie
                 else if (SwitchingMatrix.agentCollection.Last().Contains("get_matrix"))
                 {
+
                     int start = SwitchingMatrix.agentCollection.Last().IndexOf("<get_matrix>");
                     int end = SwitchingMatrix.agentCollection.Last().IndexOf("</get_matrix>");
                     int matrix = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(start + 12, end - start - 12));
+
+                    Console.WriteLine("  Zadanie pobrania portu: " + matrix);
 
                     Send(XMLParser.StringMatrix(matrix));
                 }
@@ -168,6 +176,8 @@ namespace NetworkNode
                 else if (SwitchingMatrix.agentCollection.Last().Contains("remove:"))
                 {
                     int numer = Int32.Parse(SwitchingMatrix.agentCollection.Last().Substring(7));
+                    Console.WriteLine("Zadanie usuniecia polaczenia: "+numer);
+                   
                     SwitchingMatrix.RemoveEonDictionary(numer);
 
                     XMLParser.RemoveConnection("myNode" + Program.number + ".xml", numer);

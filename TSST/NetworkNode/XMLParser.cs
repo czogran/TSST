@@ -86,9 +86,9 @@ namespace NetworkNode
             {
                 int matrix = Int32.Parse(node.Attributes["num"].Value);
                 XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry[@num=" + matrix + "]");
-                Console.WriteLine("addtoforst   " + addTo.InnerXml);
+               // Console.WriteLine("addtoforst   " + addTo.InnerXml);
                 node = xmlMessage.SelectSingleNode("//node[@id=" + Program.number + "]/matrix_entry[@num=" + matrix + "]/connection");
-                Console.WriteLine(" node1first        " + node.InnerXml);
+               // Console.WriteLine(" node1first        " + node.InnerXml);
                 node1 = xmlDoc.ImportNode(node, true);
                 addTo.AppendChild(node1);
                 xmlDoc.Save(name);
@@ -101,8 +101,8 @@ namespace NetworkNode
                     //Console.WriteLine(node.InnerText);
                     XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]");
                     node1 = xmlDoc.ImportNode(node, true);
-                    Console.WriteLine("addTO   " + addTo.InnerXml);
-                    Console.WriteLine("node1:   " + node1.InnerXml);
+                 //   Console.WriteLine("addTO   " + addTo.InnerXml);
+                  //  Console.WriteLine("node1:   " + node1.InnerXml);
                     addTo.AppendChild(node1);
                     xmlDoc.Save(name);
                 }
@@ -110,7 +110,7 @@ namespace NetworkNode
                 {
                     Console.WriteLine("Second:" + ex1.ToString());
                 }
-                Console.WriteLine("first:" + ex.ToString());
+                //Console.WriteLine("first:" + ex.ToString());
             }
         }
 

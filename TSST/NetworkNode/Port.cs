@@ -72,8 +72,9 @@ namespace NetworkNode
 
                 string receivedMessage = encoding.GetString(auxtrim);
 
+                Console.WriteLine();
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Odebrana została od agenta wiadomość na porcie " + Label.GetPort(receivedMessage) + " o treści: " + receivedMessage);
+                Console.WriteLine("Odebrana została od chmury wiadomość na porcie " + Label.GetPort(receivedMessage) + " o treści: " + receivedMessage);
 
                 //Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
 
@@ -125,7 +126,7 @@ namespace NetworkNode
                 ASCIIEncoding enc = new ASCIIEncoding();
                 byte[] sending = new byte[1024];
                 sending = enc.GetBytes(s);
-                Console.WriteLine(s);
+              //  Console.WriteLine(s);
 
                 mySocket.Send(sending);
                 Console.Write(this.GetTimestamp() + " : ");
