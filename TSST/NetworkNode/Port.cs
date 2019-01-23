@@ -74,7 +74,9 @@ namespace NetworkNode
 
                 Console.WriteLine();
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Odebrana została od chmury wiadomość na porcie " + Label.GetPort(receivedMessage) + " o treści: " + receivedMessage);
+                int index = receivedMessage.IndexOf("<port>");
+                string msg = receivedMessage.Substring(0, index);
+                Console.WriteLine("Odebrana została od chmury wiadomość na porcie " + Label.GetPort(receivedMessage) + " o treści: " + msg);
 
                 //Console.WriteLine("Otrzymana wiadomosc na porcie:" + Label.GetPort(receivedMessage) + "\n" + receivedMessage);
 
@@ -130,7 +132,9 @@ namespace NetworkNode
 
                 mySocket.Send(sending);
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Wysłana została wiadomość o treści: " + s);
+                int index = s.IndexOf("<port>");
+                string msg = s.Substring(0, index);
+                Console.WriteLine("Wysłana została wiadomość o treści: " + msg);
 
             }
         }

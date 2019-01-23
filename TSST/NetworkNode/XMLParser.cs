@@ -97,6 +97,7 @@ namespace NetworkNode
             {
                 try
                 {
+                    node = xmlMessage.SelectSingleNode("/node/matrix_entry");
                     //xmlDoc.ImportNode(node,true);
                     //Console.WriteLine(node.InnerText);
                     XmlNode addTo = xmlDoc.DocumentElement.SelectSingleNode("//node[@id=" + Program.number + "]");
