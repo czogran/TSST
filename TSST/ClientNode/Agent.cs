@@ -81,7 +81,19 @@ namespace ClientNode
 
                 Console.WriteLine();
                 Console.Write(this.GetTimestamp() + " : ");
-                Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
+                if (receivedMessage.Contains("start_slot"))
+                {
+                    int index = receivedMessage.IndexOf("slot");
+                    index += 5;
+                    string substr_start = receivedMessage.Substring(index, 1);
+                    index = receivedMessage.IndexOf("client");
+                    index += 7;
+                    string substr_client = receivedMessage.Substring(index, 1);
+
+                    Console.WriteLine("Odebrana została od agenta wiadomość dotycząca szczeliny startowej " + substr_start + " oraz docelowego klienta " + substr_client);
+                }
+                else
+                    Console.WriteLine("Odebrana została od agenta wiadomość o treści: " + receivedMessage);
                 //Console.WriteLine("Od Agenta: \n" + receivedMessage);
                 lock (agentCollection)
                 {
