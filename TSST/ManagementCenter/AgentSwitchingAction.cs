@@ -63,17 +63,31 @@ namespace ManagementCenter
             {
                 messageData = GetStartAndEndNode(message);
 
-                string pathId = (messageData[0]).ToString() + (messageData[1]).ToString();
-                SwitchingActions.pathToCount = Program.paths.Find(x => x.id == pathId);
-                SendNodesToDeleteConnection(SwitchingActions.pathToCount);
-                SwitchingActions.pathToCount.ResetSlotReservation();
-                lock (Program.paths)
+                // string pathId = (messageData[0]).ToString() + (messageData[1]).ToString();
+                // SwitchingActions.pathToCount = Program.paths.Find(x => x.id == pathId);
+                string pathGlobalId =  (messageData[4]).ToString();
+                 Console.WriteLine(" aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +pathGlobalId);
+
+
+                try
                 {
-                    Program.paths.Remove(SwitchingActions.pathToCount);
+                    SwitchingActions.pathToCount = Program.paths.Find(x => x.globalID == pathGlobalId);
+             
+                    SendNodesToDeleteConnection(SwitchingActions.pathToCount);
+                    SwitchingActions.pathToCount.ResetSlotReservation();
+                    lock (Program.paths)
+                    {
+                        Program.paths.Remove(SwitchingActions.pathToCount);
+                    }
+
+                    Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                    Console.WriteLine("Wysłałem do węzłów prośbę o usunięcie połączenia");
+                }
+                catch
+                {
+                    Console.WriteLine(" Polaczenie juz usuniete");
                 }
 
-                Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-                Console.WriteLine("Wysłałem do węzłów prośbę o usunięcie połączenia");
             }
 
         }
@@ -85,8 +99,16 @@ namespace ManagementCenter
         internal static void NodeIsDead(int id)
         {
             var toReconfigure = Program.paths.FindAll(x => x.nodes.Contains(x.nodes.Find(y => y.number == id)));
-            //czyszczenie zajetych zasobow
+            Console.WriteLine("id" + id);
             foreach (Path path in toReconfigure)
+            {
+                Console.WriteLine(path.globalID);
+                Console.WriteLine(" ninn" + path.id);
+            }
+
+
+                //czyszczenie zajetych zasobow
+                foreach (Path path in toReconfigure)
             {
                 path.ResetSlotReservation();
                 SendNodesToDeleteConnection(path);
@@ -138,7 +160,7 @@ namespace ManagementCenter
                     {
 
                         //tu plus jeden bo ta walona indeksacja
-                        ReserveRequest(path.startSlot, path.endSlot - path.startSlot + 1);
+                        ReserveRequest(path.startSlot, path.endSlot - path.startSlot + 1,path.globalID);
                         Program.paths.Remove(Program.paths.Find(x => x == path));
                         Program.paths.Add(SwitchingActions.pathToCount);
                     }
@@ -147,10 +169,13 @@ namespace ManagementCenter
                         Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
                         Console.WriteLine("Brakuje szczelin, by zestawić połączenie");
 
+                        //by potem bylo wiadomo co usuwamy
+                        SwitchingActions.pathToCount = path;
+
                         //wysylanie do agenta wiadomosci ze sie nie udalo 
                         lock (agentCollection)
                         {
-                            agentCollection.Add("<error>" + path.globalID + "</error>");
+                            agentCollection.Add("<error>" + path.globalID + "</error><slots>");
                         }
 
                         lock (Program.paths)
@@ -177,7 +202,7 @@ namespace ManagementCenter
         /// <param name="pathToCount"></param>
         private static void SendNodesToDeleteConnection(Path pathToCount)
         {
-            string message1 = "remove:" + pathToCount.nodes.Last().number + pathToCount.nodes[0].number + pathToCount.startSlot;
+            string message1 = "remove:" + pathToCount.nodes.Last().number +pathToCount.nodes[0].number + pathToCount.globalID;
             foreach (Node node in pathToCount.nodes)
             {
                 if (node.number <= 80)
@@ -186,6 +211,7 @@ namespace ManagementCenter
                     {
                         try
                         {
+                            Console.WriteLine("    " + message1);
                             Program.managerNodes.Find(x => x.number == node.number).Send(message1);
                         }
                         catch
@@ -304,6 +330,7 @@ namespace ManagementCenter
             int[] data;
             data = GetStartAndAmountOfSlots(message);
             SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
+            SwitchingActions.pathToCount.globalID = messageData[4].ToString();
             XMLeon xml;
             //xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml", XMLeon.Type.nodes);
 
@@ -336,11 +363,12 @@ namespace ManagementCenter
             }
         }
 
-        public static void ReserveRequest(int startSlot, int neededSlots)
+        public static void ReserveRequest(int startSlot, int neededSlots,string globalID)
         {
             int[] data = { startSlot, neededSlots };
             //  data = GetStartAndAmountOfSlots(message);
             SwitchingActions.pathToCount.ReserveWindow(data[1], data[0]);
+            SwitchingActions.pathToCount.globalID = globalID;
             XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml", XMLeon.Type.nodes);
             //  XMLeon xml = new XMLeon("path" + messageData[0] + messageData[1] + ".xml");
             SwitchingActions.pathToCount.xmlName = ("path" + messageData[0] + messageData[1] + SwitchingActions.pathToCount.globalID + ".xml");

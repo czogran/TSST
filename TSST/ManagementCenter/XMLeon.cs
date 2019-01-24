@@ -131,7 +131,7 @@ namespace ManagementCenter
             for (int i = 0; i < path.nodes.Count; i++)
             {
                 if (path.nodes[i].number < 80)
-                    AddConnection(path.nodes.Last().number, path.nodes[0].number, path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn);
+                    AddConnection(path.nodes.Last().number, path.nodes[0].number, path.nodes[i].number, path.nodes[i].inputLink.portIn, path.startSlot, path.endSlot, path.nodes[i].outputLink.portIn,path.globalID);
             }
 
         }
@@ -334,7 +334,7 @@ namespace ManagementCenter
             }
 
         }
-        public void AddConnection(int startNode, int endNode, int node, int matrix, int startSlot, int endSlot, int portOut)
+        public void AddConnection(int startNode, int endNode, int node, int matrix, int startSlot, int endSlot, int portOut,string globalID)
         {
 
             XmlDocument xmlDefault = new XmlDocument();
@@ -343,7 +343,7 @@ namespace ManagementCenter
             XmlNode connection = xmlDefault.CreateElement("connection");
             XmlAttribute attribute = xmlDefault.CreateAttribute("num");
             // zmienic id polaczenia
-            attribute.Value = startNode.ToString() + endNode.ToString() + startSlot.ToString();
+            attribute.Value = startNode.ToString() + endNode.ToString() + globalID;
             connection.Attributes.Append(attribute);
 
             XmlNode startSlotNode = xmlDefault.CreateElement("start_slot");

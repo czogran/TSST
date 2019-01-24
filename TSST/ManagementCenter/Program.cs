@@ -49,7 +49,7 @@ namespace ManagementCenter
             //a potem zakomentowac
             //i znowu skompilowac
 
-            //Tests.TestXML();
+           // Tests.TestXML();
 
             /*    bool[] a = new[] { true, false };
 

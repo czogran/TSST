@@ -23,8 +23,9 @@ namespace NetworkNode
 
         //pierwszy int to port wejsciowy, drugi to start slot, trzeci to port wyjsciowy
         public static Dictionary<int, Dictionary<int, int>> eonDictionary = new Dictionary<int, Dictionary<int, int>>();
+
         //pierwszy to start slot, drugi to port wyjsciowy
-        static Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
+       // static Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
 
 
         /// <summary>
@@ -35,8 +36,8 @@ namespace NetworkNode
         {
             XmlDocument doc = new XmlDocument();
             doc.Load("myNode" + Program.number + ".xml");
-            int startSlot;
-            XmlNode node1;
+            int startSlot,matrixNumber;
+            XmlNode node1,parentNode;
 
             try
             {
@@ -46,9 +47,16 @@ namespace NetworkNode
                 node1 = node.SelectSingleNode("start_slot");
                 startSlot = Int32.Parse(node1.InnerText);
 
-                switchingDictionary.Remove(startSlot);
+                parentNode = node.ParentNode;
+                matrixNumber = Int32.Parse(parentNode.Attributes["num"].Value);
+
+                eonDictionary[matrixNumber].Remove(startSlot);
+
+             //   switchingDictionary.Remove(startSlot);
+
                 Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
                 Console.WriteLine("Usunąłem wpisy ze słownika ścieżki: " + num);
+                Console.WriteLine(" Parametry usunietej sciezki port: " + matrixNumber + "  start slot: " + startSlot);
 
             }
             catch(Exception ex)
@@ -70,7 +78,12 @@ namespace NetworkNode
             int outPort;
             int startSlot;
 
+            string connectionNum;
+
             XmlNode node1;
+
+            // pierwszy to start slot, drugi to port wyjsciowy
+        Dictionary<int, int> switchingDictionary = new Dictionary<int, int>();
 
             //to w sumie mozna wywalic do parsera, bo tam jest tego miejsce zgodnie z konwencja
             foreach (XmlNode nodePort in doc.SelectNodes("node/matrix_entry"))
@@ -79,20 +92,36 @@ namespace NetworkNode
                 inPort = Int32.Parse(nodePort.Attributes["num"].Value);
                 foreach (XmlNode nodeConnection in nodePort.SelectNodes("connection"))
                 {
+                    connectionNum = nodeConnection.Attributes["num"].Value;
+
                     node1 = nodeConnection.SelectSingleNode("start_slot");
                     startSlot = Int32.Parse(node1.InnerText);
 
                     node1 = nodeConnection.SelectSingleNode("port_out");
                     outPort = Int32.Parse(node1.InnerText);
 
+                    Console.WriteLine("  Port wejsciowy:  " + inPort + "  Start slot: " + startSlot + "  Port wyjsciowy: " + outPort+"  Numer polaczenia: "+connectionNum);
+
+
                     switchingDictionary.Add(startSlot, outPort);
+
+                    if (!eonDictionary.ContainsKey(inPort))
+                    {
+                        eonDictionary.Add(inPort, switchingDictionary);
+                    }
+                    else
+                    {
+                        eonDictionary[inPort].Add(startSlot, outPort);
+                    }
+
                    // Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
-                    Console.WriteLine("  Port wejsciowy:  "+inPort + "  Start slot: " + startSlot + "  Port wyjsciowy: " + outPort);
                 }
-                if (!eonDictionary.ContainsKey(inPort))
+               /* if (!eonDictionary.ContainsKey(inPort))
                 {
                     eonDictionary.Add(inPort, switchingDictionary);
-                }
+                }*/
+               
+
             }
             Console.Write(DateTime.Now.ToString("  HH:mm:ss") + " : ");
             Console.WriteLine("Dodałem wpisy ścieżki");

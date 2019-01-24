@@ -83,9 +83,11 @@ namespace ManagementCenter
                             //jezeli oba zyja to znaczy nie sa wylaczone moze na nich wykonywac algorytm
                             if (nodes[index].isAlive && nodes[index2].isAlive)
                             {
-                                if (nodes[index].costToGetHere > links[i].cost + nodes[index2].costToGetHere)
+                                int slotsCost = links[i].usedSlots.Where(c => c).Count();
+
+                                if (nodes[index].costToGetHere > links[i].cost+slotsCost+ nodes[index2].costToGetHere)
                                 {
-                                    nodes[index].costToGetHere = links[i].cost + nodes[index2].costToGetHere;
+                                    nodes[index].costToGetHere = links[i].cost+ slotsCost+ nodes[index2].costToGetHere;
                                     nodes[index].previousNode = links[i].nodeA;
                                     nodes[index].inputLink = links[i];
                                 }

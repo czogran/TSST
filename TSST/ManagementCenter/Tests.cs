@@ -30,39 +30,39 @@ namespace ManagementCenter
 
             //linki
             XMLeon linksgen = new XMLeon("sub1links.xml", XMLeon.Type.cable_cloud);
-            linksgen.AddLink(9111, 81, 2, 9111, 1191, "on", 1, 14);
-            linksgen.AddLink(9211, 82, 2, 9211, 1191, "on", 1, 14);
-            linksgen.AddLink(2693, 5, 83, 2693, 9326, "on", 1, 14);
-            linksgen.AddLink(2694, 5, 84, 2694, 9426, "on", 1, 14);
+            linksgen.AddLink(9111, 81, 2, 9111, 1191, "on", 1, 24);
+            linksgen.AddLink(9211, 82, 2, 9211, 1191, "on", 1, 24);
+            linksgen.AddLink(2693, 5, 83, 2693, 9326, "on", 1, 24);
+            linksgen.AddLink(2694, 5, 84, 2694, 9426, "on", 1, 24);
 
-            linksgen.AddLink(1415, 2, 3, 1415, 1514, "on", 1, 14);
-            linksgen.AddLink(1419, 2, 4, 1419, 1914, "on", 1, 14);
-            linksgen.AddLink(1823, 3, 5, 1823, 2318, "on", 1, 14);
-            linksgen.AddLink(2223, 4, 5, 2223, 2322, "on", 1, 14);
+            linksgen.AddLink(1415, 2, 3, 1415, 1514, "on", 1, 24);
+            linksgen.AddLink(1419, 2, 4, 1419, 1914, "on", 1, 24);
+            linksgen.AddLink(1823, 3, 5, 1823, 2318, "on", 1, 24);
+            linksgen.AddLink(2223, 4, 5, 2223, 2322, "on", 1, 24);
 
             linksgen = new XMLeon("sub2links.xml", XMLeon.Type.cable_cloud);
-            linksgen.AddLink(1112, 1, 2, "on", 1, 14);
-            linksgen.AddLink(1113, 1, 3, "on", 1, 14);
-            linksgen.AddLink(1214, 2, 4, "on", 1, 14);
-            linksgen.AddLink(1314, 3, 4, "on", 1, 14);
+            linksgen.AddLink(1112, 1, 2, "on", 1, 24);
+            linksgen.AddLink(1113, 1, 3, "on", 1, 24);
+            linksgen.AddLink(1214, 2, 4, "on", 1, 24);
+            linksgen.AddLink(1314, 3, 4, "on", 1, 24);
 
             linksgen = new XMLeon("sub3links.xml", XMLeon.Type.cable_cloud);
-            linksgen.AddLink(1516, 5, 6, "on", 1, 14);
-            linksgen.AddLink(1517, 5, 7, "on", 1, 14);
-            linksgen.AddLink(1618, 6, 8, "on", 1, 14);
-            linksgen.AddLink(1718, 7, 8, "on", 1, 14);
+            linksgen.AddLink(1516, 5, 6, "on", 1, 24);
+            linksgen.AddLink(1517, 5, 7, "on", 1, 24);
+            linksgen.AddLink(1618, 6, 8, "on", 1, 24);
+            linksgen.AddLink(1718, 7, 8, "on", 1, 24);
 
             linksgen = new XMLeon("sub4links.xml", XMLeon.Type.cable_cloud);
-            linksgen.AddLink(1920, 9, 10, "on", 1, 14);
-            linksgen.AddLink(1921, 9, 11, "on", 1, 14);
-            linksgen.AddLink(2022, 10, 12, "on", 1, 14);
-            linksgen.AddLink(2122, 11, 12, "on", 1, 14);
+            linksgen.AddLink(1920, 9, 10, "on", 1, 24);
+            linksgen.AddLink(1921, 9, 11, "on", 1, 24);
+            linksgen.AddLink(2022, 10, 12, "on", 1, 24);
+            linksgen.AddLink(2122, 11, 12, "on", 1, 24);
 
             linksgen = new XMLeon("sub5links.xml", XMLeon.Type.cable_cloud);
-            linksgen.AddLink(2324, 13, 14, "on", 1, 14);
-            linksgen.AddLink(2325, 13, 15, "on", 1, 14);
-            linksgen.AddLink(2426, 14, 16, "on", 1, 14);
-            linksgen.AddLink(2526, 15, 16, "on", 1, 14);
+            linksgen.AddLink(2324, 13, 14, "on", 1, 24);
+            linksgen.AddLink(2325, 13, 15, "on", 1, 24);
+            linksgen.AddLink(2426, 14, 16, "on", 1, 24);
+            linksgen.AddLink(2526, 15, 16, "on", 1, 24);
 
             XMLeonSubnetwork sub = new XMLeonSubnetwork("subnetwork1.xml", "subclient.xml", "sub1links.xml");
             sub.AddSubnetwork(2, "", "sub2links.xml");

@@ -201,6 +201,66 @@ namespace ManagementCenter
                     Console.WriteLine("Zestawianie ścieżki się powiodło");
                 }
             }
+            else if (message.Contains("</error><slots"))
+            {
+                Console.WriteLine("Do naprawy, poniewaz brakuje slotow: " + toReconfigure);
+                Thread.Sleep(3000 * toReconfigure);
+                toReconfigure++;
+
+                //tu jest maly cheat- taki ze numery podsieci sa takie same jak ich managerow
+                //by nie parsowac ich wiadomosci ze wzgledu na numer
+                //TODO zrobic ze podsiec wysyla tylko te scezki ktorych nie moze naprawic
+
+
+                //ustawienie ze jak nie mozna w niej usunac sciezki to sie ustawia ze jest ona martwa, by algorytm dijxtry do niej
+                //nie wchodzil
+
+
+                string errorPathId = GetIdOfErrorPath(message);
+
+                var path = Program.paths.Find(x => x.globalID == errorPathId);
+
+                path.ResetSlotReservation();
+                SendSubToDeleteConnection(path);
+
+                //a tu zestawiamy od nowa
+                //musza byc dwie petle, bo robimy sycnhronicznie zestawianie
+                lock (Program.nodes)
+                {
+                    lock (Program.links)
+                    {
+                        SwitchingActions.pathToCount = PathAlgorithm.dijkstra(Program.nodes, Program.links, path.nodes.Last().number, path.nodes.First().number, false);
+                    }
+                    try
+                    {
+                        lock (Program.paths)
+                        {
+                            Program.paths.Remove(Program.paths.Find(x => x.globalID == errorPathId));
+                        }
+
+                    }
+                    catch
+                    {
+                    }
+                    if (SwitchingActions.pathToCount.endToEnd == false)
+                    {
+                        //jak nie udalo sie zrekonfigurwac zmniejszamy licznik
+                        toReconfigure--;
+
+                        Console.Write(DateTime.Now.ToString("HH:mm:ss") + " : ");
+                        Console.WriteLine("Naprawa ścieżki jest niemożliwa");
+                    }
+                    else
+                    {
+                        //zerujemy licznik
+                        messageCounterPossibleWindow = 0;
+                        messageCounterPossibleReservation = 0;
+
+                        reconfigured = false;
+                        SendToSubnetworks(SwitchingActions.pathToCount);
+                    }
+                }
+            }
             //jezeli zepsula sie podsiec, by naprawic to na wyzszym poziomie
 
             else if (message.Contains("error"))
@@ -501,7 +561,9 @@ namespace ManagementCenter
             {
                 System.Threading.Thread.Sleep(100);
                 path.ResetSlotReservation();
-                message1 = "remove:" + path.nodes.Last().number + path.nodes[0].number;
+                // message1 = "remove:" + path.nodes.Last().number + path.nodes[0].number;
+               message1 = "remove:" + path.nodes.Last().number + path.nodes[0].number+path.globalID;
+
                 foreach (Node node in path.nodes)
                 {
                     if (node.number <= 80 && node.number != id)
@@ -652,7 +714,9 @@ namespace ManagementCenter
                         {
                             if (node.number < 80)
                             {
-                                string message1 = "remove:" + p.nodes.Last().number + p.nodes[0].number;
+                               // string message1 = "remove:" + p.nodes.Last().number + p.nodes[0].number;
+                                string message1 = "remove:" + p.nodes.Last().number + p.nodes[0].number+p.globalID;
+
                                 Program.managerNodes[node.number - 1].Send(message1);
                             }
                         }
